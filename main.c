@@ -6,5 +6,6 @@ void assembler(){
 
 int main() {
     printf("Hello, World!\n");
+    printf("hey");
     return 0;
 }

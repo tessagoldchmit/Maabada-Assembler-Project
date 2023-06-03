@@ -1,50 +1,27 @@
 #include "output.h"
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
-void binary_to_base64(int binary_number){
-    char[] base64_string = "";
 
-    // Extracting the 6 left bits
-    unsigned int left_bits = binary_number >> 6;
-
-    if (left_bits >= 0 && left_bits <= 25) {
-        base64_string='A' + left_bits; //'A' to 'Z'
-    } else if (left_bits >= 26 && left_bits <= 51) {
-        base64_string='a' + (left_bits - 26); // 'a' to 'z'
-    } else if (left_bits >= 52 && left_bits <= 61) {
-        base64_string='0' + (left_bits - 52); // '0' to '9'
-    } else if (left_bits == 62) {
-        base64_string='+'; // Base64 character '+'
-    } else if (left_bits == 63) {
-        base64_string='/'; // Base64 character '/'
+char binary_to_base64(int bits) {
+    if (bits >= 0 && bits <= 25) {
+        return 'A' + bits; //'A' to 'Z'
+    } else if (bits >= 26 && bits <= 51) {
+        return 'a' + (bits - 26); // 'a' to 'z'
+    } else if (bits >= 52 && bits <= 61) {
+        return '0' + (bits - 52); // '0' to '9'
+    } else if (bits == 62) {
+        return '+'; // Base64 character '+'
+    } else if (bits == 63) {
+        return '/'; // Base64 character '/'
     } else {
-        base64_string='='; // Padding character '='
+        return '='; // Padding character '='
     }
-
-    // Extracting the 6 right bits
-    unsigned int right_bits = binary_number & 0b111111;
-
-    if (right_bits >= 0 && right_bits <= 25) {
-        base64_string='A' + right_bits; // 'A' to 'Z'
-    } else if (right_bits >= 26 && right_bits <= 51) {
-        base64_string='a' + (right_bits - 26); // 'a' to 'z'
-    } else if (right_bits >= 52 && right_bits <= 61) {
-        base64_string='0' + (right_bits - 52); // '0' to '9'
-    } else if (right_bits == 62) {
-        base64_string='+'; // Base64 character '+'
-    } else if (right_bits == 63) {
-        base64_string='/'; // Base64 character '/'
-    } else {
-        base64_string='='; // Padding character '='
-    }
-    fputc('\n', file);
 }
 
 
-int main(){
-    int binaryNumbers[] = {
+int main() {
+    int binary_numbers_arr[] = {
             0b101000001100,
             0b000110000000,
             0b000111110110,
@@ -75,22 +52,30 @@ int main(){
             0b000000001111,
             0b000000010110
     };
-    int i=0;
-    int IC=18;
-    int DC=11;
+    int IC = 18;
+    int DC = 11;
 
-    FILE* file = fopen("C:\\Users\\Maayan\\CLionProjects\\assembler\\Base64.txt", "w"); // Open the file in write mode
+    int i;
 
-    fprintf(file, "%d ", IC);
-    fprintf(file, "%d\n", DC);
+    FILE *file = fopen("outputs/output.obj", "w"); // Open the file in write mode
+
+    fprintf(file, "%d %d\n", IC, DC);
 
     if (file == NULL) {
         printf("Failed to open the file.\n");
         exit(1);
     }
 
-    for(i; i<IC+DC; i++) {
-        binary_to_base64(binaryNumbers[i]);
+    for (i = 0; i < IC + DC; i++) {
+        int binary_number = binary_numbers_arr[i];
+
+        unsigned int left_bits = binary_number >> 6;
+        unsigned int right_bits = binary_number & 0b111111;
+
+        fputc(binary_to_base64(left_bits), file);
+        fputc(binary_to_base64(right_bits), file);
+        fputc('\n', file);
+
     }
     fclose(file);
     printf("Data written to the file.\n");
@@ -100,4 +85,4 @@ int main(){
 
 
 
-/* TODO support writing .ob file, .ent file and .ext file */
+/* TODO support writing .obj file, .ent file and .ext file */

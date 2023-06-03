@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "preprocessor.h"
+#include "pre_assembler.h"
 
 
 bool process_file(char *filename);
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     int i;
 
     /* Check that at least one file name was passed to the program */
-    if (argc < 2) {
+    if (argc == 1) {
         fprintf(stderr, "Error: No file names provided.\n");
         exit(EXIT_FAILURE);
     }
@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
         process_file(argv[i]);
     }
 
+    printf("All files have been processed!\n");
     return 0;
 }
 

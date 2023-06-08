@@ -19,7 +19,7 @@ char binary_to_base64(int bits) {
     }
 }
 
-
+/*
 int main() {
     int binary_numbers_arr[] = {
             0b101000001100,
@@ -81,7 +81,8 @@ int main() {
     printf("Data written to the file.\n");
 
     return 0;
-}
+
+}*/
 
 
 

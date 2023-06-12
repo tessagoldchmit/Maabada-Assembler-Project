@@ -1,0 +1,7 @@
+mov r2, r1
+stop
+mov r2, r1
+stop
+L1: cmp LABEL, #1
+mov r2, r1
+rts

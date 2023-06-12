@@ -1,0 +1,38 @@
+# Directories
+.idea/
+.cmake/
+CMakeFiles/
+cmake-build-*/
+
+# Compiled object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Executables
+*.exe
+*.out
+
+# Libraries
+*.a
+*.lib
+*.so
+*.dll
+
+# Generated Makefile
+Makefile
+
+# CLion specific files
+*.iml
+.cproject
+.project
+
+# macOS specific files
+.DS_Store
+
+# Editor backups
+*~
+*.swp
+*.swo
+*.swn

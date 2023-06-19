@@ -1,8 +1,10 @@
 #include "first_pass.h"
-#include "assembler.c"
+#include "string.h"
 #include "globals.h"
 #include "tables.h"
 #include "utils.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 bool is_symbol(char* line, char* char_ptr){
@@ -50,6 +52,16 @@ void update_data_dc(symbol_table *symbol_table, long ic) {
 
 }
 
+int get_symbol_length(char line[80]) {
+    // Find the index of the colon
+    const char *colon = strchr(line, ':');
+
+    // Calculate the length of the word
+    int length = colon - line;
+
+    return length;
+}
+
 bool first_pass_process(char *base_filename, long ic, long dc) {
     char *char_ptr=NULL;
     FILE *am_file;
@@ -60,10 +72,15 @@ bool first_pass_process(char *base_filename, long ic, long dc) {
     char *symbol_name;
     bool error_flag = FALSE;
     int L;
+    char *filename_with_am_suffix;
 
+    /* Create filename with .am suffix */
+    filename_with_am_suffix = malloc(strlen(base_filename) + 4); /* +4 for ".am\0" */
+    strcpy(filename_with_am_suffix, base_filename);
+    strcat(filename_with_am_suffix, ".am");
 
     // Open .am file
-    am_file = fopen(base_filename, "r");
+    am_file = fopen(filename_with_am_suffix, "r");
     if (am_file == NULL) {
         fprintf(stderr, "Error: Failed to open .am file '%s' for reading.\n", base_filename);
         return FALSE;
@@ -73,7 +90,7 @@ bool first_pass_process(char *base_filename, long ic, long dc) {
     while (fgets(line, MAX_LINE_LENGTH, am_file)) {
         char_ptr=line;
         if(is_symbol(line, char_ptr)){
-            size_t symbol_length = char_ptr - line;  // Calculate the length of the string before ':'
+            int symbol_length = get_symbol_length(line);  // Calculate the length of the string before ':'
             symbol_name[symbol_length + 1];  // Allocate a new string to store the symbol
             strncpy(symbol_name, line, symbol_length);  // Copy the characters before ':' to the symbol string
             symbol_name[symbol_length] = '\0';  // Null-terminate the symbol string

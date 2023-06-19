@@ -13,7 +13,7 @@
  */
 bool preprocess_file(char *base_filename) {
     /* Variables */
-    bool is_macro_flag, replaced_flag;
+    bool is_macro_flag=FALSE, replaced_flag=FALSE;
     macro_array macro_array;
 
     char line[MAX_LINE_LENGTH];
@@ -60,6 +60,7 @@ bool preprocess_file(char *base_filename) {
     while (fgets(line, MAX_LINE_LENGTH, as_file)) {
 
         /* Skip empty lines and comments (lines starting with ';') */
+        /* TODO tessa - handle cases where comments don't start at index 0 */
         if (empty_string(line) || line[0] == ';') {
             continue;
         }

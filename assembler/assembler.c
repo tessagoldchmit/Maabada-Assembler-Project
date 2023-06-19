@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "pre_assembler.h"
+#include "first_pass.h"
+#include "tables.h"
 
 
 bool process_file(char *filename);
@@ -46,11 +48,24 @@ bool process_file(char *filename) {
     /* NOTE probably more variables will be created here, too early to know :) */
     long ic = 0, dc = 0;
     /* TODO: Initialize data image to an array of data words of size 1024 */
+    data_image *data_image;
+    initialize_data_image(data_image);
+
     /* TODO: Initialize code image to an array of machine words of size 1024 */
+    code_image *code_image;
+    initialize_code_image(code_image);
+
     /* TODO: Initialize a temporary line of size MAX_LINE_LENGTH + 2.
              This temp line holds the line that was read each time. */
+
     /* TODO: Initialize symbol table */
+    symbol_table *symbol_table;
+    initialize_symbol_table(symbol_table);
+
     /* TODO: Initialize Abstract Syntax Tree (AST) */
+
+
+
     bool success = TRUE, has_extern = FALSE, has_entry = FALSE;
 
     /* Preprocessing step */
@@ -65,6 +80,10 @@ bool process_file(char *filename) {
 
     /* First pass */
     /* TODO: Perform the first pass - process each line in the .am file and update the success variable */
+    if (!first_pass_process("program-wanted.am", ic, dc)) {
+        printf("Error: First pass step failed.\n");
+        return FALSE;
+    }
 
     /* Second pass */
     /* TODO: Perform the second pass and update the success variable */

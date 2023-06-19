@@ -1,3 +1,6 @@
+#ifndef AST_H
+#define AST_H
+
 typedef enum {
     /* Group A */
     MOV_TYPE,
@@ -17,91 +20,93 @@ typedef enum {
     /* Group C */
     RTS_TYPE,
     STOP_TYPE
-} InstructionType;
+} instruction_type;
 
 typedef enum{
     REGISTER_TYPE,
     LABEL_TYPE,
     NUMBER_TYPE
-} OperandType;
+} operand_type;
 
 /** src  opcode  des   ARE **/
 /** XXX   XXXX   XXX   XX **/
 typedef struct{
-    InstructionType kind;
+    instruction_type kind;
 
     char* source_operand;
 
-    OperandType srctype;
+    operand_type srctype;
 
     char* target_operand;
 
-    OperandType trgtype;
-} GroupA;
+    operand_type trgtype;
+} group_a;
 
 /** src  opcode  des   ARE **/
 /** 000   XXXX   XXX   XX **/
 typedef struct{
-    InstructionType kind;
+    instruction_type kind;
 
     char* source_operand;
 
-    OperandType srctype;
+    operand_type srctype;
 
-} GroupB;
+} group_b;
 
 /** src  opcode  des   ARE **/
 /** 000   XXXX   000   XX **/
 typedef struct{
-    InstructionType kind;
-} GroupC;
+    instruction_type kind;
+} group_c;
 
 typedef struct{
     //condition: has : in the end of label
     char* label; //optional
 
     union Instruction_union {
-        GroupA groupA;
-        GroupB groupB;
-        GroupC groupC;
+        group_a group_a;
+        group_b group_b;
+        group_c group_c;
     };
 
-} Instruction;
+} instruction;
 
 typedef enum {
     DATA_TYPE,
     STRING_TYPE,
     ENTRY_TYPE,
     EXTERN_TYPE
-} DirectiveType;
+} directive_type;
 
 typedef struct{
     char* label;
 
-    DirectiveType kind;
+    directive_type kind;
 
     /** 000000000110 -> 6 **/
     /** 111111110111 -> -9 (Two's complement, because negative) **/
     /** 000000001111 -> 15 **/
     char* parameters;
 
-} Directive;
+} directive;
 
 typedef struct {
     char error[80];
-}Error;
+}error;
 
 typedef enum {
     INSTRUCTION,
     DIRECTIVE,
     ERROR
-} WordType;
+} word_type;
 
-typedef struct AST{
-    WordType type;
+typedef struct ast{
+    word_type type;
     union word{
-        Instruction instruction_word;
-        Directive directive_word;
+        instruction instruction_word;
+        directive directive_word;
     };
-    Error error;
-}AST;
+    error error;
+}ast;
+
+#endif // AST_H

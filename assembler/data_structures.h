@@ -1,7 +1,8 @@
-#ifndef TABLES_H
-#define TABLES_H
+#ifndef DATA_STRUCTURES_H
+#define DATA_STRUCTURES_H
 
 #include "ast.h"
+#include "globals.h"
 
 typedef enum {
     DATA,
@@ -37,19 +38,19 @@ typedef struct data_node {
     int *word;
     int L;
     ast ast;
-    struct data_node *next;
+    struct data_node *next_node;
 } data_node;
 
 typedef struct {
-    data_node *first;
-    data_node *last;
+    data_node *head;
+    data_node *last_node;
 } data_image;
 
 symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type symbol_type);
 
 void initialize_symbol_table(symbol_table *symbol_table);
 
-void add_symbol(symbol_table *table, char *symbol_name, int decimal_address, symbol_type symbol_type);
+bool add_symbol(symbol_table *table, char *symbol_name, int decimal_address, symbol_type symbol_type);
 
 code_node *create_code_node(int L, ast ast);
 
@@ -63,4 +64,4 @@ void initialize_data_image(data_image *data_image);
 
 void add_data_node(data_image *data_image, int L, ast ast);
 
-#endif // TABLES_H
+#endif /* DATA_STRUCTURES_H */

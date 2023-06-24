@@ -1,5 +1,5 @@
 #include "second_pass.h"
-#include "tables.h"
+#include "data_structures.h"
 #include "globals.h"
 
 /*
@@ -10,7 +10,7 @@
     @param line Information about the processed line.
     @return TRUE if the line is processed successfully, FALSE otherwise.
 */
-bool second_pass_line_process();
+bool second_pass_process();
 
 /*
     Encodes the labels into the code image.

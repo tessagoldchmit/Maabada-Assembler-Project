@@ -10,7 +10,7 @@ set(SOURCE_FILES
         assembler/pre_assembler.c
         assembler/first_pass.c
         assembler/second_pass.c
-        assembler/tables.c
+        assembler/data_structures.c
         assembler/utils.c
         assembler/output.c
         assembler/ast.c
@@ -22,7 +22,7 @@ set(HEADER_FILES
         assembler/pre_assembler.h
         assembler/first_pass.h
         assembler/second_pass.h
-        assembler/tables.h
+        assembler/data_structures.h
         assembler/utils.h
         assembler/output.h
         assembler/ast.h

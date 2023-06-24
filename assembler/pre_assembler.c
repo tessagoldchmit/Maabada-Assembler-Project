@@ -19,21 +19,15 @@ bool preprocess_file(char *base_filename) {
     char line[MAX_LINE_LENGTH];
     char macro_name[MAX_MACRO_LENGTH], macro_content[MAX_MACRO_INST];
 
-    char *filename_with_as_suffix;
-    char *filename_with_am_suffix;
-
     FILE *as_file;
     FILE *am_file;
 
     /* Create filename with .as suffix */
-    filename_with_as_suffix = malloc(strlen(base_filename) + 4); /* +4 for ".as\0" */
-    strcpy(filename_with_as_suffix, base_filename);
-    strcat(filename_with_as_suffix, ".as");
+    char *filename_with_as_suffix = concatenate_strings(base_filename, ".as");
 
     /* Create filename with .am suffix */
-    filename_with_am_suffix = malloc(strlen(base_filename) + 4); /* +4 for ".am\0" */
-    strcpy(filename_with_am_suffix, base_filename);
-    strcat(filename_with_am_suffix, ".am");
+    char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
+
 
     // Open .as file
     as_file = fopen(filename_with_as_suffix, "r");
@@ -135,7 +129,7 @@ void init_macro_array(macro_array *arr, int initial_size) {
 void insert_macro_array(macro_array *arr, char *name, char *content) {
     if (arr->used == arr->size) {
         arr->size *= 2;
-        void* temp = realloc(arr->array, arr->size * sizeof(macro));
+        void *temp = realloc(arr->array, arr->size * sizeof(macro));
         if (!temp) {
             fprintf(stderr, "Error: Failed to reallocate memory.\n");
             exit(1);

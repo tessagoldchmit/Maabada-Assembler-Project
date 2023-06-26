@@ -1,5 +1,8 @@
 ;this is comment
-STR: .string “abcdef”
+TEST1: .data 7,6
+TEST2: .string "ab"
+TEST3: .string "abd"
+TEST4: .data 1,2
 
 mcr m1
 mov r2, r1

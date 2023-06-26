@@ -60,8 +60,8 @@ void add_code_node(code_image *code_image, int L, ast ast);
 
 data_node *create_data_node(int L, ast ast);
 
-void initialize_data_image(data_image *data_image);
+data_node* initialize_data_image();
 
-void add_data_node(data_image *data_image, int L, ast ast);
+void add_data_node(data_image *data_image, data_node *new_node);
 
 #endif /* DATA_STRUCTURES_H */

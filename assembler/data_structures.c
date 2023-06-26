@@ -113,15 +113,17 @@ data_node *create_data_node(int L, ast ast) {
  * Initialize an empty data image.
  *
  * @param data_image The data image to initialize.
- */void initialize_data_image(data_image *data_image) {
-    data_image->head = NULL;
-    data_image->last_node = NULL;
+ */
+data_node* initialize_data_image() {
+    data_image* new_data_image = malloc(sizeof(data_image));
+    new_data_image->head = NULL;
+    new_data_image->last_node = NULL;
+
+    return new_data_image;
 }
 
 /* Adds a data node to the data image */
-void add_data_node(data_image *data_image, int L, ast ast) {
-    data_node *new_node = create_data_node(L, ast);
-
+void add_data_node(data_image *data_image, data_node *new_node) {
     if (data_image->head == NULL) {
         data_image->head = new_node;
         data_image->last_node = new_node;

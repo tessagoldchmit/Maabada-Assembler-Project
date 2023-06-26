@@ -86,7 +86,7 @@ typedef struct{
     /** 000000000110 -> 6 **/
     /** 111111110111 -> -9 (Two's complement, because negative) **/
     /** 000000001111 -> 15 **/
-    char* parameters;
+    int machine_code[];
 
 } directive;
 
@@ -105,8 +105,11 @@ typedef struct ast{
     union word{
         instruction instruction_word;
         directive directive_word;
-    };
+    }word;
     error error;
 }ast;
+
+ast* initialize_ast(word_type word_type, union word);
+directive* initialize_directive(char* label, directive_type kind, char* parameters, int binary_length);
 
 #endif // AST_H

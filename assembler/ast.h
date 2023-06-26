@@ -59,15 +59,15 @@ typedef struct{
     instruction_type kind;
 } group_c;
 
-typedef struct{
+typedef struct {
     //condition: has : in the end of label
     char* label; //optional
 
-    union Instruction_union {
+    union instruction_union {
         group_a group_a;
         group_b group_b;
         group_c group_c;
-    };
+    }instruction_union;
 
 } instruction;
 
@@ -100,16 +100,20 @@ typedef enum {
     ERROR
 } word_type;
 
+typedef union word{
+    instruction instruction_word;
+    directive directive_word;
+}word;
+
 typedef struct ast{
+    /* TODO relocation to L and merge between data_node and ast.*/
     word_type type;
-    union word{
-        instruction instruction_word;
-        directive directive_word;
-    }word;
+    word word;
     error error;
 }ast;
 
 ast* initialize_ast(word_type word_type, union word);
 directive* initialize_directive(char* label, directive_type kind, char* parameters, int binary_length);
+group_a initialize_group_a_instruction(instruction_type kind, const char* source_operand, operand_type srctype, const char* target_operand, operand_type trgtype);
 
 #endif // AST_H

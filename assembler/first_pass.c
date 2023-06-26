@@ -14,10 +14,8 @@ bool is_symbol(char* line){
 }
 
 bool is_data_or_string(char* line) {
-    /* Check if the line represents either ".data" or ".string" type */
-    if (strncmp(line, ".data", 5) == 0 || strncmp(line, ".string", 7) == 0) {
+    if (strncmp(line, ".data", 5) == 0 || strncmp(line, ".string", 7) == 0)
         return TRUE;
-    }
     return FALSE;
 }
 
@@ -50,11 +48,11 @@ int count_data_numbers(const char* str) {
 }
 
 void decode_data(directive_type directive_type, char *char_ptr, long *dc, char *symbol_name, data_image *my_data_image) {
-    directive *directive;
+    directive *new_directive;
     data_node *new_node;
     int binary_length=0;
     char *handler;
-    char parameters[MAX_LINE_LENGTH]; /* NOT SURE ABOUT THE LENGTH, MUST BE INITIALIZED HERE BECAUSE OF SEGFAULT*/
+    char parameters[MAX_LINE_LENGTH]; /* TODO NOT SURE ABOUT THE LENGTH, MUST BE INITIALIZED HERE BECAUSE OF SEGFAULT*/
 
     if(directive_type==STRING_TYPE) {
         char_ptr++; /* skip the first " */
@@ -73,7 +71,6 @@ void decode_data(directive_type directive_type, char *char_ptr, long *dc, char *
     *dc+=binary_length; /* update memory length */
 
     if(directive_type==STRING_TYPE){
-        *dc++;
         strncpy(parameters, handler, binary_length); /* save string parameters */
     }
     else{
@@ -81,30 +78,152 @@ void decode_data(directive_type directive_type, char *char_ptr, long *dc, char *
     }
 
     if(directive_type==STRING_TYPE)
-        directive = initialize_directive(symbol_name, STRING_TYPE, parameters, binary_length);
+        new_directive = initialize_directive(symbol_name, STRING_TYPE, parameters, binary_length);
     else if(directive_type==DATA_TYPE)
-        directive = initialize_directive(symbol_name, DATA_TYPE, parameters, binary_length);
-    union word directive_union_word;
-    directive_union_word.directive_word=*directive;
+        new_directive = initialize_directive(symbol_name, DATA_TYPE, parameters, binary_length);
+    word directive_union_word;
+    directive_union_word.directive_word=*new_directive;
     ast *ast = initialize_ast(DIRECTIVE, directive_union_word);
     new_node=create_data_node(binary_length, *ast);
     add_data_node(my_data_image, new_node);
 }
 
 bool is_extern_entry(char *line, char *char_ptr) {
+    if (strncmp(char_ptr, ".entry", 6) == 0 || strncmp(char_ptr, ".extern", 7) == 0)
+        return TRUE;
     return FALSE;
 }
 
 bool is_extern(char *line, char *char_ptr) {
+    if (strncmp(line, ".extern", 7) == 0)
+        return TRUE;
     return FALSE;
 }
 
-void add_extern_symbols() {
-
+int check_group(instruction_type kind) {
+    /* TODO enum groups a, b, c*/
+    if( kind==MOV_TYPE ||
+        kind==CMP_TYPE ||
+        kind==ADD_TYPE ||
+        kind==SUB_TYPE ||
+        kind==LEA_TYPE){
+        return 1;
+    }
+    else if(kind==NOT_TYPE ||
+            kind==CLR_TYPE ||
+            kind==DEC_TYPE ||
+            kind==JMP_TYPE ||
+            kind==BNE_TYPE ||
+            kind==RED_TYPE ||
+            kind==PRN_TYPE ||
+            kind==JSR_TYPE){
+        return 2;
+    }
+    else if(kind==RTS_TYPE ||
+            kind==STOP_TYPE){
+        return 3;
+    }
 }
 
-int analyze_operands() {
+instruction_type check_instruction_type(char* char_ptr) {
+    if(strncmp(char_ptr, "mov", 3)==0)
+        return MOV_TYPE;
+    if(strncmp(char_ptr, "cmp", 3)==0)
+        return CMP_TYPE;
+    if(strncmp(char_ptr, "add", 3)==0)
+        return ADD_TYPE;
+    if(strncmp(char_ptr, "sub", 3)==0)
+        return SUB_TYPE;
+    if(strncmp(char_ptr, "lea", 3)==0)
+        return LEA_TYPE;
+    if(strncmp(char_ptr, "not", 3)==0)
+        return NOT_TYPE;
+    if(strncmp(char_ptr, "clr", 3)==0)
+        return CLR_TYPE;
+    if(strncmp(char_ptr, "dec", 3)==0)
+        return DEC_TYPE;
+    if(strncmp(char_ptr, "jmp", 3)==0)
+        return JMP_TYPE;
+    if(strncmp(char_ptr, "bne", 3)==0)
+        return BNE_TYPE;
+    if(strncmp(char_ptr, "red", 3)==0)
+        return RED_TYPE;
+    if(strncmp(char_ptr, "prn", 3)==0)
+        return PRN_TYPE;
+    if(strncmp(char_ptr, "jsr", 3)==0)
+        return JSR_TYPE;
+    if(strncmp(char_ptr, "rts", 3)==0)
+        return RTS_TYPE;
+    if(strncmp(char_ptr, "stop", 4)==0)
+        return STOP_TYPE;
+}
 
+void copy_string_until_space(char *source, char *destination, char delimiter, size_t dest_size) {
+    size_t i = 0;
+
+    while (source[i] != '\0' && source[i] != delimiter && i < dest_size - 1) {
+        destination[i] = source[i];
+        i++;
+    }
+
+    destination[i] = '\0'; // Null-terminate the copied string
+}
+
+int analyze_operands(char *char_ptr, code_image *my_code_image) {
+    instruction_type kind;
+    char* source_operand;
+    operand_type srctype;
+    char* target_operand;
+    operand_type trgttype;
+    union instruction_union instruction_union_word;
+    instruction *new_instruction;
+    char *backup;
+    word new_word;
+
+    kind=check_instruction_type(char_ptr);
+    char_ptr+=4;
+    skip_spaces(char_ptr);
+
+    if(check_group(kind)==1) {
+        backup = malloc(strlen(char_ptr) + 1);
+        strcpy(backup, char_ptr);
+        source_operand=strtok(backup, ",");
+        if(strncmp(source_operand, "@r", 2)==0) {
+            srctype = REGISTER_TYPE;
+            char_ptr+=3;
+        }
+        else if(isalpha(*char_ptr)) {
+            srctype = LABEL_TYPE;
+        }
+        else {
+            srctype = NUMBER_TYPE;
+        }
+
+        skip_spaces(char_ptr);
+        char_ptr+=2; //skip comma
+
+        backup = malloc(strlen(char_ptr) + 1);
+        strcpy(backup, char_ptr);
+        target_operand=strtok(backup, ",");
+        if(strncmp(target_operand, "@r", 2)==0)
+            trgttype=REGISTER_TYPE;
+        else if(isalpha(*char_ptr))
+            trgttype=LABEL_TYPE;
+        else
+            trgttype=NUMBER_TYPE;
+
+        /* TODO fix the constrction here*/
+        instruction_union_word.group_a = initialize_group_a_instruction(kind, source_operand, srctype, target_operand, trgttype);
+        new_instruction->instruction_union=instruction_union_word;
+        new_word.instruction_word = *new_instruction;
+        ast *ast = initialize_ast(INSTRUCTION, new_word);
+    }
+    else if(check_group(kind)==2) {
+        instruction_union_word.group_b;
+    }
+    else if(check_group(kind)==3) {
+        instruction_union_word.group_c;
+    }
 }
 
 void update_data_dc(symbol_table *symbol_table, long ic) {
@@ -112,7 +231,29 @@ void update_data_dc(symbol_table *symbol_table, long ic) {
 }
 
 
-bool first_pass_process(char *filename_with_am_suffix, long ic, long dc, data_image *my_data_image, code_image code_image, symbol_table symbol_table) {
+bool is_valid_ins(char *char_ptr) {
+    /* TODO relocate to one dedicated container */
+    if( strncmp(char_ptr, "mov", 3) ||
+        strncmp(char_ptr, "cmp", 3) ||
+        strncmp(char_ptr, "add", 3) ||
+        strncmp(char_ptr, "sub", 3) ||
+        strncmp(char_ptr, "lea", 3) ||
+        strncmp(char_ptr, "not", 3) ||
+        strncmp(char_ptr, "clr", 3) ||
+        strncmp(char_ptr, "dec", 3) ||
+        strncmp(char_ptr, "jmp", 3) ||
+        strncmp(char_ptr, "bne", 3) ||
+        strncmp(char_ptr, "red", 3) ||
+        strncmp(char_ptr, "prn", 3) ||
+        strncmp(char_ptr, "jsr", 3) ||
+        strncmp(char_ptr, "rts", 3) ||
+        strncmp(char_ptr, "stop", 4)){
+        return TRUE;
+    }
+    return FALSE;
+}
+
+bool first_pass_process(char *filename_with_am_suffix, long ic, long dc, data_image *my_data_image, code_image *my_code_image, symbol_table symbol_table) {
     FILE *am_file;
     char line[MAX_LINE_LENGTH];
     bool symbol_flag = FALSE;
@@ -160,16 +301,21 @@ bool first_pass_process(char *filename_with_am_suffix, long ic, long dc, data_im
             decode_data(directive_type, char_ptr, &dc, symbol_name, my_data_image);
         }
         else if(is_extern_entry(line, char_ptr)){
-            if(is_extern(line, char_ptr)){
-                add_extern_symbols();
+            if (strncmp(char_ptr, ".extern", 7) == 0) {
+                char_ptr += strlen(".extern");
+                directive_type = EXTERN_TYPE;
+                add_symbol(&symbol_table, char_ptr, -1, EXTERNAL);
+                /* TODO what the fuck is happening here */
+                /* TODO we have TEST as symbol, HEY as an external symbol. what goes into symbol table? what not? */
             }
         }
         else if(symbol_flag){
             add_symbol(&symbol_table, symbol_name, ic, CODE);
-            L = analyze_operands();
-            ic+=L;
+            if(is_valid_ins(char_ptr)){
+                L = analyze_operands(char_ptr, my_code_image);
+                ic+=L;
+            }
         }
-
         symbol_flag = FALSE;
     }
     if(error_flag)

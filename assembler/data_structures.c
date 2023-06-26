@@ -81,9 +81,12 @@ code_node *create_code_node(int L, ast ast) {
  *
  * @param code_image The code image to initialize.
  */
-void initialize_code_image(code_image *code_image) {
-    code_image->first = NULL;
-    code_image->last = NULL;
+code_image* initialize_code_image() {
+    code_image* new_code_image = malloc(sizeof(code_image));
+    new_code_image->first = NULL;
+    new_code_image->last = NULL;
+
+    return new_code_image;
 }
 
 /* Function to add a code node to the code image */
@@ -100,7 +103,7 @@ void add_code_node(code_image *code_image, int L, ast ast) {
 }
 
 /* Creates a new data node */
-data_node *create_data_node(int L, ast ast) {
+data_node* create_data_node(int L, ast ast) {
     data_node *new_node = (data_node *) malloc(sizeof(data_node));
     new_node->word = NULL;
     new_node->L = L;
@@ -114,7 +117,7 @@ data_node *create_data_node(int L, ast ast) {
  *
  * @param data_image The data image to initialize.
  */
-data_node* initialize_data_image() {
+data_image* initialize_data_image() {
     data_image* new_data_image = malloc(sizeof(data_image));
     new_data_image->head = NULL;
     new_data_image->last_node = NULL;

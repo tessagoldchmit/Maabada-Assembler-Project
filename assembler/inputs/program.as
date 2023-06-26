@@ -1,8 +1,11 @@
 ;this is comment
-TEST1: .data 7,6
+MAIN: mov @r3 ,LENGTH
+TEST: .extern HEY
 TEST2: .string "ab"
+TEST1: .data 7,6
 TEST3: .string "abd"
 TEST4: .data 1,2
+
 
 mcr m1
 mov r2, r1
@@ -14,7 +17,7 @@ mcr m2
 rts
 endmcr
 
-MAIN: mov @r3 ,LENGTH
+
 LOOP: jmp L1
 
 m1

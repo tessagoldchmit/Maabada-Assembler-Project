@@ -54,13 +54,13 @@ bool add_symbol(symbol_table *table, char *symbol_name, int decimal_address, sym
 
 code_node *create_code_node(int L, ast ast);
 
-void initialize_code_image(code_image *code_image);
+code_image* initialize_code_image();
 
 void add_code_node(code_image *code_image, int L, ast ast);
 
 data_node *create_data_node(int L, ast ast);
 
-data_node* initialize_data_image();
+data_image* initialize_data_image();
 
 void add_data_node(data_image *data_image, data_node *new_node);
 

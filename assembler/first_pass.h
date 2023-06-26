@@ -20,6 +20,6 @@ int analyze_operands();
 
 void update_data_dc(symbol_table *symbol_table, long ic);
 
-bool first_pass_process(char *base_filename, long ic, long dc, data_image *my_data_image, code_image code_image, symbol_table symbol_table);
+bool first_pass_process(char *base_filename, long ic, long dc, data_image *my_data_image, code_image *code_image, symbol_table symbol_table);
 
 #endif /* FIRST_PASS_H */

@@ -51,8 +51,8 @@ bool process_file(char *base_filename) {
     data_image *my_data_image;
     my_data_image = initialize_data_image();
 
-    code_image code_image;
-    initialize_code_image(&code_image);
+    code_image *my_code_image;
+    my_code_image = initialize_code_image();
 
     symbol_table symbol_table;
     initialize_symbol_table(&symbol_table);
@@ -69,7 +69,7 @@ bool process_file(char *base_filename) {
 
     /* First pass */
     char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
-    if (!first_pass_process(filename_with_am_suffix, ic, dc, my_data_image, code_image, symbol_table)) {
+    if (!first_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table)) {
         printf("Error: First pass failed.\n");
         return FALSE;
     }

@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "globals.h"
+
 typedef enum {
     /* Group A */
     MOV_TYPE,
@@ -11,6 +13,7 @@ typedef enum {
     /* Group B */
     NOT_TYPE,
     CLR_TYPE,
+    INC_TYPE,
     DEC_TYPE,
     JMP_TYPE,
     BNE_TYPE,
@@ -19,56 +22,76 @@ typedef enum {
     JSR_TYPE,
     /* Group C */
     RTS_TYPE,
-    STOP_TYPE
-} instruction_type;
+    STOP_TYPE,
+} instruction_name;
 
-typedef enum{
-    REGISTER_TYPE,
-    LABEL_TYPE,
-    NUMBER_TYPE
+struct instruction_map {
+    const char *name;
+    instruction_name type;
+};
+
+static const struct instruction_map instructions_map[] = {
+        {"mov",  MOV_TYPE},
+        {"cmp",  CMP_TYPE},
+        {"add",  ADD_TYPE},
+        {"sub",  SUB_TYPE},
+        {"lea",  LEA_TYPE},
+        {"not",  NOT_TYPE},
+        {"clr",  CLR_TYPE},
+        {"inc",  INC_TYPE},
+        {"dec",  DEC_TYPE},
+        {"jmp",  JMP_TYPE},
+        {"bne",  BNE_TYPE},
+        {"red",  RED_TYPE},
+        {"prn",  PRN_TYPE},
+        {"jsr",  JSR_TYPE},
+        {"rts",  RTS_TYPE},
+        {"stop", STOP_TYPE}
+};
+
+typedef enum {
+    GROUP_A = 1,
+    GROUP_B = 2,
+    GROUP_C = 3
+} group_type;
+
+typedef enum {
+    ERROR_OPERAND_TYPE,
+    REGISTER_OPERAND_TYPE,
+    SYMBOL_OPERAND_TYPE,
+    NUMBER_OPERAND_TYPE
 } operand_type;
+
+typedef union {
+    char symbol[MAX_SYMBOL_LENGTH+1];
+    char register_num;
+    int number;
+} operand_union;
 
 /** src  opcode  des   ARE **/
 /** XXX   XXXX   XXX   XX **/
-typedef struct{
-    instruction_type kind;
-
-    char* source_operand;
-
-    operand_type srctype;
-
-    char* target_operand;
-
-    operand_type trgtype;
+typedef struct {
+    operand_type source_type;
+    operand_union source_value;
+    operand_type target_type;
+    operand_union target_value;
 } group_a;
 
 /** src  opcode  des   ARE **/
 /** 000   XXXX   XXX   XX **/
-typedef struct{
-    instruction_type kind;
-
-    char* source_operand;
-
-    operand_type srctype;
-
+typedef struct {
+    operand_type target_type;
+    operand_union target_value;
 } group_b;
 
-/** src  opcode  des   ARE **/
-/** 000   XXXX   000   XX **/
-typedef struct{
-    instruction_type kind;
-} group_c;
 
 typedef struct {
-    //condition: has : in the end of label
-    char* label; //optional
-
+    char *symbol; /* optional */
+    instruction_name instruction_name;
     union instruction_union {
         group_a group_a;
         group_b group_b;
-        group_c group_c;
-    }instruction_union;
-
+    } instruction_union;
 } instruction;
 
 typedef enum {
@@ -78,21 +101,24 @@ typedef enum {
     EXTERN_TYPE
 } directive_type;
 
-typedef struct{
-    char* label;
-
-    directive_type kind;
-
-    /** 000000000110 -> 6 **/
-    /** 111111110111 -> -9 (Two's complement, because negative) **/
-    /** 000000001111 -> 15 **/
-    int machine_code[];
-
+typedef struct {
+    directive_type directive_type;
+    union {
+        char string[MAX_STRING_LENGTH];  /* for string type */
+        char symbol[MAX_SYMBOL_LENGTH];  /* for extern / entry type */
+        /** 000000000110 -> 6 **/
+        /** 111111110111 -> -9 (Two's complement, because negative) **/
+        /** 000000001111 -> 15 **/
+        struct {
+            int machine_code_array[MAX_NUMBER_LENGTH];
+            int machine_code_count;
+        } machine_code;  /* for data type */
+    } directive_option;
 } directive;
 
-typedef struct {
-    char error[80];
-}error;
+typedef char error[MAX_AST_ERROR_LENGTH + 1];
+typedef char symbol[MAX_SYMBOL_LENGTH + 1];
+
 
 typedef enum {
     INSTRUCTION,
@@ -100,20 +126,22 @@ typedef enum {
     ERROR
 } word_type;
 
-typedef union word{
+typedef union {
     instruction instruction_word;
     directive directive_word;
-}word;
+    error error_word;
+} word_union;
 
-typedef struct ast{
+typedef struct ast {
     /* TODO relocation to L and merge between data_node and ast.*/
-    word_type type;
-    word word;
-    error error;
-}ast;
+    symbol ast_symbol;
+    word_type ast_word_type;
+    word_union ast_word;
+} ast;
 
-ast* initialize_ast(word_type word_type, union word);
-directive* initialize_directive(char* label, directive_type kind, char* parameters, int binary_length);
-group_a initialize_group_a_instruction(instruction_type kind, const char* source_operand, operand_type srctype, const char* target_operand, operand_type trgtype);
 
-#endif // AST_H
+ast get_ast_line_info(char *line);
+
+group_type check_group(instruction_name instruction_name);
+
+#endif /* AST_H */

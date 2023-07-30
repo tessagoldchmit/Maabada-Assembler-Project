@@ -3,8 +3,6 @@
 #include <string.h>
 #include "pre_assembler.h"
 #include "first_pass.h"
-#include "second_pass.h"
-#include "data_structures.h"
 #include "utils.h"
 
 
@@ -54,10 +52,8 @@ bool process_file(char *base_filename) {
     code_image *my_code_image;
     my_code_image = initialize_code_image();
 
-    symbol_table symbol_table;
-    initialize_symbol_table(&symbol_table);
-
-    /* TODO: Initialize Abstract Syntax Tree (AST) */
+    symbol_table *symbol_table;
+    symbol_table = initialize_symbol_table();
 
     bool success = TRUE, has_extern = FALSE, has_entry = FALSE;
 
@@ -76,10 +72,10 @@ bool process_file(char *base_filename) {
 
     /* Second pass */
     /* TODO: Perform the second pass and update the success variable */
-//    if (!second_pass_process()) {
-//        printf("Error: Second pass failed.\n");
-//        return FALSE;
-//    }
+/*    if (!second_pass_process()) {
+        printf("Error: Second pass failed.\n");
+        return FALSE;
+    } */
 
     /* Check if we have exceeded the memory size */
     if (ic + dc > MEMORY_SIZE - 100) {

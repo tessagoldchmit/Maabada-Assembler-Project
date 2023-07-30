@@ -1,8 +1,9 @@
 #include "pre_assembler.h"
-#include "utils.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "utils.h"
+
 
 /**
  * Preprocesses a C file by removing comments, empty lines, and spreading macros.
@@ -29,14 +30,14 @@ bool preprocess_file(char *base_filename) {
     char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
 
 
-    // Open .as file
+    /* Open .as file  */
     as_file = fopen(filename_with_as_suffix, "r");
     if (as_file == NULL) {
         fprintf(stderr, "Error: Failed to open .as file '%s' for reading.\n", filename_with_as_suffix);
         return FALSE;
     }
 
-    // Open .am file
+    /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "w");
     if (am_file == NULL) {
         fprintf(stderr, "Error: Failed to open .am file '%s' for writing.\n", filename_with_am_suffix);
@@ -59,8 +60,8 @@ bool preprocess_file(char *base_filename) {
             continue;
         }
 
-        /* Remove leading spaces and get the command length */
-        char *main_str_ptr = skip_spaces(line); /* Points to first word */
+        /* Remove leading spaces and get the word_union length */
+        char *main_str_ptr = skip_spaces(line); /* Points to first ast_word */
         int command_length = word_length(main_str_ptr);
         int macro_status;
 
@@ -169,11 +170,11 @@ void free_macro_array(macro_array *arr) {
  *
  * @param str: Input string to analyze.
  * @param macro_flag: Flag indicating if currently processing a macro.
- * @param cmd_length: Length of the command.
+ * @param cmd_length: Length of the word_union.
  * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
  */
 int current_macro_status(char *str, bool macro_flag, int cmd_length) {
-    if (strncmp(str, "mcr", strlen("mcr")) == 0 && str[3] && str[3] == ' ') { /* First word is 'macro'*/
+    if (strncmp(str, "mcr", strlen("mcr")) == 0 && str[3] && str[3] == ' ') { /* First ast_word is 'macro'*/
         return START_OF_MACRO;
     } else if (macro_flag && strncmp(str, "endmcr", cmd_length) != 0) {
         return BODY_OF_MACRO;

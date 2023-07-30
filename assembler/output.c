@@ -1,21 +1,19 @@
 #include "output.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 
 char binary_to_base64(int bits) {
     if (bits >= 0 && bits <= 25) {
-        return 'A' + bits; //'A' to 'Z'
+        return 'A' + bits; /* 'A' to 'Z' */
     } else if (bits >= 26 && bits <= 51) {
-        return 'a' + (bits - 26); // 'a' to 'z'
+        return 'a' + (bits - 26); /* 'a' to 'z' */
     } else if (bits >= 52 && bits <= 61) {
-        return '0' + (bits - 52); // '0' to '9'
+        return '0' + (bits - 52); /* '0' to '9'  */
     } else if (bits == 62) {
-        return '+'; // Base64 character '+'
+        return '+'; /* Base64 character '+' */
     } else if (bits == 63) {
-        return '/'; // Base64 character '/'
+        return '/'; /* Base64 character '/' */
     } else {
-        return '='; // Padding character '='
+        return '='; /* Padding character '=' */
     }
 }
 
@@ -57,7 +55,7 @@ int main() {
 
     int i;
 
-    FILE *file = fopen("outputs/output.obj", "w"); // Open the file in write mode
+    FILE *file = fopen("outputs/output.obj", "w");
 
     fprintf(file, "%d %d\n", IC, DC);
 

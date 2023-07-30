@@ -1,6 +1,5 @@
 #include "second_pass.h"
-#include "data_structures.h"
-#include "globals.h"
+
 
 /*
     Processes a line during the second pass of the assembler.
@@ -13,10 +12,10 @@
 bool second_pass_process();
 
 /*
-    Encodes the labels into the code image.
+    Encodes the symbols into the code image.
 
-    @param symbol_table The symbol table containing label information.
+    @param symbol_table The symbol table containing symbols information.
     @param code_image The code image used for storing the encoded machine code instructions.
     @param ic The instruction counter representing the current instruction address.
 */
-void second_pass_encode_labels();
+void second_pass_encode_symbols();

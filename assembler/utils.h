@@ -1,9 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <stdio.h>
 #include "globals.h"
 
-int count_line_length(const char *);
+int count_line_length(char *);
 
 char *skip_spaces(char *);
 
@@ -11,6 +12,12 @@ bool empty_string(char *);
 
 int word_length(char *);
 
-char* concatenate_strings(char*, char* );
+char *concatenate_strings(char *, char *);
+
+void *safe_malloc(size_t size);
+
+bool is_operand_a_number(char *operand);
+
+bool is_operand_a_register(char *operand);
 
 #endif /* UTILS_H */

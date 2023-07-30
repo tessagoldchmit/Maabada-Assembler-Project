@@ -1,0 +1,16 @@
+1. Understand why errors are shorter than what suppose to be.
+examples:
+* "MAIN: mov @r9, LENGTH"
+ the error needs to be "Invalid register number" but somehow what is thrown is "Invalid regi"
+* jmp
+ the error needs to be "Missing operand." but somehow what is thrown is "Missing oper"
+
+2. Create a HUGE as file containing all types of errors.
+
+3. finish first pass based on the AST provided
+
+4. finish second pass
+
+5. decode binary and write files
+
+6. be happy

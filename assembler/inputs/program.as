@@ -12,7 +12,6 @@ mov r2, r1
 stop
 endmcr
 
-
 mcr m2
 rts
 endmcr

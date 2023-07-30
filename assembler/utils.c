@@ -1,5 +1,4 @@
 #include "utils.h"
-
 #include <ctype.h>
 #include <string.h>
 #include <malloc.h>
@@ -10,7 +9,7 @@
  * @param p: The pointer to the input string.
  * @return: The length of the line in characters.
  */
-int count_line_length(const char *p) {
+int count_line_length(char *p) {
     int i = 0;
     while (p[i] != '\n' && p[i])
         i++;
@@ -44,29 +43,34 @@ bool empty_string(char *str) {
 }
 
 /**
- * Computes the length of the first word in a string.
+ * Computes the length of the first ast_word in a string.
  *
  * @param str: The input string.
- * @return: The length of the first word in the string.
+ * @return: The length of the first ast_word in the string.
  */
 int word_length(char *str) {
     int i;
-    for (i=0; !isspace(str[i]) && str[i]; i++);
+    for (i = 0; !isspace(str[i]) && str[i]; i++);
     return i;
 }
 
 /**
- * Concatenates a string with an extension.
+ * Allocate memory with ast_error handling.
+ * The returned pointer should be freed using the standard free function when it is no longer needed.
  *
- * This function takes two strings, `str1` and `ext`, and concatenates them to create
- * a new string. The resulting string will have the content of `str1` followed by the
- * content of `ext`.
- *
- * @param str1 The base string.
- * @param ext The extension string.
- * @return A dynamically allocated string containing the concatenated result.
- *         The caller is responsible for freeing the memory allocated for the returned string.
+ * @param size The size of the memory block to allocate.
+ * @return A pointer to the allocated memory block.
  */
+void *safe_malloc(size_t size) {
+    void *ptr = malloc(size);
+    if (ptr == NULL) {
+        fprintf(stderr, "Failed to allocate memory.\n");
+        exit(EXIT_FAILURE);
+    }
+    return ptr;
+}
+
+
 /**
  * Concatenates a base string with an extension.
  *
@@ -79,14 +83,14 @@ int word_length(char *str) {
  * @return A dynamically allocated string containing the concatenated result.
  *         The caller is responsible for freeing the memory allocated for the returned string.
  */
-char* concatenate_strings(char* base, char* ext) {
+char *concatenate_strings(char *base, char *ext) {
     /* Calculate the length of the resulting string */
     size_t base_len = strlen(base);
     size_t ext_len = strlen(ext);
     size_t total_len = base_len + ext_len;
 
     /* Allocate memory for the resulting string */
-    char* concatenated_string = malloc(total_len + 1);
+    char *concatenated_string = malloc(total_len + 1);
     if (concatenated_string == NULL) {
         return NULL;
     }
@@ -94,4 +98,27 @@ char* concatenate_strings(char* base, char* ext) {
     strcpy(concatenated_string, base);
     strcat(concatenated_string, ext);
     return concatenated_string;
+}
+
+
+bool is_operand_a_number(char *operand) {
+    if (*operand == '-' || *operand == '+') {
+        operand++; /* Move past the sign character */
+    }
+    bool has_digits = FALSE;
+    while (*operand != '\0') {
+        if (!isdigit(*operand)) {
+            return FALSE;
+        }
+        has_digits = TRUE;
+        operand++;
+    }
+
+    return has_digits;
+}
+
+bool is_operand_a_register(char *operand) {
+    if (strlen(operand) == 3 && operand[0] == '@' && operand[1] == 'r' && isdigit(operand[2]))
+        return TRUE;
+    return FALSE;
 }

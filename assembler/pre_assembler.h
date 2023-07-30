@@ -10,27 +10,27 @@
  * Represents a macro, consisting of content and a name.
  */
 typedef struct {
-    char *content;  // The content of the macro.
-    char *name;     // The name of the macro.
+    char *content;  /* The content of the macro. */
+    char *name;     /* The name of the macro. */
 } macro;
 
 /**
  * Represents an array of macros.
  */
 typedef struct {
-    macro *array;  // The array of macros.
-    int used;      // The number of macros used in the array.
-    int size;      // The size of the array.
+    macro *array;  /* The array of macros. */
+    int used;      /* The number of macros used in the array. */
+    int size;      /* The size of the array. */
 } macro_array;
 
 /**
  * Enumerates the possible macro statuses.
  */
 enum {
-    START_OF_MACRO,  // Indicates the start of a macro.
-    BODY_OF_MACRO,   // Indicates the body of a macro.
-    END_OF_MACRO,    // Indicates the end of a macro.
-    NOT_A_MACRO      // Indicates that it is not a macro.
+    START_OF_MACRO,  /* Indicates the start of a macro. */
+    BODY_OF_MACRO,   /* Indicates the body of a macro. */
+    END_OF_MACRO,    /* Indicates the end of a macro. */
+    NOT_A_MACRO      /* Indicates that it is not a macro. */
 };
 
 

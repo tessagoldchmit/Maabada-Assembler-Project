@@ -3,9 +3,8 @@
 
 #include "globals.h"
 
-
 bool second_pass_process();
 
-void second_pass_encode_labels();
+void second_pass_encode_symbols();
 
 #endif /* SECOND_PASS_H */

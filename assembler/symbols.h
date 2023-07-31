@@ -26,7 +26,7 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
 
 symbol_table *initialize_symbol_table();
 
-bool add_symbol(symbol_table *table, char *symbol_name, int decimal_address, symbol_type symbol_type);
+bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, symbol_type symbol_type);
 
 bool is_symbol_valid(char *symbol_name);
 

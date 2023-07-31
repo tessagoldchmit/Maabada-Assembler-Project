@@ -4,6 +4,7 @@
 #include "pre_assembler.h"
 #include "first_pass.h"
 #include "utils.h"
+#include "second_pass.h"
 
 
 bool process_file(char *base_filename);
@@ -45,7 +46,10 @@ int main(int argc, char *argv[]) {
 */
 bool process_file(char *base_filename) {
     /* Initialize variables and data structures */
-    long ic = 0, dc = 0;
+    int *ic = malloc(sizeof(int));
+    int *dc = malloc(sizeof(int));
+    *ic=0;
+    *dc=0;
     data_image *my_data_image;
     my_data_image = initialize_data_image();
 
@@ -72,13 +76,13 @@ bool process_file(char *base_filename) {
 
     /* Second pass */
     /* TODO: Perform the second pass and update the success variable */
-/*    if (!second_pass_process()) {
+    if (!second_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table)) {
         printf("Error: Second pass failed.\n");
         return FALSE;
-    } */
+    }
 
     /* Check if we have exceeded the memory size */
-    if (ic + dc > MEMORY_SIZE - 100) {
+    if ((*ic + *dc) > (MEMORY_SIZE - 100)) {
         /* First 100 memory cells reserved for the system */
         /* TODO: Print an error indicating that the memory size is too small for the file */
         success = FALSE;

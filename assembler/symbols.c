@@ -49,7 +49,7 @@ symbol_table *initialize_symbol_table() {
  * @param symbol_type The ast_word_type of the symbol (DATA / EXTERNAL / CODE).
  * @return True if the symbol was successfully added, False if the symbol already exists in the table.
  */
-bool add_symbol(symbol_table *table, char *symbol_name, int decimal_address, symbol_type symbol_type) {
+bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, symbol_type symbol_type) {
     /* Check if the symbol already exists in the table */
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -61,7 +61,7 @@ bool add_symbol(symbol_table *table, char *symbol_name, int decimal_address, sym
     }
 
     /* Create a new symbol node */
-    symbol_node *new_symbol = create_symbol(symbol_name, decimal_address, symbol_type);
+    symbol_node *new_symbol = create_symbol(symbol_name, *decimal_address, symbol_type);
 
     if (table->first == NULL) {
         /* If the symbol table is empty, set the new symbol as both head and tail */

@@ -6,32 +6,101 @@
 #include "ast.h"
 #include "print_ast_utils.c"
 
+#define NO_OPERAND 0
+#define GROUP_A_WORD_LENGTH 3
+#define DEFAULT_WORD_LENGTH 2
+#define GROUP_C_WORD_LENGTH 1
+#define IMMEDIATE_ADDRESS 1
+#define DIRECT_ADDRESS 3
+#define REGISTER_ADDRESS 5
+
 
 void decode_data(ast ast_line_info, long *dc, data_image *my_data_image) {
     data_node *new_node;
-    int binary_length = 0;
+    int word_length = 0;
     int i=0;
 
     /* handle directive */
     if (ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
         while (ast_line_info.ast_word.directive_word.directive_option.string[i] != '\000') {
             i++;
-            binary_length++;
+            word_length++;
         }
-        binary_length++; /* for null terminating */
+        word_length++; /* for null terminating */
     } else if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE) {
-        binary_length = ast_line_info.ast_word.directive_word.directive_option.machine_code.machine_code_count;
+        word_length = ast_line_info.ast_word.directive_word.directive_option.machine_code.machine_code_count;
     }
 
-    *dc += binary_length; /* update memory length */
+    *dc += word_length; /* update memory length */
 
-    new_node = create_data_node(binary_length, ast_line_info);
+    new_node = create_data_node(word_length, ast_line_info);
     add_data_node(my_data_image, new_node);
 }
 
+int analyze_operands(ast ast_line_info, long *ic, code_image *my_code_image) {
+    code_node *new_node;
+    int word_length = 0;
+    int new_operand_code = 0;
+    int new_operand_target = 0;
+    int new_operand_source = 0;
+    int L=0;
 
-void update_data_dc(symbol_table *symbol_table, long ic) {
+    if (check_group(ast_line_info.ast_word.instruction_word.instruction_name) == GROUP_A){
+        new_operand_code = ast_line_info.ast_word.instruction_word.instruction_name;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_a.target_type == NUMBER_OPERAND_TYPE)
+            new_operand_target = IMMEDIATE_ADDRESS;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_a.target_type == SYMBOL_OPERAND_TYPE)
+            new_operand_target = DIRECT_ADDRESS;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_a.target_type == REGISTER_OPERAND_TYPE)
+            new_operand_target = REGISTER_ADDRESS;
 
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_a.source_type == NUMBER_OPERAND_TYPE)
+            new_operand_source = IMMEDIATE_ADDRESS;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_a.source_type == SYMBOL_OPERAND_TYPE)
+            new_operand_source = DIRECT_ADDRESS;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE)
+            new_operand_source = REGISTER_ADDRESS;
+
+        if(new_operand_target == 5 && new_operand_source == 5){
+            new_node = create_code_node_registers(DEFAULT_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, new_operand_source); //because of two registers
+            L=DEFAULT_WORD_LENGTH;
+        }
+        else{
+            new_node = create_code_node(GROUP_A_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, new_operand_source); //because groupa handles 3 words
+            L=GROUP_A_WORD_LENGTH;
+        }
+    }
+    if(check_group(ast_line_info.ast_word.instruction_word.instruction_name) == GROUP_B){
+        new_operand_code = ast_line_info.ast_word.instruction_word.instruction_name;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_b.target_type == NUMBER_OPERAND_TYPE)
+            new_operand_target = IMMEDIATE_ADDRESS;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_b.target_type == SYMBOL_OPERAND_TYPE)
+            new_operand_target = DIRECT_ADDRESS;
+        if(ast_line_info.ast_word.instruction_word.instruction_union.group_b.target_type == REGISTER_OPERAND_TYPE)
+            new_operand_target = REGISTER_ADDRESS;
+
+        new_node = create_code_node(DEFAULT_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, NO_OPERAND);
+        L=DEFAULT_WORD_LENGTH;
+    }
+    if(check_group(ast_line_info.ast_word.instruction_word.instruction_name) == GROUP_C){
+        new_operand_code = ast_line_info.ast_word.instruction_word.instruction_name;
+        new_node = create_code_node(GROUP_C_WORD_LENGTH, ast_line_info, new_operand_code, NO_OPERAND, NO_OPERAND);
+        L=GROUP_C_WORD_LENGTH;
+    }
+    add_code_node(my_code_image, new_node);
+    return L;
+}
+
+void update_data_dc(symbol_table *my_symbol_table, long ic) {
+    symbol_node *table_pointer = my_symbol_table->first;
+    while(table_pointer != my_symbol_table->last){
+        if(table_pointer->symbol_type == DATA)
+            table_pointer->decimal_address+=ic;
+
+        table_pointer=table_pointer->next_symbol;
+    }
+    if(table_pointer->symbol_type == DATA)
+        table_pointer->decimal_address+=ic;
 }
 
 
@@ -81,30 +150,34 @@ bool first_pass_process(char *filename_with_am_suffix, long ic, long dc, data_im
         if (ast_line_info.ast_symbol[0] != '\0') {
             symbol_flag = TRUE;
         }
-        if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
-            ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
-            if (symbol_flag) {
-                add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA);
-            }
-            decode_data(ast_line_info, &dc, my_data_image);
-        } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
-                   ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
+        if(ast_line_info.ast_word_type==DIRECTIVE) {
+            if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
+                ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
+                if (symbol_flag) {
+                    add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA);
+                }
+                decode_data(ast_line_info, &dc, my_data_image);
+            } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
+                       ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
 
-        } else if (symbol_flag) {
-            add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
-            if (is_valid_instruction(line)) {
-//                L = analyze_operands(line, my_code_image);
-//                ic += L;
             }
+        }
+        else {
+            if (symbol_flag)
+                add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
+
+            L = analyze_operands(ast_line_info, &ic, my_code_image);
+            ic += L;
         }
         symbol_flag = FALSE;
     }
+    update_data_dc(symbol_table, ic);
     print_symbol_table(symbol_table);
     if (error_flag) {
         printf("## First pass encountered errors.\n");
         return FALSE;
-    } else {
-        update_data_dc(symbol_table, ic);
+    }
+    else {
         printf("## First pass completed successfully.\n");
         return TRUE;
     }

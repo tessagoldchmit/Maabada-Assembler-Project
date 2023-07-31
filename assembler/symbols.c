@@ -61,7 +61,7 @@ bool add_symbol(symbol_table *table, char *symbol_name, int decimal_address, sym
     }
 
     /* Create a new symbol node */
-    symbol_node *new_symbol = create_symbol(symbol_name, decimal_address + 100, symbol_type);
+    symbol_node *new_symbol = create_symbol(symbol_name, decimal_address, symbol_type);
 
     if (table->first == NULL) {
         /* If the symbol table is empty, set the new symbol as both head and tail */
@@ -124,7 +124,7 @@ void print_symbol_table(symbol_table *table) {
     printf("-------------------------------------------------------\n");
 
     while (current != NULL) {
-        printf("| %-15s | %-15d | ", current->symbol_name, current->decimal_address);
+        printf("| %-15s | %-15d | ", current->symbol_name, current->decimal_address+100);
 
         switch (current->symbol_type) {
             case DATA:

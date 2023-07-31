@@ -68,7 +68,7 @@ typedef union {
     int number;
 } operand_union;
 
-/** src  opcode  des   ARE **/
+/** src  opcode  trg   ARE **/
 /** XXX   XXXX   XXX   XX **/
 typedef struct {
     operand_type source_type;
@@ -77,7 +77,7 @@ typedef struct {
     operand_union target_value;
 } group_a;
 
-/** src  opcode  des   ARE **/
+/** src  opcode  trg   ARE **/
 /** 000   XXXX   XXX   XX **/
 typedef struct {
     operand_type target_type;

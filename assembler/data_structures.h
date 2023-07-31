@@ -28,11 +28,13 @@ typedef struct {
 } data_image;
 
 
-code_node *create_code_node(int L, ast ast);
+code_node *create_code_node(int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source);
+
+code_node *create_code_node_registers(int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source);
 
 code_image *initialize_code_image();
 
-void add_code_node(code_image *code_image, int L, ast ast);
+void add_code_node(code_image *code_image, code_node *new_node);
 
 data_node *create_data_node(int L, ast ast);
 

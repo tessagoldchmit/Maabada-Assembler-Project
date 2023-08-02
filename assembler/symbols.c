@@ -59,9 +59,13 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
         }
         current = current->next_symbol;
     }
+    symbol_node *new_symbol;
 
     /* Create a new symbol node */
-    symbol_node *new_symbol = create_symbol(symbol_name, *decimal_address, symbol_type);
+    if(symbol_type==EXTERNAL)
+        new_symbol= create_symbol(symbol_name, EXTERN_DECIMAL_ADDRESS, symbol_type);
+    else
+        new_symbol = create_symbol(symbol_name, *decimal_address, symbol_type);
 
     if (table->first == NULL) {
         /* If the symbol table is empty, set the new symbol as both head and tail */
@@ -116,33 +120,3 @@ bool is_symbol_valid(char *symbol_name) {
 }
 
 
-void print_symbol_table(symbol_table *table) {
-    symbol_node *current = table->first;
-
-    printf("-------------------------------------------------------\n");
-    printf("| %-15s | %-15s | %-15s |\n", "Symbol Name", "Decimal Address", "Symbol Type");
-    printf("-------------------------------------------------------\n");
-
-    while (current != NULL) {
-        printf("| %-15s | %-15d | ", current->symbol_name, current->decimal_address+100);
-
-        switch (current->symbol_type) {
-            case DATA:
-                printf("%-15s |\n", "DATA");
-                break;
-            case EXTERNAL:
-                printf("%-15s |\n", "EXTERNAL");
-                break;
-            case CODE:
-                printf("%-15s |\n", "CODE");
-                break;
-            default:
-                printf("%-15s |\n", "Unknown");
-                break;
-        }
-
-        current = current->next_symbol;
-    }
-
-    printf("-------------------------------------------------------\n");
-}

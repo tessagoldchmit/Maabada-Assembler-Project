@@ -1,6 +1,56 @@
+//
+// Created by Maayan on 02/08/2023.
+//
+
+#include <stdio.h>
+#include "temp.h"
+#include "symbols.h"
 #include "ast.h"
 
-void print_ast(ast *ast_line_info);
+/** TEMP **/
+void print_binary_12bits(int num) {
+    int i=0;
+    for (i = 11; i >= 0; i--) {
+        putchar((num & (1 << i)) ? '1' : '0');
+    }
+}
+/** TEMP **/
+
+void print_symbol_table(symbol_table *table) {
+    symbol_node *current = table->first;
+
+    printf("-------------------------------------------------------\n");
+    printf("| %-15s | %-15s | %-15s |\n", "Symbol Name", "Decimal Address", "Symbol Type");
+    printf("-------------------------------------------------------\n");
+
+    while (current != NULL) {
+        if(current->symbol_type == EXTERNAL)
+            printf("| %-15s | %-15d | ", current->symbol_name, EXTERN_DECIMAL_ADDRESS);
+        else
+            printf("| %-15s | %-15d | ", current->symbol_name, current->decimal_address+100);
+
+        switch (current->symbol_type) {
+            case DATA:
+                printf("%-15s |\n", "DATA");
+                break;
+            case EXTERNAL:
+                printf("%-15s |\n", "EXTERNAL");
+                break;
+            case CODE:
+                printf("%-15s |\n", "CODE");
+                break;
+            default:
+                printf("%-15s |\n", "Unknown");
+                break;
+        }
+
+        current = current->next_symbol;
+    }
+
+    printf("-------------------------------------------------------\n");
+}
+
+
 
 const char* operand_type_strings[] = {
         "ERROR_OPERAND_TYPE",

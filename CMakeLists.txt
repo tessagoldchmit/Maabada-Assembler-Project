@@ -26,7 +26,7 @@ set(HEADER_FILES
         assembler/utils.h
         assembler/output.h
         assembler/ast.h
-        assembler/symbols.c)
+        assembler/symbols.c assembler/temp.c)
 
 # Add executable target
 add_executable(mmn14 ${SOURCE_FILES} ${HEADER_FILES})

@@ -20,6 +20,15 @@
 #define FIRST_REGISTER_NUM 0
 #define LAST_REGISTER_NUM 7
 
+#define NO_OPERAND 0 /* For words that doesn't take operand */
+#define GROUP_A_WORD_LENGTH 3 /* The amount of words take place in the memory for group a */
+#define DEFAULT_WORD_LENGTH 2 /* The default amount of words take place in the memory */
+#define GROUP_C_WORD_LENGTH 1 /* The amount of words take place in the memory for group c */
+#define IMMEDIATE_ADDRESS 1 /* Address method */
+#define DIRECT_ADDRESS 3 /* Address method */
+#define REGISTER_ADDRESS 5 /* Address method */
+#define EXTERN_DECIMAL_ADDRESS -1 /* First pass - no address for .extern symbols */
+
 /* Defines a boolean ast_word_type (T/F) */
 typedef enum {
     FALSE,

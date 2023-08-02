@@ -1,15 +1,8 @@
 #include "data_structures.h"
 #include <malloc.h>
 #include <stdio.h>
+#include "temp.h"
 
-/** TEMP **/
-void print_binary_12bits(int num) {
-    int i=0;
-    for (i = 11; i >= 0; i--) {
-        putchar((num & (1 << i)) ? '1' : '0');
-    }
-}
-/** TEMP **/
 
 int char_to_binary(char character) {
     return (int)character;

@@ -42,4 +42,6 @@ data_image *initialize_data_image();
 
 void add_data_node(data_image *data_image, data_node *new_node);
 
+unsigned short insert_bits(unsigned short value, int num, int start_bit, int end_bit);
+
 #endif /* DATA_STRUCTURES_H */

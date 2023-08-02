@@ -119,4 +119,12 @@ bool is_symbol_valid(char *symbol_name) {
     return TRUE;
 }
 
-
+void mark_symbol_as_entry(symbol_table *table, char* symbol_name) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (strcmp(current->symbol_name, symbol_name) == 0) {
+            current->symbol_type = ENTRY;
+        }
+        current = current->next_symbol;
+    }
+}

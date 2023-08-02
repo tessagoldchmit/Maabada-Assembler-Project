@@ -6,7 +6,8 @@
 typedef enum {
     DATA,
     EXTERNAL,
-    CODE
+    CODE,
+    ENTRY
 } symbol_type;
 
 typedef struct symbol_node {
@@ -31,5 +32,7 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
 bool is_symbol_valid(char *symbol_name);
 
 void print_symbol_table(symbol_table *table);
+
+void mark_symbol_as_entry(symbol_table *table, char* symbol_name);
 
 #endif /* MMN14_SYMBOLS_H */

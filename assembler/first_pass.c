@@ -180,9 +180,8 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
         else {
             if (symbol_flag)
                 add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
-
-            L = analyze_operands(ast_line_info, ic, my_code_image);
-            *ic += L;
+                L = analyze_operands(ast_line_info, ic, my_code_image);
+                *ic += L;
         }
         symbol_flag = FALSE;
     }

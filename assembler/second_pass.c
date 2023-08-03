@@ -9,7 +9,7 @@
 #define R 2
 #define E 1
 
-int get_symbol_address(symbol_table *table, symbol symbol_name){
+int get_symbol_address(symbol_table *table, symbol symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
@@ -19,23 +19,39 @@ int get_symbol_address(symbol_table *table, symbol symbol_name){
     }
 }
 
+void decode_code_group_a(code_node *current_code_node, symbol_table* symbol_table) {
+    if (current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE &&
+        current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE){
+        current_code_node->word[1] = insert_bits(current_code_node->word[1], A, 0, 1);
+        current_code_node->word[1] = insert_bits(current_code_node->word[1], atoi(&current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.register_num),2, 6);
+        current_code_node->word[1] = insert_bits(current_code_node->word[1], atoi(&current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.register_num),7, 11);
+    }
+
+
+    current_code_node->word[1] = insert_bits(current_code_node->word[1],
+                                             atoi(&current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.register_num),
+                                             7, 11);
+    current_code_node->word[1] = insert_bits(current_code_node->word[1], A, 0, 1);
+    current_code_node->word[2] = insert_bits(current_code_node->word[2], get_symbol_address(symbol_table,
+                                                                                            current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol),
+                                             2, 11);
+    current_code_node->word[2] = insert_bits(current_code_node->word[2], R, 0, 1);
+    print_binary_12bits(current_code_node->word[0]);
+    printf("\n");
+    print_binary_12bits(current_code_node->word[1]);
+    printf("\n");
+    print_binary_12bits(current_code_node->word[2]);
+    printf("\n");
+}
+
 void decode_code(symbol_table *symbol_table, ast ast_line_info, code_image *my_code_image, int *ic) {
-    code_node *current = my_code_image->first;
-    while(current){
-        if(check_group(current->ast.ast_word.instruction_word.instruction_name) == GROUP_A){
-            current->word[1] = insert_bits(current->word[1], atoi(&current->ast.ast_word.instruction_word.instruction_union.group_a.source_value.register_num), 7, 11);
-            current->word[1] = insert_bits(current->word[1], A, 0, 1);
-            current->word[2] = insert_bits(current->word[2], get_symbol_address(symbol_table, current->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol), 2, 11);
-            current->word[2] = insert_bits(current->word[1], R, 0, 1);
-            print_binary_12bits(current->word[0]);
-            printf("\n");
-            print_binary_12bits(current->word[1]);
-            printf("\n");
-            print_binary_12bits(current->word[2]);
-            printf("\n");
+    code_node *current_code_node = my_code_image->first;
+    while (current_code_node) {
+        if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_A) {
+            decode_code_group_a(current_code_node, symbol_table);
         }
         printf("-------\n");
-        current=current->next;
+        current_code_node = current_code_node->next;
     }
 }
 
@@ -51,6 +67,8 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
                          code_image *my_code_image, symbol_table *symbol_table) {
     printf("\nin second pass\n");
     *ic = 0;
+
+    /* TODO macro for repetitives */
     FILE *am_file;
     char line[MAX_LINE_LENGTH];
     /* Open .am file */
@@ -68,16 +86,10 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
         print_ast(&ast_line_info);
 
         if (ast_line_info.ast_word_type == DIRECTIVE) {
-            if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
-                ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE ||
-                ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE) {
-                continue;
-            }
-            else if(ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE){
+            if (ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
                 mark_symbol_as_entry(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol);
             }
-        }
-        else{
+        } else {
             decode_code(symbol_table, ast_line_info, my_code_image, ic);
         }
     }

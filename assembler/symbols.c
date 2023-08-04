@@ -62,8 +62,8 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
     symbol_node *new_symbol;
 
     /* Create a new symbol node */
-    if(symbol_type==EXTERNAL)
-        new_symbol= create_symbol(symbol_name, EXTERN_DECIMAL_ADDRESS, symbol_type);
+    if (symbol_type == EXTERNAL)
+        new_symbol = create_symbol(symbol_name, EXTERN_DECIMAL_ADDRESS, symbol_type);
     else
         new_symbol = create_symbol(symbol_name, *decimal_address, symbol_type);
 
@@ -119,11 +119,23 @@ bool is_symbol_valid(char *symbol_name) {
     return TRUE;
 }
 
-void mark_symbol_as_entry(symbol_table *table, char* symbol_name) {
+void mark_symbol_as_entry(symbol_table *table, char *symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
             current->symbol_type = ENTRY;
+            return;
+        }
+        current = current->next_symbol;
+    }
+}
+
+int get_symbol_address(symbol_table *table, symbol symbol_name) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (strcmp(current->symbol_name, symbol_name) == 0) {
+            if (current->decimal_address == -1) return 1;
+            return current->decimal_address;
         }
         current = current->next_symbol;
     }

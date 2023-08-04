@@ -1,6 +1,7 @@
 #include "data_structures.h"
 #include <malloc.h>
 #include <stdio.h>
+#include <string.h>
 #include "temp.h"
 
 
@@ -15,7 +16,7 @@ unsigned short insert_bits(unsigned short value, int num, int start_bit, int end
 }
 
 /*this operation already binaring all the words*/
-code_node *create_code_node_registers(int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source) {
+code_node *create_code_node_registers(char* line, int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source) {
     int i;
 
     code_node *new_node = (code_node *) malloc(sizeof(code_node));
@@ -36,7 +37,16 @@ code_node *create_code_node_registers(int L, ast ast, int new_operand_code, int 
         print_binary_12bits(new_node->word[t] & 0xFFF);
         printf("\n");
     }
-    /** TEMP **/
+    /** END OF TEMP **/
+
+    new_node->original_line = (char*)malloc(strlen(line) + 1);
+    if (new_node->original_line == NULL) {
+        fprintf(stderr, "Error: Failed to allocate memory.\n");
+        free(new_node->word);
+        free(new_node);
+        return NULL;
+    }
+    strcpy(new_node->original_line, line);
 
     new_node->L = L;
     new_node->ast = ast;
@@ -45,7 +55,7 @@ code_node *create_code_node_registers(int L, ast ast, int new_operand_code, int 
 }
 
 /* Function to create a new code node */
-code_node *create_code_node(int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source) {
+code_node *create_code_node(char* line, int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source) {
     int i;
 
     code_node *new_node = (code_node *) malloc(sizeof(code_node));
@@ -63,7 +73,16 @@ code_node *create_code_node(int L, ast ast, int new_operand_code, int new_operan
         print_binary_12bits(new_node->word[t] & 0xFFF);
         printf("\n");
     }
-    /** TEMP **/
+    /** END OF TEMP **/
+
+    new_node->original_line = (char*)malloc(strlen(line) + 1);
+    if (new_node->original_line == NULL) {
+        fprintf(stderr, "Error: Failed to allocate memory.\n");
+        free(new_node->word);
+        free(new_node);
+        return NULL;
+    }
+    strcpy(new_node->original_line, line);
 
     new_node->L = L;
     new_node->ast = ast;
@@ -96,7 +115,7 @@ void add_code_node(code_image *code_image, code_node *new_node) {
 }
 
 /* Creates a new data node */
-data_node *create_data_node(int L, ast ast) {
+data_node *create_data_node(char* line, int L, ast ast) {
     data_node *new_node = (data_node *) malloc(sizeof(data_node));
     new_node->word = (int*)malloc(L * sizeof(int));
     int i;
@@ -114,7 +133,16 @@ data_node *create_data_node(int L, ast ast) {
         print_binary_12bits(new_node->word[t] & 0xFFF);
         printf("\n");
     }
-    /** TEMP **/
+    /** END OF TEMP **/
+
+    new_node->original_line = (char*)malloc(strlen(line) + 1);
+    if (new_node->original_line == NULL) {
+        fprintf(stderr, "Error: Failed to allocate memory.\n");
+        free(new_node->word);
+        free(new_node);
+        return NULL;
+    }
+    strcpy(new_node->original_line, line);
 
     new_node->L = L;
     new_node->ast = ast;
@@ -144,4 +172,26 @@ void add_data_node(data_image *data_image, data_node *new_node) {
         data_image->last_node->next_node = new_node;
         data_image->last_node = new_node;
     }
+}
+
+code_node* find_code_node_by_line(code_image* code_image, char* line) {
+    code_node* current = code_image->first;
+    while (current != NULL) {
+        if (strcmp(current->original_line, line) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+data_node* find_data_node_by_line(data_image* data_image, char* line) {
+    data_node* current = data_image->head;
+    while (current != NULL) {
+        if (strcmp(current->original_line, line) == 0) {
+            return current;
+        }
+        current = current->next_node;
+    }
+    return NULL;
 }

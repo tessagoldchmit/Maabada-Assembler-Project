@@ -13,6 +13,9 @@
 /* Max symbol length*/
 #define MAX_SYMBOL_LENGTH 31
 
+/* Start of memory we can access */
+#define START_OF_MEMORY_ADDRESS 100
+
 #define MAX_STRING_LENGTH 80
 #define MAX_NUMBER_LENGTH 80
 #define MAX_AST_ERROR_LENGTH 80

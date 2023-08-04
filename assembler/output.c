@@ -1,87 +1,75 @@
 #include "output.h"
+#include "utils.h"
 
 
-char binary_to_base64(int bits) {
-    if (bits >= 0 && bits <= 25) {
-        return 'A' + bits; /* 'A' to 'Z' */
-    } else if (bits >= 26 && bits <= 51) {
-        return 'a' + (bits - 26); /* 'a' to 'z' */
-    } else if (bits >= 52 && bits <= 61) {
-        return '0' + (bits - 52); /* '0' to '9'  */
-    } else if (bits == 62) {
+char binary_to_base64(unsigned int binary_number) {
+    unsigned int six_bit_group = binary_number & 0b111111;
+
+    if (six_bit_group <= 25) {
+        return 'A' + six_bit_group; /* 'A' to 'Z' */
+    } else if (six_bit_group <= 51) {
+        return 'a' + (six_bit_group - 26); /* 'a' to 'z' */
+    } else if (six_bit_group <= 61) {
+        return '0' + (six_bit_group - 52); /* '0' to '9'  */
+    } else if (six_bit_group == 62) {
         return '+'; /* Base64 character '+' */
-    } else if (bits == 63) {
+    } else if (six_bit_group == 63) {
         return '/'; /* Base64 character '/' */
     } else {
         return '='; /* Padding character '=' */
     }
 }
 
-/*
-int main() {
-    int binary_numbers_arr[] = {
-            0b101000001100,
-            0b000110000000,
-            0b000111110110,
-            0b000100101100,
-            0b000111000110,
-            0b000110000100,
-            0b111111101100,
-            0b000101001100,
-            0b000000000001,
-            0b101001110100,
-            0b000010010000,
-            0b000101001100,
-            0b000000000001,
-            0b000011101100,
-            0b001000000010,
-            0b000100101100,
-            0b000000000001,
-            0b000111100000,
-            0b000001100001,
-            0b000001100010,
-            0b000001100011,
-            0b000001100100,
-            0b000001100101,
-            0b000001100110,
-            0b000000000000,
-            0b000000000110,
-            0b111111110111,
-            0b000000001111,
-            0b000000010110
-    };
-    int IC = 18;
-    int DC = 11;
+void write_object_file(char *filename, code_image *my_code_image, int *ic, data_image *my_data_image, int *dc) {
+    FILE *file;
+    char *filename_with_obj_suffix = concatenate_strings(filename, ".ob");
+    unsigned int binary_numbers_arr[*ic + *dc];
+    int i = 0;
 
-    int i;
-
-    FILE *file = fopen("outputs/output.obj", "w");
-
-    fprintf(file, "%d %d\n", IC, DC);
-
+    /* Open .ob file */
+    file = fopen(filename_with_obj_suffix, "w");
     if (file == NULL) {
-        printf("Failed to open the file.\n");
-        exit(1);
+        fprintf(stderr, "Error: Failed to open .ob file '%s' for writing.\n", filename_with_obj_suffix);
+        return;
+    }
+    fprintf(file, "%d %d\n", *ic, *dc);
+
+    /* Add code image's binary numbers to the array */
+    code_node *current_code_node = my_code_image->first;
+    while (current_code_node != NULL) {
+        int j;
+        for (j = 0; j < current_code_node->L; j++) {
+            binary_numbers_arr[i] = current_code_node->word[j];
+            i++;
+        }
+        current_code_node = current_code_node->next;
     }
 
-    for (i = 0; i < IC + DC; i++) {
-        int binary_number = binary_numbers_arr[i];
+    /* Add data image's binary numbers to the array */
+    data_node *current_data_node = my_data_image->head;
+    while (current_data_node != NULL) {
+        int j;
+        for (j = 0; j < current_data_node->L; j++) {
+            binary_numbers_arr[i] = current_data_node->word[j];
+            i++;
+        }
+        current_data_node = current_data_node->next_node;
+    }
 
-        unsigned int left_bits = binary_number >> 6;
+    /* Write the binary numbers to the file as base64 characters */
+    for (i = 0; i < *ic + *dc; i++) {
+        unsigned int binary_number = binary_numbers_arr[i];
+
+        unsigned int left_bits = (unsigned int)binary_number >> 6;
         unsigned int right_bits = binary_number & 0b111111;
 
         fputc(binary_to_base64(left_bits), file);
         fputc(binary_to_base64(right_bits), file);
         fputc('\n', file);
-
     }
+
+    /* Free the allocated memory */
     fclose(file);
-    printf("Data written to the file.\n");
-
-    return 0;
-
-}*/
-
-
+}
 
 /* TODO support writing .obj file, .ent file and .ext file */

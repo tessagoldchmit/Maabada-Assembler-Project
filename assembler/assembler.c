@@ -4,6 +4,7 @@
 #include "pre_assembler.h"
 #include "first_pass.h"
 #include "utils.h"
+#include "output.h"
 #include "second_pass.h"
 
 
@@ -82,7 +83,7 @@ bool process_file(char *base_filename) {
     }
 
     /* Check if we have exceeded the memory size */
-    if ((*ic + *dc) > (MEMORY_SIZE - 100)) {
+    if ((*ic + *dc) > (MEMORY_SIZE - START_OF_MEMORY_ADDRESS)) {
         /* First 100 memory cells reserved for the system */
         /* TODO: Print an error indicating that the memory size is too small for the file */
         success = FALSE;
@@ -90,13 +91,11 @@ bool process_file(char *base_filename) {
 
     /* Print output files if success */
     if (success) {
-        /* TODO: Create the object file */
-        if (has_entry)
-            exit(0);
-        /* TODO: Create the entry file */
-        if (has_extern)
-            exit(0);
-        /* TODO: Create the extern file */
+        write_object_file(base_filename, my_code_image, ic, my_data_image, dc);
+//        if (has_entry)
+//            write_entries_file(base_filename, symbol_table);
+//        if (has_extern)
+//            write_externals_file(base_filename, symbol_table, my_code_image, ic);
     }
 
     /* Free all allocated memory */

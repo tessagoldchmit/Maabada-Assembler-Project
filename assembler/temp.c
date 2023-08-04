@@ -7,14 +7,13 @@
 #include "symbols.h"
 #include "ast.h"
 
-/** TEMP **/
+
 void print_binary_12bits(int num) {
     int i=0;
     for (i = 11; i >= 0; i--) {
         putchar((num & (1 << i)) ? '1' : '0');
     }
 }
-/** TEMP **/
 
 void print_symbol_table(symbol_table *table) {
     symbol_node *current = table->first;
@@ -27,7 +26,7 @@ void print_symbol_table(symbol_table *table) {
         if(current->symbol_type == EXTERNAL)
             printf("| %-15s | %-15d | ", current->symbol_name, EXTERN_DECIMAL_ADDRESS);
         else
-            printf("| %-15s | %-15d | ", current->symbol_name, current->decimal_address+100);
+            printf("| %-15s | %-15d | ", current->symbol_name, current->decimal_address + START_OF_MEMORY_ADDRESS);
 
         switch (current->symbol_type) {
             case DATA:

@@ -6,9 +6,9 @@
 
 bool is_symbol(char *line);
 
-void decode_data(ast ast_line_info, int *dc, data_image *my_data_image);
+void decode_data(char* line, ast ast_line_info, int *dc, data_image *my_data_image);
 
-int analyze_operands(ast ast_line_info, int *ic, code_image *my_code_image);
+int analyze_operands(char* line, ast ast_line_info, int *ic, code_image *my_code_image);
 
 void update_data_dc(symbol_table *my_symbol_table, int *ic);
 

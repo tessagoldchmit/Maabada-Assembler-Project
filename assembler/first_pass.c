@@ -6,7 +6,7 @@
 #include "ast.h"
 #include "temp.h"
 
-void decode_data(ast ast_line_info, int *dc, data_image *my_data_image) {
+void decode_data(char* line, ast ast_line_info, int *dc, data_image *my_data_image) {
     data_node *new_node;
     int word_length = 0;
     int i=0;
@@ -24,11 +24,11 @@ void decode_data(ast ast_line_info, int *dc, data_image *my_data_image) {
 
     *dc += word_length; /* update memory length */
 
-    new_node = create_data_node(word_length, ast_line_info);
+    new_node = create_data_node(line, word_length, ast_line_info);
     add_data_node(my_data_image, new_node);
 }
 
-int analyze_operands(ast ast_line_info, int *ic, code_image *my_code_image) {
+int analyze_operands(char* line, ast ast_line_info, int *ic, code_image *my_code_image) {
     code_node *new_node;
     int word_length = 0;
     int new_operand_code = 0;
@@ -70,11 +70,11 @@ int analyze_operands(ast ast_line_info, int *ic, code_image *my_code_image) {
                 new_operand_source = REGISTER_ADDRESS;
             }
         if(new_operand_target == REGISTER_ADDRESS && new_operand_source == REGISTER_ADDRESS){
-            new_node = create_code_node_registers(DEFAULT_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, new_operand_source); //because of two registers
+            new_node = create_code_node_registers(line, DEFAULT_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, new_operand_source); /* because of two registers */
             L=DEFAULT_WORD_LENGTH;
         }
         else{
-            new_node = create_code_node(GROUP_A_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, new_operand_source); //because groupa handles 3 words
+            new_node = create_code_node(line, GROUP_A_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, new_operand_source); /* group a handles 3 words */
             L=GROUP_A_WORD_LENGTH;
         }
     }
@@ -92,12 +92,12 @@ int analyze_operands(ast ast_line_info, int *ic, code_image *my_code_image) {
         if(ast_line_info.ast_word.instruction_word.instruction_union.group_b.target_type == REGISTER_OPERAND_TYPE)
             new_operand_target = REGISTER_ADDRESS;
 
-        new_node = create_code_node(DEFAULT_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, NO_OPERAND);
+        new_node = create_code_node(line, DEFAULT_WORD_LENGTH, ast_line_info, new_operand_code, new_operand_target, NO_OPERAND);
         L=DEFAULT_WORD_LENGTH;
     }
     if(check_group(ast_line_info.ast_word.instruction_word.instruction_name) == GROUP_C){
         new_operand_code = ast_line_info.ast_word.instruction_word.instruction_name;
-        new_node = create_code_node(GROUP_C_WORD_LENGTH, ast_line_info, new_operand_code, NO_OPERAND, NO_OPERAND);
+        new_node = create_code_node(line, GROUP_C_WORD_LENGTH, ast_line_info, new_operand_code, NO_OPERAND, NO_OPERAND);
         L=GROUP_C_WORD_LENGTH;
     }
     add_code_node(my_code_image, new_node);
@@ -117,26 +117,6 @@ void update_data_dc(symbol_table *my_symbol_table, int *ic) {
 }
 
 
-bool is_valid_instruction(char *char_ptr) {
-    if (strncmp(char_ptr, "mov", 3) == 0 ||
-        strncmp(char_ptr, "cmp", 3) == 0 ||
-        strncmp(char_ptr, "add", 3) == 0 ||
-        strncmp(char_ptr, "sub", 3) == 0 ||
-        strncmp(char_ptr, "lea", 3) == 0 ||
-        strncmp(char_ptr, "not", 3) == 0 ||
-        strncmp(char_ptr, "clr", 3) == 0 ||
-        strncmp(char_ptr, "dec", 3) == 0 ||
-        strncmp(char_ptr, "jmp", 3) == 0 ||
-        strncmp(char_ptr, "bne", 3) == 0 ||
-        strncmp(char_ptr, "red", 3) == 0 ||
-        strncmp(char_ptr, "prn", 3) == 0 ||
-        strncmp(char_ptr, "jsr", 3) == 0 ||
-        strncmp(char_ptr, "rts", 3) == 0 ||
-        strncmp(char_ptr, "stop", 4) == 0) {
-        return TRUE;
-    }
-    return FALSE;
-}
 
 bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
                         code_image *my_code_image, symbol_table *symbol_table) {
@@ -169,7 +149,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                 if (symbol_flag) {
                     add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA);
                 }
-                decode_data(ast_line_info, dc, my_data_image);
+                decode_data(line, ast_line_info, dc, my_data_image);
             } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
                        ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
                 if(ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE){
@@ -180,7 +160,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
         else {
             if (symbol_flag)
                 add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
-                L = analyze_operands(ast_line_info, ic, my_code_image);
+                L = analyze_operands(line, ast_line_info, ic, my_code_image);
                 *ic += L;
         }
         symbol_flag = FALSE;

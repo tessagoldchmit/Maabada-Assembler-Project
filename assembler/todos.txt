@@ -8,6 +8,10 @@ examples:
 fix bug with extern symbols in the second pass -
 the function get_symbol_address() CAN'T RETURN 1 if the decimal address is -1. think of another solution.
 
+add errors printing
+
+move all errors texts to errors file
+
 Create a HUGE as file containing all types of errors.
 
 debug first pass and clean
@@ -15,4 +19,8 @@ debug first pass and clean
 finish second pass
 
 write files extern and entry (only if exist)
+
+delete temp files
+
+add docstring to every function
 

@@ -7,7 +7,7 @@ examples:
 
 2. Create a HUGE as file containing all types of errors.
 
-3. finish first pass based on the AST provided
+3. debug first pass and clean
 
 4. finish second pass
 

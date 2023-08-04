@@ -133,7 +133,6 @@ typedef union {
 } word_union;
 
 typedef struct ast {
-    /* TODO relocation to L and merge between data_node and ast.*/
     symbol ast_symbol;
     word_type ast_word_type;
     word_union ast_word;

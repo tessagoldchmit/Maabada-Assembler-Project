@@ -34,6 +34,8 @@ delete temp files
 
 add docstring to every function
 
+test everything in UBUNTU
+
 be happyyyyyyyyyyyyyyyyyyyyyyyyy
 
 /**********************************************************************************************************************/

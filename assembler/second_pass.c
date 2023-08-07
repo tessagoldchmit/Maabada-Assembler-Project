@@ -176,7 +176,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
     while (fgets(line, MAX_LINE_LENGTH, am_file)) {
         printf("\n------------------------------------------------------------------------------\n");
         printf(line);
-        ast ast_line_info = get_ast_line_info(line);
+        ast ast_line_info = get_ast_line_info(line, 0); /*TODO handle line number 0*/
         print_ast(&ast_line_info);
 
         if (ast_line_info.ast_word_type == DIRECTIVE) {

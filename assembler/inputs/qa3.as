@@ -16,7 +16,7 @@ LENGTH: data 6,-9,15
 K: .data 7.5, 8, 9.5
 
 ;spaces and no spaces in data array
-ARR: .data 7,        ,8,9
+ARR: .data 7,        8,9
 
 ;commas not in place
 ARRTEST: .data ,7,8
@@ -28,4 +28,4 @@ ARRTEST3: .data 7,8,
 .string "hello"
 
 ;charred string
-STR2: 'helo'
+STR2: .string 'helo'

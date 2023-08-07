@@ -125,6 +125,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
     bool symbol_flag = FALSE;
     bool error_flag = FALSE;
     int L;
+    int line_number=1;
 
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "r");
@@ -134,39 +135,50 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
     }
 
     /* Process each line of the source file */
-    while (fgets(line, MAX_LINE_LENGTH, am_file)) {
+    while (fgets(line, 256, am_file)) { /* TODO define 256 or higher, else the long line error handle never occurs */
         printf("\n------------------------------------------------------------------------------\n");
-        printf(line);
-        ast ast_line_info = get_ast_line_info(line);
-        print_ast(&ast_line_info);
+        printf("%d. %s",line_number, line);
 
-        if (ast_line_info.ast_symbol[0] != '\0') {
-            symbol_flag = TRUE;
-        }
-        if(ast_line_info.ast_word_type==DIRECTIVE) {
-            if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
-                ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
-                if (symbol_flag) {
-                    add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA);
-                }
-                decode_data(line, ast_line_info, dc, my_data_image);
-            } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
-                       ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
-                if(ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE){
-                    add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc, EXTERNAL);
-                }
-            }
+        if (strlen(line) > MAX_LINE_LENGTH) {
+            printf("Error: Line %d is longer than %d characters.\n", line_number, MAX_LINE_LENGTH);
+            error_flag=TRUE;
         }
         else {
-            if (symbol_flag)
-                add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
-                L = analyze_operands(line, ast_line_info, ic, my_code_image);
-                *ic += L;
+            ast ast_line_info = get_ast_line_info(line, line_number);
+            print_ast(&ast_line_info);
+            if (ast_line_info.ast_word_type != ERROR) {
+                if (ast_line_info.ast_symbol[0] != '\0') {
+                    symbol_flag = TRUE;
+                }
+                if (ast_line_info.ast_word_type == DIRECTIVE) {
+                    if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
+                        ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
+                        if (symbol_flag) {
+                            add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA);
+                        }
+                        decode_data(line, ast_line_info, dc, my_data_image);
+                    } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
+                               ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
+                        if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE) {
+                            add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc,
+                                       EXTERNAL);
+                        }
+                    }
+                } else {
+                    if (symbol_flag)
+                        add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
+                    L = analyze_operands(line, ast_line_info, ic, my_code_image);
+                    *ic += L;
+                }
+                symbol_flag = FALSE;
+                update_data_dc(symbol_table, ic);
+                print_symbol_table(symbol_table);
+            } else {
+                error_flag = TRUE;
+            }
         }
-        symbol_flag = FALSE;
+        line_number++;
     }
-    update_data_dc(symbol_table, ic);
-    print_symbol_table(symbol_table);
     if (error_flag) {
         printf("## First pass encountered errors.\n");
         return FALSE;

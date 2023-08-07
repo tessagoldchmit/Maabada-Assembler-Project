@@ -61,6 +61,7 @@ bool preprocess_file(char *base_filename) {
         }
 
         /* Remove leading spaces and get the word_union length */
+        /* TODO handle the invalid name of the macro. if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
         char *main_str_ptr = skip_spaces(line); /* Points to first ast_word */
         int command_length = word_length(main_str_ptr);
         int macro_status;
@@ -174,11 +175,11 @@ void free_macro_array(macro_array *arr) {
  * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
  */
 int current_macro_status(char *str, bool macro_flag, int cmd_length) {
-    if (strncmp(str, "mcr", strlen("mcr")) == 0 && str[3] && str[3] == ' ') { /* First ast_word is 'macro'*/
+    if (strncmp(str, "mcro", strlen("mcro")) == 0 && str[4] && str[4] == ' ') { /* First ast_word is 'macro'*/
         return START_OF_MACRO;
-    } else if (macro_flag && strncmp(str, "endmcr", cmd_length) != 0) {
+    } else if (macro_flag && strncmp(str, "endmcro", cmd_length) != 0) {
         return BODY_OF_MACRO;
-    } else if (macro_flag && strncmp(str, "endmcr", cmd_length) == 0) {
+    } else if (macro_flag && strncmp(str, "endmcro", cmd_length) == 0) {
         return END_OF_MACRO;
     }
     return NOT_A_MACRO;

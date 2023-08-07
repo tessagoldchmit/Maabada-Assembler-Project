@@ -136,10 +136,11 @@ typedef struct ast {
     symbol ast_symbol;
     word_type ast_word_type;
     word_union ast_word;
+    int error_line;
 } ast;
 
 
-ast get_ast_line_info(char *line);
+ast get_ast_line_info(char *line, int line_number);
 
 group_type check_group(instruction_name instruction_name);
 

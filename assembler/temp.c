@@ -160,7 +160,7 @@ void print_ast(ast *ast_line_info) {
             break;
         case ERROR:
             printf("Error\n");
-            printf("Error String: %s", ast_line_info->ast_word.error_word);
+            printf("Error String: %s in line %d\n", ast_line_info->ast_word.error_word, ast_line_info->error_line);
             break;
         default:
             printf("Unknown\n");

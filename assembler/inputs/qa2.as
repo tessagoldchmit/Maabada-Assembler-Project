@@ -1,8 +1,3 @@
-MAIN: mov @r3 ,LENGTH
-LOOP: jmp L1
-prn -5
-bne LOOP
-
 ;invalid mcro name
 mcro lea
 prn -8
@@ -13,6 +8,10 @@ mcro .data
 prn -8
 endmcro
 
+MAIN: mov @r3 ,LENGTH
+LOOP: jmp L1
+prn -5
+bne LOOP
 
 m1
 

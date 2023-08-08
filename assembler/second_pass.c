@@ -163,6 +163,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
     printf("\nin second pass\n");
 
     /* TODO macro for repetitives */
+    int line_number=1;
     FILE *am_file;
     char line[MAX_LINE_LENGTH];
     /* Open .am file */
@@ -176,7 +177,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
     while (fgets(line, MAX_LINE_LENGTH, am_file)) {
         printf("\n------------------------------------------------------------------------------\n");
         printf(line);
-        ast ast_line_info = get_ast_line_info(line, 0); /*TODO handle line number 0*/
+        ast ast_line_info = get_ast_line_info(line, line_number);
         print_ast(&ast_line_info);
 
         if (ast_line_info.ast_word_type == DIRECTIVE) {
@@ -199,6 +200,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
             code_node *current_code_node = find_code_node_by_line(my_code_image, line);
             decode_code(symbol_table, current_code_node);
         }
+        line_number++;
     }
     return TRUE;
 }

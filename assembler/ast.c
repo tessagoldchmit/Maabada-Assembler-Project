@@ -451,7 +451,7 @@ ast get_ast_line_info(char *line, int line_number) {
     ast ast = {0};
     char *line_ptr = line;
     char *symbol_name = NULL;
-    ast.error_line=line_number;
+    ast.line_number=line_number;
 
     /* is a symbol definition */
     line_ptr = skip_spaces(line_ptr);

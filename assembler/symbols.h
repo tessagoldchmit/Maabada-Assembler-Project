@@ -38,6 +38,4 @@ void mark_symbol_as_entry(symbol_table *table, char* symbol_name);
 
 int get_symbol_address(symbol_table *table, symbol symbol_name);
 
-int get_symbol_type(symbol_table *table, symbol symbol_name);
-
 #endif /* MMN14_SYMBOLS_H */

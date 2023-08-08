@@ -135,7 +135,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
     }
 
     /* Process each line of the source file */
-    while (fgets(line, 256, am_file)) { /* TODO define 256 or higher, else the long line error handle never occurs */
+    while (fgets(line, MAX_LINE_LENGTH+1, am_file)) { /* TODO define 256 or higher, else the long line error handle never occurs */
         printf("\n------------------------------------------------------------------------------\n");
         printf("%d. %s",line_number, line);
 
@@ -172,13 +172,13 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                 }
                 symbol_flag = FALSE;
                 update_data_dc(symbol_table, ic);
-                print_symbol_table(symbol_table);
             } else {
                 error_flag = TRUE;
             }
         }
         line_number++;
     }
+    print_symbol_table(symbol_table);
     if (error_flag) {
         printf("## First pass encountered errors.\n");
         return FALSE;

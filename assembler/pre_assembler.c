@@ -55,14 +55,13 @@ bool preprocess_file(char *base_filename) {
     while (fgets(line, MAX_LINE_LENGTH, as_file)) {
 
         /* Skip empty lines and comments (lines starting with ';') */
-        /* TODO tessa - handle cases where comments don't start at index 0 */
-        if (empty_string(line) || line[0] == ';') {
+        char *main_str_ptr = skip_spaces(line); /* Points to first ast_word */
+        if (empty_string(line) || main_str_ptr[0] == ';') {
             continue;
         }
 
         /* Remove leading spaces and get the word_union length */
         /* TODO handle the invalid name of the macro. if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
-        char *main_str_ptr = skip_spaces(line); /* Points to first ast_word */
         int command_length = word_length(main_str_ptr);
         int macro_status;
 

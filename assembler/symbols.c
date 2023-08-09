@@ -55,6 +55,7 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
             /* Symbol already exists, return false */
+            printf("Error: Symbol already exists.");
             return FALSE;
         }
         current = current->next_symbol;
@@ -119,6 +120,19 @@ bool is_symbol_valid(char *symbol_name) {
     return TRUE;
 }
 
+bool check_entry_symbol_duplication(symbol_table *table, char *symbol_name) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (strcmp(current->symbol_name, symbol_name) == 0) {
+            /* Symbol already exists, return false */
+            printf("Error: Symbol already exists.");
+            return FALSE;
+        }
+        current = current->next_symbol;
+    }
+    return TRUE;
+}
+
 void mark_symbol_as_entry(symbol_table *table, char *symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -139,4 +153,5 @@ int get_symbol_address(symbol_table *table, symbol symbol_name) {
         }
         current = current->next_symbol;
     }
+    return -2;
 }

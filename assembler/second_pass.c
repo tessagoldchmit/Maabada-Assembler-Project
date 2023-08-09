@@ -42,7 +42,7 @@ int get_correct_a_r_e_for_target(ast ast_line_info, symbol_table *symbol_table) 
 }
 
 
-void decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table) {
+bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table) {
     int source_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_type;
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_type;
 
@@ -55,7 +55,7 @@ void decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
 
         current_code_node->word[1] = insert_bits(current_code_node->word[1], target_register_num, 2, 6);
         current_code_node->word[1] = insert_bits(current_code_node->word[1], source_register_num, 7, 11);
-        return;
+        return TRUE;
     }
 
     /* Handle source */
@@ -67,7 +67,11 @@ void decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (source_type == SYMBOL_OPERAND_TYPE) {
         char *source_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol;
         int source_symbol_address = get_symbol_address(symbol_table, source_symbol);
-        if (source_symbol_address != 1) {
+        if(source_symbol_address == -2){
+            printf("Symbol does not exist\n");
+            return FALSE;
+        }
+        else if (source_symbol_address != 1) {
             int source_are = get_correct_a_r_e_for_source(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], source_are, 0, 1);
             source_symbol_address = source_symbol_address + START_OF_MEMORY_ADDRESS;
@@ -90,7 +94,11 @@ void decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (target_type == SYMBOL_OPERAND_TYPE) {
         char *target_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol;
         int target_symbol_address = get_symbol_address(symbol_table, target_symbol);
-        if (target_symbol_address != 1) {
+        if(target_symbol_address == -2){
+            printf("Symbol does not exist\n");
+            return FALSE;
+        }
+        else if (target_symbol_address != 1) {
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_are, 0, 1);
             target_symbol_address = target_symbol_address + START_OF_MEMORY_ADDRESS;
@@ -98,16 +106,15 @@ void decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_symbol_address, 0, 11);
         }
-
-
     } else if (target_type == NUMBER_OPERAND_TYPE) {
         int target_number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.number;
         current_code_node->word[2] = insert_bits(current_code_node->word[2], target_number, 2, 11);
     }
+    return TRUE;
 }
 
 
-void decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table) {
+bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table) {
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_type;
 
     /* handle target */
@@ -119,7 +126,11 @@ void decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (target_type == SYMBOL_OPERAND_TYPE) {
         char *symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol;
         int symbol_address = get_symbol_address(symbol_table, symbol);
-        if (symbol_address != 1) {
+        if(symbol_address == -2){
+            printf("Symbol does not exist\n");
+            return FALSE;
+        }
+        else if (symbol_address != 1) {
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], target_are, 0, 1);
             symbol_address = symbol_address + START_OF_MEMORY_ADDRESS;
@@ -132,14 +143,19 @@ void decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
         int number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.number;
         current_code_node->word[1] = insert_bits(current_code_node->word[1], number, 2, 11);
     }
+    return TRUE;
 }
 
 
-void decode_code(symbol_table *symbol_table, code_node *current_code_node) {
+bool decode_code(symbol_table *symbol_table, code_node *current_code_node) {
     if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_A) {
-        decode_code_group_a(current_code_node, symbol_table);
+        if(decode_code_group_a(current_code_node, symbol_table)==FALSE){
+            return FALSE;
+        }
     } else if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_B) {
-        decode_code_group_b(current_code_node, symbol_table);
+        if(decode_code_group_b(current_code_node, symbol_table)==FALSE){
+            return FALSE;
+        }
     }
 
     /* Todo delete me :) */
@@ -148,6 +164,7 @@ void decode_code(symbol_table *symbol_table, code_node *current_code_node) {
         print_binary_12bits(current_code_node->word[i]);
         printf("\n");
     }
+    return TRUE;
 }
 
 /*
@@ -161,6 +178,7 @@ void decode_code(symbol_table *symbol_table, code_node *current_code_node) {
 bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
                          code_image *my_code_image, symbol_table *symbol_table) {
     printf("\nin second pass\n");
+    bool error_flag = FALSE;
 
     /* TODO macro for repetitives */
     int line_number=1;
@@ -182,7 +200,13 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
 
         if (ast_line_info.ast_word_type == DIRECTIVE) {
             if (ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
-                mark_symbol_as_entry(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol);
+                if(check_entry_symbol_duplication(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol)==FALSE) {
+                    ast_line_info.ast_word_type = ERROR;
+                    strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                    error_flag = TRUE;
+                }
+                else
+                    mark_symbol_as_entry(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol);
             }
 
             /* Todo delete me :) */
@@ -198,9 +222,24 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
 
         } else {
             code_node *current_code_node = find_code_node_by_line(my_code_image, line);
-            decode_code(symbol_table, current_code_node);
+            if(decode_code(symbol_table, current_code_node)==FALSE){
+                ast_line_info.ast_word_type = ERROR;
+                strcpy(ast_line_info.ast_word.error_word, "Symbol does not exists.");
+                error_flag=TRUE;
+            }
         }
+        printf("\nast after checking error:\n");
+        print_ast(&ast_line_info);
+        printf("-------------------------\n");
         line_number++;
     }
-    return TRUE;
+    if (error_flag) {
+        printf("## Second pass encountered errors.\n");
+        return FALSE;
+    } else {
+        printf("## Second pass completed successfully.\n");
+        return TRUE;
+    }
 }
+
+

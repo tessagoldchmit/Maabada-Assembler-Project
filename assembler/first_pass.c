@@ -164,29 +164,56 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                     if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
                         ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
                         if (symbol_flag) {
-                            add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA);
+                            if(add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA)==FALSE){
+                                ast_line_info.ast_word_type=ERROR;
+                                strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                                error_flag = TRUE;
+                            }
+                            else{
+                                decode_data(line, ast_line_info, dc, my_data_image);
+                            }
                         }
-                        decode_data(line, ast_line_info, dc, my_data_image);
                     } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
                                ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
+                        if(ast_line_info.ast_symbol[1]!=NULL) /* reaching index 1 instead of 0 because null terminated TODO talk with tessa */
+                            printf("Warning! Useless symbol before entry/extern in line %d", ast_line_info.line_number);
                         if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE) {
-                            add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc,
-                                       EXTERNAL);
+                            if(add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc,
+                                       EXTERNAL)==FALSE){
+                                ast_line_info.ast_word_type = ERROR;
+                                strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                                error_flag = TRUE;
+                            }
                         }
                     }
                 } else {
-                    if (symbol_flag)
-                        add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE);
-                    L = analyze_operands(line, ast_line_info, ic, my_code_image);
-                    *ic += L;
+                    if (symbol_flag) {
+                        if (add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE)==FALSE) {
+                            ast_line_info.ast_word_type = ERROR;
+                            strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                            error_flag = TRUE;
+                        }
+                        else{
+                            L = analyze_operands(line, ast_line_info, ic, my_code_image);
+                            *ic += L;
+                        }
+                    }
+                    else{
+                        L = analyze_operands(line, ast_line_info, ic, my_code_image);
+                        *ic += L;
+                    }
                 }
                 symbol_flag = FALSE;
-                update_data_dc(symbol_table, ic);
+                //update_data_dc(symbol_table, ic);
             } else {
                 error_flag = TRUE;
             }
+            printf("\nast after checking error:\n");
+            print_ast(&ast_line_info);
+            printf("-------------------------\n");
         }
     }
+    update_data_dc(symbol_table, ic);
     print_symbol_table(symbol_table);
     if (error_flag) {
         printf("## First pass encountered errors.\n");

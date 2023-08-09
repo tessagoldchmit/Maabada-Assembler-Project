@@ -38,4 +38,6 @@ void mark_symbol_as_entry(symbol_table *table, char* symbol_name);
 
 int get_symbol_address(symbol_table *table, symbol symbol_name);
 
+bool check_entry_symbol_duplication(symbol_table *table, char symbol[31]);
+
 #endif /* MMN14_SYMBOLS_H */

@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "output.h"
 #include "second_pass.h"
+#include "symbols.h"
 
 
 bool process_file(char *base_filename);
@@ -89,13 +90,18 @@ bool process_file(char *base_filename) {
         success = FALSE;
     }
 
+    /* Check if entry and extern exist */
+    has_entry = has_entry_symbol(symbol_table);
+    has_extern = has_extern_symbol(symbol_table);
+
+
     /* Print output files if success */
     if (success) {
         write_object_file(base_filename, my_code_image, ic, my_data_image, dc);
-/*        if (has_entry)
+        if (has_entry)
             write_entries_file(base_filename, symbol_table);
         if (has_extern)
-            write_externals_file(base_filename, symbol_table, my_code_image, ic);*/
+            write_externals_file(base_filename, symbol_table);
     }
 
     /* Free all allocated memory */

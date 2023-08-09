@@ -67,7 +67,7 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (source_type == SYMBOL_OPERAND_TYPE) {
         char *source_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol;
         int source_symbol_address = get_symbol_address(symbol_table, source_symbol);
-        if(source_symbol_address == -2){
+        if(source_symbol_address == NONEXIST_SYMBOL_ADDRESS){
             printf("Symbol does not exist\n");
             return FALSE;
         }
@@ -94,7 +94,7 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (target_type == SYMBOL_OPERAND_TYPE) {
         char *target_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol;
         int target_symbol_address = get_symbol_address(symbol_table, target_symbol);
-        if(target_symbol_address == -2){
+        if(target_symbol_address == NONEXIST_SYMBOL_ADDRESS){
             printf("Symbol does not exist\n");
             return FALSE;
         }
@@ -126,7 +126,7 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (target_type == SYMBOL_OPERAND_TYPE) {
         char *symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol;
         int symbol_address = get_symbol_address(symbol_table, symbol);
-        if(symbol_address == -2){
+        if(symbol_address == NONEXIST_SYMBOL_ADDRESS){
             printf("Symbol does not exist\n");
             return FALSE;
         }
@@ -138,7 +138,8 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[1] = insert_bits(current_code_node->word[1], symbol_address, 0, 11);
         }
-
+        /* TODO check if current is external*/
+        /* TODO if it is, then save ic to his address */
     } else if (target_type == NUMBER_OPERAND_TYPE) {
         int number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.number;
         current_code_node->word[1] = insert_bits(current_code_node->word[1], number, 2, 11);
@@ -182,6 +183,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
 
     /* TODO macro for repetitives */
     int line_number=1;
+    ic=0;
     FILE *am_file;
     char line[MAX_LINE_LENGTH];
     /* Open .am file */

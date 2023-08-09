@@ -337,7 +337,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
-    HANDLE_ERROR(&ast, *error_msg)
+    //HANDLE_ERROR(&ast, *error_msg)
     /* Check that the first operand is valid */
     if (ast->ast_word_type == ERROR) {
         free(operand);
@@ -371,7 +371,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
-    HANDLE_ERROR(&ast, *error_msg)
+    //HANDLE_ERROR(&ast, *error_msg)
 
     /* Check that the second operand is valid */
     if (ast->ast_word_type == ERROR) {
@@ -429,7 +429,7 @@ void check_operands_for_group_b(char *line, ast *ast) {
         return;
     }
     ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
-    HANDLE_ERROR(&ast, *error_msg)
+    //HANDLE_ERROR(&ast, *error_msg)
 
     if (ast->ast_word_type == ERROR) {
         free(operand);

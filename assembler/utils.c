@@ -122,3 +122,47 @@ bool is_operand_a_register(char *operand) {
         return TRUE;
     return FALSE;
 }
+
+void write_entries_file(char *filename, symbol_table *table) {
+    char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
+    snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
+
+    FILE *entries_file = fopen(entries_filename, "w");
+    if (entries_file == NULL) {
+        fprintf(stderr, "Error opening entries file for writing.\n");
+        return;
+    }
+
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (current->symbol_type == ENTRY) {
+            int current_symbol_address = get_symbol_address(table, current->symbol_name) + 100;
+            fprintf(entries_file, "%s\t%d\n", current->symbol_name, current_symbol_address);
+        }
+        current = current->next_symbol;
+    }
+
+    fclose(entries_file);
+}
+
+void write_externals_file(char *filename, symbol_table *table) {
+    char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
+    snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);
+
+    FILE *externals_file = fopen(externals_filename, "w");
+    if (externals_file == NULL) {
+        fprintf(stderr, "Error opening entries file for writing.\n");
+        return;
+    }
+
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (current->symbol_type == EXTERNAL) {
+            int current_symbol_address = get_symbol_address(table, current->symbol_name) + 100;
+            fprintf(externals_file, "%s\t%d\n", current->symbol_name, current_symbol_address);
+        }
+        current = current->next_symbol;
+    }
+
+    fclose(externals_file);
+}

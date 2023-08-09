@@ -124,9 +124,10 @@ bool check_entry_symbol_duplication(symbol_table *table, char *symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
-            /* Symbol already exists, return false */
-            printf("Error: Symbol already exists.");
-            return FALSE;
+            if(current->symbol_type == EXTERNAL) {
+                printf("Error: Symbol already exists.");
+                return FALSE;
+            }
         }
         current = current->next_symbol;
     }
@@ -153,5 +154,27 @@ int get_symbol_address(symbol_table *table, symbol symbol_name) {
         }
         current = current->next_symbol;
     }
-    return -2;
+    return NONEXIST_SYMBOL_ADDRESS;
+}
+
+bool has_entry_symbol(symbol_table *table) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (current->symbol_type == ENTRY) {
+            return TRUE;
+        }
+        current = current->next_symbol;
+    }
+    return FALSE;
+}
+
+bool has_extern_symbol(symbol_table *table) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (current->symbol_type == EXTERNAL) {
+            return TRUE;
+        }
+        current = current->next_symbol;
+    }
+    return FALSE;
 }

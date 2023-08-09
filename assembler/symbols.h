@@ -40,4 +40,8 @@ int get_symbol_address(symbol_table *table, symbol symbol_name);
 
 bool check_entry_symbol_duplication(symbol_table *table, char symbol[31]);
 
+bool has_entry_symbol(symbol_table *table);
+
+bool has_extern_symbol(symbol_table *table);
+
 #endif /* MMN14_SYMBOLS_H */

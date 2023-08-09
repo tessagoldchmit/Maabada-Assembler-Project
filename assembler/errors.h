@@ -31,6 +31,7 @@ char ERROR_DATA_MISSING_INT[] = ".data instruction must have at least one intege
 
 char ERROR_MISSING_OPERAND[] = "Missing operand.";
 char ERROR_ILLEGAL_OPERAND[] = "Illegal operand.";
+char ERROR_ILLEGAL_OPERAND_TYPE[] = "Illegal operand type.";
 
 char ERROR_INTEGER_OUT_OF_RANGE[] = "Integer is out of range.";
 char ERROR_COMMAND_DOES_NOT_EXIST[] = "Command does not exist.";

@@ -31,6 +31,7 @@
 #define DIRECT_ADDRESS 3 /* Address method */
 #define REGISTER_ADDRESS 5 /* Address method */
 #define EXTERN_DECIMAL_ADDRESS -1 /* First pass - no address for .extern symbols */
+#define NONEXIST_SYMBOL_ADDRESS -2
 
 /* Defines a boolean ast_word_type (T/F) */
 typedef enum {

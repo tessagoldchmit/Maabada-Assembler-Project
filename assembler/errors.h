@@ -36,6 +36,6 @@ char ERROR_INTEGER_OUT_OF_RANGE[] = "Integer is out of range.";
 char ERROR_COMMAND_DOES_NOT_EXIST[] = "Command does not exist.";
 char ERROR_TRAILING_CHARACTERS[] = "Detected trailing characters at the end.";
 char ERROR_ENTRY_EXTERN_WITHOUT_SYMBOL[] = "Entry/Extern must be followed by a symbol.";
-//char ERROR_SYMBOL_ALREADY_EXISTS[] = "Symbol already exists.";
+/* char ERROR_SYMBOL_ALREADY_EXISTS[] = "Symbol already exists."; */
 
 #endif /* MMN14_ERRORS_H */

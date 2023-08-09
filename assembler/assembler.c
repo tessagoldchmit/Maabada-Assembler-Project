@@ -92,10 +92,10 @@ bool process_file(char *base_filename) {
     /* Print output files if success */
     if (success) {
         write_object_file(base_filename, my_code_image, ic, my_data_image, dc);
-//        if (has_entry)
-//            write_entries_file(base_filename, symbol_table);
-//        if (has_extern)
-//            write_externals_file(base_filename, symbol_table, my_code_image, ic);
+/*        if (has_entry)
+            write_entries_file(base_filename, symbol_table);
+        if (has_extern)
+            write_externals_file(base_filename, symbol_table, my_code_image, ic);*/
     }
 
     /* Free all allocated memory */

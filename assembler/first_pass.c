@@ -207,7 +207,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                     }
                 }
                 symbol_flag = FALSE;
-                //update_data_dc(symbol_table, ic);
+                /*update_data_dc(symbol_table, ic);*/
             } else {
                 error_flag = TRUE;
             }

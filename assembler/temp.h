@@ -1,7 +1,3 @@
-//
-// Created by Maayan on 02/08/2023.
-//
-
 #ifndef MMN14_TEMP_H
 #define MMN14_TEMP_H
 
@@ -14,4 +10,4 @@ void print_ast(ast *ast_line_info);
 void print_ast_directive(const directive *directive_node);
 void print_ast_instruction(const instruction *instruction_node);
 
-#endif //MMN14_TEMP_H
+#endif /* MMN14_TEMP_H */

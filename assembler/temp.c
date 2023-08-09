@@ -1,7 +1,3 @@
-//
-// Created by Maayan on 02/08/2023.
-//
-
 #include <stdio.h>
 #include "temp.h"
 #include "symbols.h"
@@ -91,10 +87,10 @@ void print_ast_directive(const directive *directive_node) {
 }
 
 void print_ast_instruction(const instruction *instruction_node) {
-    // Print instruction details
+    /* Print instruction details */
     printf("Instruction Name: %s\n", instructions_map[instruction_node->instruction_name].name);
 
-    // Print instruction union based on the instruction name
+    /* Print instruction union based on the instruction name */
     switch (check_group(instruction_node->instruction_name)) {
         case GROUP_A:
             printf("Source Operand Type: %s\n", operand_type_strings[instruction_node->instruction_union.group_a.source_type]);
@@ -143,12 +139,12 @@ void print_ast(ast *ast_line_info) {
         return;
     }
 
-    // Print the symbol (if present)
+    /* Print the symbol (if present) */
     if (ast_line_info->ast_symbol[0] != '\0') {
         printf("Symbol: %s\n", ast_line_info->ast_symbol);
     }
 
-    // Print the word type
+    /* Print the word type */
     printf("Word Type: ");
     switch (ast_line_info->ast_word_type) {
         case INSTRUCTION:

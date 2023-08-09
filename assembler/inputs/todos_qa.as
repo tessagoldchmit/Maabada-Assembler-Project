@@ -1,10 +1,10 @@
 ; INVALID OPERAND (maayan)
 ; todo: why it prints Illegal oper?
-MAIN: mov @     r5 ,LENGTH
+;MAIN: mov @     r5 ,LENGTH
 
 ; INVALID REGISTER (maayan)
 ; todo: why it prints Illegal regi?
-mov @r9 ,K
+;mov @r9 ,K
 
 ; ARGUMENTS FOR DATA MUST BE INTEGERS (tessa)
 ; todo: handle decimal numbers
@@ -24,7 +24,7 @@ K: .data 7.5, 8, 9.5
 ;using non exist label (known only after first pass!!!) (maayan)
 ; todo check me in a working program
 ; SYMBOL DOES NOT EXIST
-MAIN: mov @r3 ,NOTEXIST
+;MAIN: mov @r3 ,NOTEXIST
 
 
 ;todo: understand why this symbol is invalid (tessa)

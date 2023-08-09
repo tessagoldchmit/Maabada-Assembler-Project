@@ -279,11 +279,11 @@ char *get_code_instruction(char *line, ast *ast) {
     return line_ptr;
 }
 
-operand_type check_operand_type(char *operand, ast *ast) {
+operand_type check_operand_type(char *operand, error *error_msg) {
     char *endptr;
     long value;
     if (strlen(operand) == 0) {
-        HANDLE_ERROR(&ast, ERROR_MISSING_OPERAND)
+        strcpy(*error_msg, ERROR_MISSING_OPERAND);
         return ERROR_OPERAND_TYPE;
     }
     /* check if operand is a number */
@@ -294,7 +294,7 @@ operand_type check_operand_type(char *operand, ast *ast) {
             return NUMBER_OPERAND_TYPE;
         } else {
             /* Error: value out of range */
-            HANDLE_ERROR(&ast, ERROR_INTEGER_OUT_OF_RANGE)
+            strcpy(*error_msg, ERROR_INTEGER_OUT_OF_RANGE);
             return ERROR_OPERAND_TYPE;
         }
 
@@ -304,14 +304,14 @@ operand_type check_operand_type(char *operand, ast *ast) {
         if (register_num >= FIRST_REGISTER_NUM && register_num <= LAST_REGISTER_NUM) {
             return REGISTER_OPERAND_TYPE;
         } else {
-            HANDLE_ERROR(&ast, ERROR_INVALID_REGISTER)
+            strcpy(*error_msg, ERROR_INVALID_REGISTER);
             return ERROR_OPERAND_TYPE;
         }
     } else if (is_symbol_valid(operand)) {
         /* Might be a defined symbol or not, we'll save it for now as a symbol */
         return SYMBOL_OPERAND_TYPE;
     } else {
-        HANDLE_ERROR(&ast, ERROR_ILLEGAL_OPERAND)
+        strcpy(*error_msg, ERROR_ILLEGAL_OPERAND);
         return ERROR_OPERAND_TYPE;
     }
 }
@@ -321,6 +321,9 @@ void check_operands_for_group_a(char *line, ast *ast) {
     char *endptr;
     int len;
     char *operand;
+
+    error *error_msg = NULL;
+    error_msg = (error*)malloc(sizeof(char));
 
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] == ',') {
@@ -333,7 +336,8 @@ void check_operands_for_group_a(char *line, ast *ast) {
     operand = malloc(sizeof(char) * len + 1);
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
-    ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, ast);
+    ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
+    HANDLE_ERROR(&ast, *error_msg)
     /* Check that the first operand is valid */
     if (ast->ast_word_type == ERROR) {
         free(operand);
@@ -366,7 +370,9 @@ void check_operands_for_group_a(char *line, ast *ast) {
     operand = malloc(sizeof(char) * len + 1);
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
-    ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, ast);
+    ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
+    HANDLE_ERROR(&ast, *error_msg)
+
     /* Check that the second operand is valid */
     if (ast->ast_word_type == ERROR) {
         HANDLE_ERROR(&ast, ERROR_ILLEGAL_OPERAND)
@@ -397,6 +403,8 @@ void check_operands_for_group_b(char *line, ast *ast) {
     char *endptr;
     int len;
     char *operand;
+    error *error_msg = NULL;
+    error_msg = (error*)malloc(sizeof(char));
 
     line_ptr = skip_spaces(line_ptr);
 
@@ -420,7 +428,9 @@ void check_operands_for_group_b(char *line, ast *ast) {
         free(operand);
         return;
     }
-    ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, ast);
+    ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
+    HANDLE_ERROR(&ast, *error_msg)
+
     if (ast->ast_word_type == ERROR) {
         free(operand);
         return;

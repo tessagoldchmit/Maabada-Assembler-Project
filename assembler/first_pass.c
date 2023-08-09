@@ -104,15 +104,18 @@ int analyze_operands(char *line, ast ast_line_info, int *ic, code_image *my_code
 }
 
 void update_data_dc(symbol_table *my_symbol_table, int *ic) {
+    if (my_symbol_table->first == NULL) {
+        /* Symbol table is empty, nothing to update */
+        return;
+    }
+
     symbol_node *symbol_node_pointer = my_symbol_table->first;
-    while (symbol_node_pointer != my_symbol_table->last) {
+    do {
         if (symbol_node_pointer->symbol_type == DATA)
             symbol_node_pointer->decimal_address += *ic;
 
         symbol_node_pointer = symbol_node_pointer->next_symbol;
-    }
-    if (symbol_node_pointer->symbol_type == DATA)
-        symbol_node_pointer->decimal_address += *ic;
+    } while (symbol_node_pointer != NULL);
 }
 
 
@@ -208,9 +211,9 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
             } else {
                 error_flag = TRUE;
             }
-            printf("\nast after checking error:\n");
+            /*printf("\nast after checking error:\n");
             print_ast(&ast_line_info);
-            printf("-------------------------\n");
+            printf("-------------------------\n");*/
         }
     }
     update_data_dc(symbol_table, ic);

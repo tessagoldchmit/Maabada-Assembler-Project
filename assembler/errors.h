@@ -13,10 +13,10 @@
 
 
 /* Error messages */
-char ERROR_INVALID_REGISTER[] = "Invalid register number";
-char ERROR_INVALID_SYMBOL[] = "Invalid symbol";
+char ERROR_INVALID_REGISTER[] = "Invalid register number.";
+char ERROR_INVALID_SYMBOL[] = "Invalid symbol.";
 char ERROR_INVALID_NUMBER[] = "Invalid number.";
-char ERROR_INVALID_INSTRUCTION[] = "Invalid instruction";
+char ERROR_INVALID_INSTRUCTION[] = "Invalid instruction.";
 
 char ERROR_CONSECUTIVE_COMMAS[] = "Consecutive commas detected.";
 char ERROR_MISSING_COMMA[] = "Missing comma.";

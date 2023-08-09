@@ -228,9 +228,9 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
                 error_flag=TRUE;
             }
         }
-        printf("\nast after checking error:\n");
+       /* printf("\nast after checking error:\n");
         print_ast(&ast_line_info);
-        printf("-------------------------\n");
+        printf("-------------------------\n");*/
         line_number++;
     }
     if (error_flag) {

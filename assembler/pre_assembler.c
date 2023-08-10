@@ -14,7 +14,7 @@
  */
 bool preprocess_file(char *base_filename) {
     /* Variables */
-    bool is_macro_flag=FALSE, replaced_flag=FALSE;
+    bool is_macro_flag=FALSE, replaced_flag;
     macro_array macro_array;
 
     char line[MAX_LINE_LENGTH];

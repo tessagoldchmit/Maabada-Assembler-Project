@@ -44,4 +44,6 @@ bool has_entry_symbol(symbol_table *table);
 
 bool has_extern_symbol(symbol_table *table);
 
+bool is_symbol_extern(symbol_table *table, symbol symbol);
+
 #endif /* MMN14_SYMBOLS_H */

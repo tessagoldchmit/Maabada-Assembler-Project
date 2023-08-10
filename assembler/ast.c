@@ -7,100 +7,6 @@
 #include "symbols.h"
 #include "errors.h"
 
-int set_binary_value(int value) {
-    int binary = 0;
-    int bit_position = 0;
-
-    while (bit_position < 12) {
-        int bit = value & 1;  /* Extract the least significant bit */
-        binary |= (bit << bit_position);  /* Set the bit at the corresponding position */
-        value >>= 1;  /* Right-shift the value to process the next bit */
-        bit_position++;  /* Move to the next bit position */
-    }
-    return binary;
-}
-
-int ascii_to_binary(char parameter) {
-    int param_int_value = (int) parameter;
-    return set_binary_value(param_int_value);
-}
-
-int *num_to_binary(char *parameters, int *machine_code, int binary_length) {
-    char *token;
-    int *numbers = malloc(binary_length * sizeof(int));
-    int count = 0;
-    int i;
-
-    char *parameter_copy = strdup(parameters); /* Create a copy of the original string */
-    char *parameter_ptr = skip_spaces(parameter_copy); /* Skip initial spaces */
-
-    while (count < binary_length) {
-        /* Find the next comma */
-        char *comma_ptr = strchr(parameter_ptr, ',');
-        if (comma_ptr != NULL) {
-            /* Null-terminate the token */
-            *comma_ptr = '\0';
-        }
-
-        /* Convert token to integer and store in numbers array */
-        numbers[count] = atoi(parameter_ptr);
-        count++;
-
-        if (comma_ptr == NULL) {
-            /* No more commas found, exit the loop */
-            break;
-        }
-
-        /* Move the parameter pointer to the next token */
-        parameter_ptr = skip_spaces(comma_ptr + 1);
-    }
-
-    free(parameter_copy); /* Free the dynamically allocated memory */
-
-    for (i = 0; i < count; i++) {
-        machine_code[i] = set_binary_value(numbers[i]);
-    }
-    free(numbers); /* Free the dynamically allocated memory */
-    return machine_code;
-}
-
-directive *initialize_directive(char *symbol, directive_type directive_type, char *parameters, int binary_length) {
-    directive *new_directive = malloc(sizeof(directive));
-    /* Handle memory allocation failure */
-    if (new_directive == NULL) {
-        return NULL;
-    }
-
-    /* Allocate memory and copy symbol */
-    strcpy(new_directive->directive_option.symbol, symbol);
-
-    /* Assign directive_type */
-    new_directive->directive_type = directive_type;
-
-    /* Create machine code */
-    int new_machine_code[binary_length];
-    int *array_ptr;
-    int i;
-    if (directive_type == STRING_TYPE) {
-        for (i = 0; i < binary_length - 1; i++) {
-            new_machine_code[i] = ascii_to_binary(parameters[i]);
-        }
-        new_machine_code[binary_length - 1] = ascii_to_binary('\0');
-    } else if (directive_type == DATA_TYPE) {
-        array_ptr = num_to_binary(parameters, new_machine_code, binary_length);
-        memcpy(new_directive->directive_option.machine_code.machine_code_array, array_ptr, binary_length * sizeof(int));
-    }
-
-    if (new_directive->directive_option.machine_code.machine_code_array == NULL) {
-        /* Handle memory allocation failure */
-        free(new_directive->directive_option.symbol);
-        free(new_directive);
-        return NULL;
-    }
-
-    return new_directive;
-}
-
 char *get_directive(char *line_ptr, ast *ast) {
     /* Skip '.' */
     (line_ptr)++;
@@ -127,7 +33,6 @@ char *get_directive(char *line_ptr, ast *ast) {
     }
     return line_ptr;
 }
-
 
 static void get_string(char *ptr, ast *ast) {
     char *end_quote;
@@ -208,7 +113,7 @@ static void get_data(char *ptr, ast *ast) {
 
 static void get_ent_extern_symbol(char *ptr, ast *ast) {
     char *symbol_name = NULL;
-    int len = 0;
+    int len;
     ptr = skip_spaces(ptr);
     if (ast->ast_symbol[0] != '\0') {
         ast->ast_symbol[0] = '\0';
@@ -337,9 +242,9 @@ void check_operands_for_group_a(char *line, ast *ast) {
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
-    //HANDLE_ERROR(&ast, *error_msg)
     /* Check that the first operand is valid */
     if (ast->ast_word_type == ERROR) {
+        HANDLE_ERROR(&ast, *error_msg)
         free(operand);
         return;
     } else {
@@ -371,11 +276,10 @@ void check_operands_for_group_a(char *line, ast *ast) {
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
-    //HANDLE_ERROR(&ast, *error_msg)
 
     /* Check that the second operand is valid */
     if (ast->ast_word_type == ERROR) {
-        HANDLE_ERROR(&ast, ERROR_ILLEGAL_OPERAND)
+        HANDLE_ERROR(&ast, *error_msg)
         free(operand);
         return;
     } else {
@@ -429,9 +333,9 @@ void check_operands_for_group_b(char *line, ast *ast) {
         return;
     }
     ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
-    //HANDLE_ERROR(&ast, *error_msg)
 
     if (ast->ast_word_type == ERROR) {
+        HANDLE_ERROR(&ast, *error_msg)
         free(operand);
         return;
     } else {

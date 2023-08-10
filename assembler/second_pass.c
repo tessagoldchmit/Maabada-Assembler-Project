@@ -42,7 +42,7 @@ int get_correct_a_r_e_for_target(ast ast_line_info, symbol_table *symbol_table) 
 }
 
 
-bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table) {
+bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
     int source_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_type;
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_type;
 
@@ -79,7 +79,9 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[1] = insert_bits(current_code_node->word[1], source_symbol_address, 0, 11);
         }
-
+        if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol)){
+            add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol, *ic+(current_code_node->L-1));
+        }
     } else if (source_type == NUMBER_OPERAND_TYPE) {
         int source_number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.number;
         current_code_node->word[1] = insert_bits(current_code_node->word[1], source_number, 2, 11);
@@ -106,6 +108,9 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_symbol_address, 0, 11);
         }
+        if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol)){
+            add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol, *ic+(current_code_node->L-1));
+        }
     } else if (target_type == NUMBER_OPERAND_TYPE) {
         int target_number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.number;
         current_code_node->word[2] = insert_bits(current_code_node->word[2], target_number, 2, 11);
@@ -113,8 +118,7 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     return TRUE;
 }
 
-
-bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table) {
+bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_type;
 
     /* handle target */
@@ -138,8 +142,9 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[1] = insert_bits(current_code_node->word[1], symbol_address, 0, 11);
         }
-        /* TODO check if current is external*/
-        /* TODO if it is, then save ic to his address */
+        if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol)){
+            add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol, *ic+(current_code_node->L-1));
+        }
     } else if (target_type == NUMBER_OPERAND_TYPE) {
         int number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.number;
         current_code_node->word[1] = insert_bits(current_code_node->word[1], number, 2, 11);
@@ -148,17 +153,18 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
 }
 
 
-bool decode_code(symbol_table *symbol_table, code_node *current_code_node) {
+bool decode_code(symbol_table *symbol_table, code_node *current_code_node, extern_table *extern_table, int *ic) {
     if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_A) {
-        if(decode_code_group_a(current_code_node, symbol_table)==FALSE){
+        if(decode_code_group_a(current_code_node, symbol_table, extern_table, ic)==FALSE){
             return FALSE;
         }
     } else if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_B) {
-        if(decode_code_group_b(current_code_node, symbol_table)==FALSE){
+        if(decode_code_group_b(current_code_node, symbol_table, extern_table, ic)==FALSE){
             return FALSE;
         }
     }
 
+    *ic+=current_code_node->L;
     /* Todo delete me :) */
     int i;
     for (i = 0; i < current_code_node->L; i++) {
@@ -177,13 +183,13 @@ bool decode_code(symbol_table *symbol_table, code_node *current_code_node) {
     @return TRUE if the line is processed successfully, FALSE otherwise.
 */
 bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
-                         code_image *my_code_image, symbol_table *symbol_table) {
+                         code_image *my_code_image, symbol_table *symbol_table, extern_table *extern_table) {
     printf("\nin second pass\n");
     bool error_flag = FALSE;
 
     /* TODO macro for repetitives */
     int line_number=1;
-    ic=0;
+    *ic=0;
     FILE *am_file;
     char line[MAX_LINE_LENGTH];
     /* Open .am file */
@@ -224,7 +230,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
 
         } else {
             code_node *current_code_node = find_code_node_by_line(my_code_image, line);
-            if(decode_code(symbol_table, current_code_node)==FALSE){
+            if(decode_code(symbol_table, current_code_node, extern_table, ic)==FALSE){
                 ast_line_info.ast_word_type = ERROR;
                 strcpy(ast_line_info.ast_word.error_word, "Symbol does not exists.");
                 error_flag=TRUE;
@@ -233,7 +239,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
        /* printf("\nast after checking error:\n");
         print_ast(&ast_line_info);
         printf("-------------------------\n");*/
-        line_number++;
+       line_number++;
     }
     if (error_flag) {
         printf("## Second pass encountered errors.\n");

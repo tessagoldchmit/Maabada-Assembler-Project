@@ -145,7 +145,7 @@ void write_entries_file(char *filename, symbol_table *table) {
     fclose(entries_file);
 }
 
-void write_externals_file(char *filename, symbol_table *table) {
+void write_externals_file(char *filename, extern_table *table) {
     char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
     snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);
 
@@ -155,13 +155,10 @@ void write_externals_file(char *filename, symbol_table *table) {
         return;
     }
 
-    symbol_node *current = table->first;
+    extern_node *current = table->first;
     while (current != NULL) {
-        if (current->symbol_type == EXTERNAL) {
-            int current_symbol_address = get_symbol_address(table, current->symbol_name) + 100;
-            fprintf(externals_file, "%s\t%d\n", current->symbol_name, current_symbol_address);
-        }
-        current = current->next_symbol;
+        fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address+100);
+        current = current->next;
     }
 
     fclose(externals_file);

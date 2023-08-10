@@ -7,6 +7,7 @@
 #include "output.h"
 #include "second_pass.h"
 #include "symbols.h"
+#include "extern_symbols.h"
 
 
 bool process_file(char *base_filename);
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]) {
 bool process_file(char *base_filename) {
     /* Initialize variables and data structures */
     int *ic = malloc(sizeof(int));
+    int *backup_ic = malloc(sizeof(int));
     int *dc = malloc(sizeof(int));
     *ic=0;
     *dc=0;
@@ -61,7 +63,10 @@ bool process_file(char *base_filename) {
     symbol_table *symbol_table;
     symbol_table = initialize_symbol_table();
 
-    bool success = TRUE, has_extern = FALSE, has_entry = FALSE;
+    extern_table *extern_table;
+    extern_table = initialize_extern_table();
+
+    bool success = TRUE, has_extern, has_entry;
 
     /* Preprocessing step */
     if (!preprocess_file(base_filename)) {
@@ -76,36 +81,42 @@ bool process_file(char *base_filename) {
         return FALSE;
     }
 
+    *backup_ic = *ic;
+
     /* Second pass */
-    /* TODO: Perform the second pass and update the success variable */
-    if (!second_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table)) {
+    if (!second_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table, extern_table)) {
         printf("Error: Second pass failed.\n");
         return FALSE;
     }
 
     /* Check if we have exceeded the memory size */
     if ((*ic + *dc) > (MEMORY_SIZE - START_OF_MEMORY_ADDRESS)) {
-        /* First 100 memory cells reserved for the system */
-        /* TODO: Print an error indicating that the memory size is too small for the file */
+        printf("Error: Memory size exceeded\n");
         success = FALSE;
     }
 
-    /* Check if entry and extern exist */
-    has_entry = has_entry_symbol(symbol_table);
-    has_extern = has_extern_symbol(symbol_table);
-
-
     /* Print output files if success */
     if (success) {
-        write_object_file(base_filename, my_code_image, ic, my_data_image, dc);
+        /* Check if entry and extern exist */
+        has_entry = has_entry_symbol(symbol_table);
+        has_extern = has_extern_symbol(symbol_table);
+        write_object_file(base_filename, my_code_image, backup_ic, my_data_image, dc);
         if (has_entry)
             write_entries_file(base_filename, symbol_table);
         if (has_extern)
-            write_externals_file(base_filename, symbol_table);
+            write_externals_file(base_filename, extern_table);
     }
 
-    /* Free all allocated memory */
-    /* TODO: Free all allocated memory */
+    /* Free allocated memory */
+    free(ic);
+    free(backup_ic);
+    free(dc);
+
+    free(my_data_image);
+    free(my_code_image);
+    free(symbol_table);
+    free(extern_table);
+
 
     return TRUE;
 }

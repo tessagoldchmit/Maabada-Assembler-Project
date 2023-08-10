@@ -30,15 +30,14 @@ void decode_data(char *line, ast ast_line_info, int *dc, data_image *my_data_ima
 
 int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_code_image) {
     code_node *new_node;
-    int word_length = 0;
-    int new_operand_code = 0;
+    int new_operand_code;
     int new_operand_target = 0;
     int new_operand_source = 0;
     int L = 0;
 
     if (check_group(ast_line_info->ast_word.instruction_word.instruction_name) == GROUP_A) {
         new_operand_code = ast_line_info->ast_word.instruction_word.instruction_name;
-        if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.target_type == NUMBER_OPERAND_TYPE)
+        if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.target_type == NUMBER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == MOV_TYPE ||
                 ast_line_info->ast_word.instruction_word.instruction_name == ADD_TYPE ||
                 ast_line_info->ast_word.instruction_word.instruction_name == SUB_TYPE ||
@@ -49,12 +48,13 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
             } else {
                 new_operand_target = IMMEDIATE_ADDRESS;
             }
+        }
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.target_type == SYMBOL_OPERAND_TYPE)
             new_operand_target = DIRECT_ADDRESS;
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.target_type == REGISTER_OPERAND_TYPE)
             new_operand_target = REGISTER_ADDRESS;
 
-        if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == NUMBER_OPERAND_TYPE)
+        if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == NUMBER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
                 ast_line_info->ast_word_type = ERROR;
                 strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
@@ -62,9 +62,10 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
             } else {
                 new_operand_source = IMMEDIATE_ADDRESS;
             }
+        }
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == SYMBOL_OPERAND_TYPE)
             new_operand_source = DIRECT_ADDRESS;
-        if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE)
+        if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
                 ast_line_info->ast_word_type = ERROR;
                 strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
@@ -72,6 +73,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
             } else {
                 new_operand_source = REGISTER_ADDRESS;
             }
+        }
         if (new_operand_target == REGISTER_ADDRESS && new_operand_source == REGISTER_ADDRESS) {
             new_node = create_code_node_registers(line, DEFAULT_WORD_LENGTH, *ast_line_info, new_operand_code,
                                                   new_operand_target,
@@ -85,7 +87,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
     }
     if (check_group(ast_line_info->ast_word.instruction_word.instruction_name) == GROUP_B) {
         new_operand_code = ast_line_info->ast_word.instruction_word.instruction_name;
-        if (ast_line_info->ast_word.instruction_word.instruction_union.group_b.target_type == NUMBER_OPERAND_TYPE)
+        if (ast_line_info->ast_word.instruction_word.instruction_union.group_b.target_type == NUMBER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == PRN_TYPE) {
                 new_operand_target = IMMEDIATE_ADDRESS;
             } else {
@@ -93,6 +95,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
                 strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
                 return -1;
             }
+        }
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_b.target_type == SYMBOL_OPERAND_TYPE)
             new_operand_target = DIRECT_ADDRESS;
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_b.target_type == REGISTER_OPERAND_TYPE)
@@ -186,7 +189,8 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                         }
                     } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
                                ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
-                        if(ast_line_info.ast_symbol[1]!=NULL) /* reaching index 1 instead of 0 because null terminated TODO talk with tessa */
+                        /* TODO talk with tessa */
+                        if(ast_line_info.ast_symbol[1]!=NULL) /* reaching index 1 instead of 0 because null terminated */
                             printf("Warning! Useless symbol before entry/extern in line %d", ast_line_info.line_number);
                         if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE) {
                             if(add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc,

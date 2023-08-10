@@ -178,3 +178,15 @@ bool has_extern_symbol(symbol_table *table) {
     }
     return FALSE;
 }
+
+bool is_symbol_extern(symbol_table *table, symbol symbol) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (strcmp(current->symbol_name, symbol)==0) {
+            if(current->symbol_type == EXTERNAL)
+                return TRUE;
+        }
+        current = current->next_symbol;
+    }
+    return FALSE;
+}

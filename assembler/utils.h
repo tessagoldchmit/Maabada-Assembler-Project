@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "globals.h"
 #include "symbols.h"
+#include "extern_symbols.h"
 
 int count_line_length(char *);
 
@@ -23,6 +24,6 @@ bool is_operand_a_register(char *operand);
 
 void write_entries_file(char *filename, symbol_table *table);
 
-void write_externals_file(char *filename, symbol_table *table);
+void write_externals_file(char *filename, extern_table *table);
 
 #endif /* UTILS_H */

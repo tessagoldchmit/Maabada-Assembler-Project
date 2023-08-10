@@ -71,5 +71,3 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     /* Free the allocated memory */
     fclose(file);
 }
-
-/* TODO support writing .obj file, .ent file and .ext file */

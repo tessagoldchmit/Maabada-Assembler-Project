@@ -4,9 +4,10 @@
 #include "globals.h"
 #include "data_structures.h"
 #include "symbols.h"
+#include "extern_symbols.h"
 
 bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
-                              code_image *my_code_image, symbol_table *symbol_table);
+                         code_image *my_code_image, symbol_table *symbol_table, extern_table *extern_table);
 
 
 

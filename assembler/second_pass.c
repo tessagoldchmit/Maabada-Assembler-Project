@@ -134,13 +134,13 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
             printf("Symbol does not exist\n");
             return FALSE;
         }
-        else if (symbol_address != 1) {
+        else if (symbol_address != -1) { /* valid symbol case */
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], target_are, 0, 1);
             symbol_address = symbol_address + START_OF_MEMORY_ADDRESS;
             current_code_node->word[1] = insert_bits(current_code_node->word[1], symbol_address, 2, 11);
-        } else {
-            current_code_node->word[1] = insert_bits(current_code_node->word[1], symbol_address, 0, 11);
+        } else { /* extern symbol case */
+            current_code_node->word[1] = insert_bits(current_code_node->word[1], 1, 0, 11);
         }
         if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol)){
             add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol, *ic+(current_code_node->L-1));

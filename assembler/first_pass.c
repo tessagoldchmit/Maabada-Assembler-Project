@@ -193,7 +193,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                             if(add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc,
                                        EXTERNAL)==FALSE){
                                 ast_line_info.ast_word_type = ERROR;
-                                strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                                strcpy(ast_line_info.ast_word.error_word, "ERROR_SYMBOL_ALREADY_EXISTS");
                                 error_flag = TRUE;
                             }
                         }

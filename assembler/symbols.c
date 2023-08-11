@@ -149,7 +149,7 @@ int get_symbol_address(symbol_table *table, symbol symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
-            if (current->decimal_address == -1) return 1;
+            if (current->decimal_address == -1) return -1;
             return current->decimal_address;
         }
         current = current->next_symbol;

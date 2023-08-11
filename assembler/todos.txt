@@ -9,6 +9,8 @@ add errors printing
 
 move all errors texts to errors file
 
+encapsulation
+
 /**********************************************************************************************************************/
 
 GENERAL TASKS:

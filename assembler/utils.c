@@ -136,7 +136,7 @@ void write_entries_file(char *filename, symbol_table *table) {
     symbol_node *current = table->first;
     while (current != NULL) {
         if (current->symbol_type == ENTRY) {
-            int current_symbol_address = get_symbol_address(table, current->symbol_name) + 100;
+            int current_symbol_address = get_symbol_address(table, current->symbol_name) + START_OF_MEMORY_ADDRESS;
             fprintf(entries_file, "%s\t%d\n", current->symbol_name, current_symbol_address);
         }
         current = current->next_symbol;
@@ -157,7 +157,7 @@ void write_externals_file(char *filename, extern_table *table) {
 
     extern_node *current = table->first;
     while (current != NULL) {
-        fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address+100);
+        fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address + START_OF_MEMORY_ADDRESS);
         current = current->next;
     }
 

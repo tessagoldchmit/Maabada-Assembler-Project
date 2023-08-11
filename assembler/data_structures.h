@@ -25,8 +25,8 @@ typedef struct data_node {
 } data_node;
 
 typedef struct {
-    data_node *head;
-    data_node *last_node;
+    data_node *first;
+    data_node *last;
 } data_image;
 
 

@@ -46,7 +46,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     }
 
     /* Add data image's binary numbers to the array */
-    data_node *current_data_node = my_data_image->head;
+    data_node *current_data_node = my_data_image->first;
     while (current_data_node != NULL) {
         int j;
         for (j = 0; j < current_data_node->L; j++) {

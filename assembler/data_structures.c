@@ -156,20 +156,20 @@ data_node *create_data_node(char* line, int L, ast ast) {
  */
 data_image *initialize_data_image() {
     data_image *new_data_image = malloc(sizeof(data_image));
-    new_data_image->head = NULL;
-    new_data_image->last_node = NULL;
+    new_data_image->first = NULL;
+    new_data_image->last = NULL;
 
     return new_data_image;
 }
 
 /* Adds a data node to the data image */
 void add_data_node(data_image *data_image, data_node *new_node) {
-    if (data_image->head == NULL) {
-        data_image->head = new_node;
-        data_image->last_node = new_node;
+    if (data_image->first == NULL) {
+        data_image->first = new_node;
+        data_image->last = new_node;
     } else {
-        data_image->last_node->next_node = new_node;
-        data_image->last_node = new_node;
+        data_image->last->next_node = new_node;
+        data_image->last = new_node;
     }
 }
 
@@ -193,7 +193,7 @@ data_node* find_data_node_by_line(data_image* data_image, char* line) {
     if (line_length > 0 && line[line_length - 1] == '\n') {
         line[line_length - 1] = '\0';  /* () Replace newline with null terminator */
     }
-    data_node* current = data_image->head;
+    data_node* current = data_image->first;
     while (current != NULL) {
         if (strcmp(current->original_line, line) == 0) {
             return current;

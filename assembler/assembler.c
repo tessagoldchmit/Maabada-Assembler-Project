@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
 bool process_file(char *base_filename) {
     /* Initialize variables and data structures */
     int *ic = malloc(sizeof(int));
-    int *backup_ic = malloc(sizeof(int));
     int *dc = malloc(sizeof(int));
     *ic=0;
     *dc=0;
@@ -81,8 +80,6 @@ bool process_file(char *base_filename) {
         return FALSE;
     }
 
-    *backup_ic = *ic;
-
     /* Second pass */
     if (!second_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table, extern_table)) {
         printf("Error: Second pass failed.\n");
@@ -100,7 +97,7 @@ bool process_file(char *base_filename) {
         /* Check if entry and extern exist */
         has_entry = has_entry_symbol(symbol_table);
         has_extern = has_extern_symbol(symbol_table);
-        write_object_file(base_filename, my_code_image, backup_ic, my_data_image, dc);
+        write_object_file(base_filename, my_code_image, ic, my_data_image, dc);
         if (has_entry)
             write_entries_file(base_filename, symbol_table);
         if (has_extern)
@@ -109,7 +106,6 @@ bool process_file(char *base_filename) {
 
     /* Free allocated memory */
     free(ic);
-    free(backup_ic);
     free(dc);
 
     free(my_data_image);

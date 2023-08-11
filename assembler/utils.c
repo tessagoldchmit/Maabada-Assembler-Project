@@ -1,7 +1,7 @@
 #include "utils.h"
 #include <ctype.h>
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 /**
  * Counts the length of a line in characters.
@@ -92,7 +92,9 @@ char *concatenate_strings(char *base, char *ext) {
     /* Allocate memory for the resulting string */
     char *concatenated_string = malloc(total_len + 1);
     if (concatenated_string == NULL) {
-        return NULL;
+        fprintf(stderr, "Memory allocation failed\n");
+        free(concatenated_string);
+        exit(1);
     }
 
     strcpy(concatenated_string, base);

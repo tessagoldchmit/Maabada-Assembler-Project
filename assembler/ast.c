@@ -1,6 +1,6 @@
 #include <ctype.h>
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include "ast.h"
 #include "utils.h"
@@ -125,6 +125,11 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
     for (len = 0; ptr[len] != '\0' && ptr[len] != '\n' &&
                   ptr[len] != EOF && !(isspace(ptr[len])); len++);
     symbol_name = (char *) malloc(sizeof(char) * (len + 1));
+    if (symbol_name == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(symbol_name);
+        exit(1);
+    }
     strncpy(symbol_name, ptr, len);
     symbol_name[len] = '\0';
     ptr += len;
@@ -140,6 +145,7 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
     ptr = skip_spaces(ptr);
     if (ptr[0] != '\0' && ptr[0] != '\n' && ptr[0] != EOF) {
         HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
+        free(symbol_name);
         return;
     }
 }
@@ -171,6 +177,11 @@ char *get_code_instruction(char *line, ast *ast) {
     for (len = 0; line_ptr[len] != '\0' && line_ptr[len] != '\n' &&
                   line_ptr[len] != EOF && !(isspace(line_ptr[len])); len++);
     command = malloc(sizeof(char) * len + 1);
+    if (command == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(command);
+        exit(1);
+    }
     strncpy(command, line_ptr, len);
     command[len] = '\0';
     line_ptr += len;
@@ -181,10 +192,12 @@ char *get_code_instruction(char *line, ast *ast) {
     for (i = 0; i < 16; ++i) {
         if (strncmp(command, instructions_map[i].name, strlen(command)) == 0) {
             ast->ast_word.instruction_word.instruction_name = instructions_map[i].type;
+            free(command);
             return line_ptr;
         }
     }
     HANDLE_ERROR(&ast, ERROR_COMMAND_DOES_NOT_EXIST)
+    free(command);
     return line_ptr;
 }
 
@@ -233,22 +246,34 @@ void check_operands_for_group_a(char *line, ast *ast) {
 
     error *error_msg = NULL;
     error_msg = (error*)malloc(sizeof(char));
+    if (error_msg == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(error_msg);
+        exit(1);
+    }
 
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] == ',') {
         HANDLE_ERROR(&ast, ERROR_LEADING_COMMA)
+        free(error_msg);
         return;
     }
     for (len = 0; line_ptr[len] != '\0' && line_ptr[len] != '\n' &&
                   line_ptr[len] != EOF && !(isspace(line_ptr[len])) && line_ptr[len] != ','; len++);
     /* Store the first operand */
     operand = malloc(sizeof(char) * len + 1);
+    if (operand == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(operand);
+        exit(1);
+    }
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
     /* Check that the first operand is valid */
     if (ast->ast_word_type == ERROR) {
         HANDLE_ERROR(&ast, *error_msg)
+        free(error_msg);
         free(operand);
         return;
     } else {
@@ -264,12 +289,14 @@ void check_operands_for_group_a(char *line, ast *ast) {
     line_ptr += len;
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] != ',') {
+        free(error_msg);
         HANDLE_ERROR(&ast, ERROR_MISSING_COMMA)
         return;
     }
     line_ptr += 1; /* skip comma */
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] == ',') {
+        free(error_msg);
         HANDLE_ERROR(&ast, ERROR_CONSECUTIVE_COMMAS)
         return;
     }
@@ -277,6 +304,11 @@ void check_operands_for_group_a(char *line, ast *ast) {
                   line_ptr[len] != EOF && !(isspace(line_ptr[len])) && line_ptr[len] != ','; len++);
     /* Store the second operand */
     operand = malloc(sizeof(char) * len + 1);
+    if (operand == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(operand);
+        exit(1);
+    }
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
@@ -284,6 +316,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     /* Check that the second operand is valid */
     if (ast->ast_word_type == ERROR) {
         HANDLE_ERROR(&ast, *error_msg)
+        free(error_msg);
         free(operand);
         return;
     } else {
@@ -300,6 +333,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     /* Check for extra trailing characters at the end */
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] != '\0' && line_ptr[0] != '\n' && line_ptr[0] != EOF) {
+        free(error_msg);
         HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
         return;
     }
@@ -313,11 +347,17 @@ void check_operands_for_group_b(char *line, ast *ast) {
     char *operand;
     error *error_msg = NULL;
     error_msg = (error*)malloc(sizeof(char));
+    if (error_msg == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(error_msg);
+        exit(1);
+    }
 
     line_ptr = skip_spaces(line_ptr);
 
     if (line_ptr[0] == ',') {
         HANDLE_ERROR(&ast, ERROR_LEADING_COMMA)
+        free(error_msg);
         return;
     }
 
@@ -326,6 +366,11 @@ void check_operands_for_group_b(char *line, ast *ast) {
 
     /* Store the operand */
     operand = malloc(sizeof(char) * len + 1);
+    if (operand == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(operand);
+        exit(1);
+    }
     strncpy(operand, line_ptr, len);
     operand[len] = '\0';
     line_ptr += len;
@@ -340,6 +385,7 @@ void check_operands_for_group_b(char *line, ast *ast) {
 
     if (ast->ast_word_type == ERROR) {
         HANDLE_ERROR(&ast, *error_msg)
+        free(error_msg);
         free(operand);
         return;
     } else {
@@ -351,6 +397,7 @@ void check_operands_for_group_b(char *line, ast *ast) {
             ast->ast_word.instruction_word.instruction_union.group_b.target_value.register_num = operand[2];
         }
         free(operand);
+        free(error_msg);
         return;
     }
 }
@@ -377,6 +424,11 @@ ast get_ast_line_info(char *line, int line_number) {
         char *colon_ptr = strchr(line, ':');
         size_t symbol_length = colon_ptr - line_ptr;  /* Calculate the length of the string before ':' */
         symbol_name = malloc(sizeof(char) * (symbol_length + 1));
+        if (symbol_name == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free(symbol_name);
+            exit(1);
+        }
         strncpy(symbol_name, line, symbol_length);
         symbol_name[symbol_length] = '\0';
         if (is_symbol_valid(symbol_name)) {

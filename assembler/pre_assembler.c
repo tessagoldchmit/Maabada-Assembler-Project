@@ -116,6 +116,11 @@ bool preprocess_file(char *base_filename) {
  */
 void init_macro_array(macro_array *arr, int initial_size) {
     arr->array = malloc(initial_size * sizeof(macro));
+    if (arr->array == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(arr->array);
+        exit(1);
+    }
     arr->used = 0;
     arr->size = initial_size;
 }
@@ -141,6 +146,8 @@ void insert_macro_array(macro_array *arr, char *name, char *content) {
     arr->array[arr->used].content = malloc(strlen(content) + 1);
     if (!arr->array[arr->used].name || !arr->array[arr->used].content) {
         fprintf(stderr, "Error: Failed to allocate memory for macro name or content.\n");
+        free(arr->array[arr->used].name);
+        free(arr->array[arr->used].content);
         exit(1);
     }
     strcpy(arr->array[arr->used].name, name);

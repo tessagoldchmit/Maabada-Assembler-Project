@@ -222,9 +222,11 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
                 ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
                 data_node *current_data_node = find_data_node_by_line(my_data_image, line);
                 int i;
-                for (i = 0; i < current_data_node->L; i++) {
-                    print_binary_12bits(current_data_node->word[i]);
-                    printf("\n");
+                if(current_data_node!=NULL) {
+                    for (i = 0; i < current_data_node->L; i++) {
+                        print_binary_12bits(current_data_node->word[i]);
+                        printf("\n");
+                    }
                 }
             }
 

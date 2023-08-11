@@ -4,15 +4,13 @@
 #include "globals.h"
 
 typedef enum {
-    /* Group A */
     MOV_TYPE,
     CMP_TYPE,
     ADD_TYPE,
     SUB_TYPE,
-    LEA_TYPE,
-    /* Group B */
     NOT_TYPE,
     CLR_TYPE,
+    LEA_TYPE,
     INC_TYPE,
     DEC_TYPE,
     JMP_TYPE,
@@ -20,7 +18,6 @@ typedef enum {
     RED_TYPE,
     PRN_TYPE,
     JSR_TYPE,
-    /* Group C */
     RTS_TYPE,
     STOP_TYPE,
 } instruction_name;

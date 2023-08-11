@@ -149,15 +149,19 @@ bool is_symbol(char *line) {
 }
 
 group_type check_group(instruction_name instruction_name) {
-    if (instruction_name <= LEA_TYPE) {
+    if (instruction_name == MOV_TYPE || instruction_name == CMP_TYPE || instruction_name == ADD_TYPE ||
+        instruction_name == SUB_TYPE || instruction_name == LEA_TYPE) {
         return GROUP_A;
-    } else if (instruction_name <= JSR_TYPE) {
+    } else if (instruction_name == NOT_TYPE || instruction_name == CLR_TYPE || instruction_name == INC_TYPE ||
+               instruction_name == DEC_TYPE || instruction_name == JMP_TYPE || instruction_name == BNE_TYPE ||
+               instruction_name == RED_TYPE || instruction_name == PRN_TYPE || instruction_name == JSR_TYPE) {
         return GROUP_B;
     } else if (instruction_name == RTS_TYPE || instruction_name == STOP_TYPE) {
         return GROUP_C;
     }
     return 0;
 }
+
 
 
 char *get_code_instruction(char *line, ast *ast) {
@@ -344,7 +348,7 @@ void check_operands_for_group_b(char *line, ast *ast) {
         } else if (ast->ast_word.instruction_word.instruction_union.group_b.target_type == SYMBOL_OPERAND_TYPE) {
             strcpy(ast->ast_word.instruction_word.instruction_union.group_b.target_value.symbol, operand);
         } else if (ast->ast_word.instruction_word.instruction_union.group_b.target_type == REGISTER_OPERAND_TYPE) {
-            ast->ast_word.instruction_word.instruction_union.group_b.target_value.register_num = operand[1];
+            ast->ast_word.instruction_word.instruction_union.group_b.target_value.register_num = operand[2];
         }
         free(operand);
         return;

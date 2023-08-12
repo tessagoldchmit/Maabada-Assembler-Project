@@ -12,9 +12,6 @@ encapsulation
 
 GENERAL TASKS:
 
-
-delete temp files
-
 add docstring to every function
 
 be happyyyyyyyyyyyyyyyyyyyyyyyyy

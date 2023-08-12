@@ -35,9 +35,11 @@ int main(int argc, char *argv[]) {
             PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FILE_NAME_TOO_LONG);
             continue;
         }
+        printf("\n");
+        PRINT_MESSAGE(INFO_MSG_TYPE, argv[i]);
         process_file(argv[i]);
     }
-
+    printf("\n");
     PRINT_MESSAGE(INFO_MSG_TYPE, INFO_ALL_FILES_HAVE_BEEN_PROCESSED);
     return 0;
 }

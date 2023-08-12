@@ -5,7 +5,7 @@
 #include "ast.h"
 #include "utils.h"
 #include "symbols.h"
-#include "errors.h"
+#include "logs.h"
 
 char *get_directive(char *line_ptr, ast *ast) {
     /* Skip '.' */
@@ -29,7 +29,7 @@ char *get_directive(char *line_ptr, ast *ast) {
         ast->ast_word.directive_word.directive_type = EXTERN_TYPE;
         line_ptr += 6;
     } else {
-        HANDLE_ERROR(&ast, ERROR_INVALID_INSTRUCTION)
+        HANDLE_AST_ERROR(&ast, ERROR_INVALID_INSTRUCTION);
     }
     return line_ptr;
 }
@@ -38,11 +38,11 @@ static void get_string(char *ptr, ast *ast) {
     char *end_quote;
     ptr = skip_spaces(ptr);
     if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
-        HANDLE_ERROR(&ast, ERROR_STRING_MISSING)
+        HANDLE_AST_ERROR(&ast, ERROR_STRING_MISSING);
         return;
     }
     if (ptr[0] != '"') {
-        HANDLE_ERROR(&ast, ERROR_STRING_START_QUOTES)
+        HANDLE_AST_ERROR(&ast, ERROR_STRING_START_QUOTES);
         return;
     }
     ptr += 1; /* Skip " */
@@ -50,7 +50,7 @@ static void get_string(char *ptr, ast *ast) {
     /* Check for closing quotes */
     end_quote = strchr(ptr, '"');
     if (end_quote == NULL) {
-        HANDLE_ERROR(&ast, ERROR_STRING_END_QUOTES)
+        HANDLE_AST_ERROR(&ast, ERROR_STRING_END_QUOTES);
         return;
     } else {
         size_t len = end_quote - ptr;
@@ -60,7 +60,7 @@ static void get_string(char *ptr, ast *ast) {
     }
     ptr = skip_spaces(ptr);
     if (ptr[0] != '\0' && ptr[0] != '\n' && ptr[0] != EOF) {
-        HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
+        HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
         return;
     }
 }
@@ -73,36 +73,36 @@ static void get_data(char *ptr, ast *ast) {
     do {
         ptr = skip_spaces(ptr);
         if (ptr[0] == ',') {
-            HANDLE_ERROR(&ast, ERROR_LEADING_COMMA)
+            HANDLE_AST_ERROR(&ast, ERROR_LEADING_COMMA);
             return;
         } else if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
-            HANDLE_ERROR(&ast, ERROR_DATA_MISSING_INT)
+            HANDLE_AST_ERROR(&ast, ERROR_DATA_MISSING_INT);
             return;
         }
         value = strtol(ptr, &end_ptr, 10);
         if (end_ptr == ptr) {
-            HANDLE_ERROR(&ast, ERROR_INVALID_NUMBER)
+            HANDLE_AST_ERROR(&ast, ERROR_INVALID_NUMBER);
             return;
         }
         ast->ast_word.directive_word.directive_option.machine_code.machine_code_array[num_of_ints] = value;
         ast->ast_word.directive_word.directive_option.machine_code.machine_code_count++;
         num_of_ints++;
-        ptr += end_ptr - ptr;  /* TODO tessag update */
+        ptr = end_ptr;
         ptr = skip_spaces(ptr);
         if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
             return;
         } else {
             if (ptr[0] != ',') {
-                HANDLE_ERROR(&ast, ERROR_MISSING_COMMA)
+                HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
                 return;
             }
             ptr += 1; /* Skip the ',' */
             ptr = skip_spaces(ptr);
             if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
-                HANDLE_ERROR(&ast, ERROR_TRAILING_COMMA)
+                HANDLE_AST_ERROR(&ast, ERROR_TRAILING_COMMA);
                 return;
             } else if (ptr[0] == ',') {
-                HANDLE_ERROR(&ast, ERROR_CONSECUTIVE_COMMAS)
+                HANDLE_AST_ERROR(&ast, ERROR_CONSECUTIVE_COMMAS);
                 return;
             }
         }
@@ -119,7 +119,7 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
         ast->ast_symbol[0] = '\0';
     }
     if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
-        HANDLE_ERROR(&ast, ERROR_ENTRY_EXTERN_WITHOUT_SYMBOL)
+        HANDLE_AST_ERROR(&ast, ERROR_ENTRY_EXTERN_WITHOUT_SYMBOL);
         return;
     }
     for (len = 0; ptr[len] != '\0' && ptr[len] != '\n' &&
@@ -131,7 +131,7 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
 
 
     if (!is_symbol_valid(symbol_name)) {
-        HANDLE_ERROR(&ast, ERROR_INVALID_SYMBOL)
+       HANDLE_AST_ERROR(&ast, ERROR_INVALID_SYMBOL);
         free(symbol_name);
         return;
     }
@@ -139,7 +139,7 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
     free(symbol_name);
     ptr = skip_spaces(ptr);
     if (ptr[0] != '\0' && ptr[0] != '\n' && ptr[0] != EOF) {
-        HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
+        HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
         return;
     }
 }
@@ -184,7 +184,7 @@ char *get_code_instruction(char *line, ast *ast) {
             return line_ptr;
         }
     }
-    HANDLE_ERROR(&ast, ERROR_COMMAND_DOES_NOT_EXIST)
+    HANDLE_AST_ERROR(&ast, ERROR_COMMAND_DOES_NOT_EXIST);
     return line_ptr;
 }
 
@@ -236,7 +236,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
 
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] == ',') {
-        HANDLE_ERROR(&ast, ERROR_LEADING_COMMA)
+        HANDLE_AST_ERROR(&ast, ERROR_LEADING_COMMA);
         return;
     }
     for (len = 0; line_ptr[len] != '\0' && line_ptr[len] != '\n' &&
@@ -248,7 +248,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
     /* Check that the first operand is valid */
     if (ast->ast_word_type == ERROR) {
-        HANDLE_ERROR(&ast, *error_msg)
+        HANDLE_AST_ERROR(&ast, *error_msg);
         free(operand);
         return;
     } else {
@@ -264,13 +264,13 @@ void check_operands_for_group_a(char *line, ast *ast) {
     line_ptr += len;
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] != ',') {
-        HANDLE_ERROR(&ast, ERROR_MISSING_COMMA)
+        HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
         return;
     }
     line_ptr += 1; /* skip comma */
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] == ',') {
-        HANDLE_ERROR(&ast, ERROR_CONSECUTIVE_COMMAS)
+        HANDLE_AST_ERROR(&ast, ERROR_CONSECUTIVE_COMMAS);
         return;
     }
     for (len = 0; line_ptr[len] != '\0' && line_ptr[len] != '\n' &&
@@ -283,7 +283,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
 
     /* Check that the second operand is valid */
     if (ast->ast_word_type == ERROR) {
-        HANDLE_ERROR(&ast, *error_msg)
+        HANDLE_AST_ERROR(&ast, *error_msg);
         free(operand);
         return;
     } else {
@@ -300,7 +300,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     /* Check for extra trailing characters at the end */
     line_ptr = skip_spaces(line_ptr);
     if (line_ptr[0] != '\0' && line_ptr[0] != '\n' && line_ptr[0] != EOF) {
-        HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
+        HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
         return;
     }
 }
@@ -317,7 +317,7 @@ void check_operands_for_group_b(char *line, ast *ast) {
     line_ptr = skip_spaces(line_ptr);
 
     if (line_ptr[0] == ',') {
-        HANDLE_ERROR(&ast, ERROR_LEADING_COMMA)
+        HANDLE_AST_ERROR(&ast, ERROR_LEADING_COMMA);
         return;
     }
 
@@ -332,14 +332,14 @@ void check_operands_for_group_b(char *line, ast *ast) {
     line_ptr = skip_spaces(line_ptr);
 
     if (line_ptr[0] != '\0' && line_ptr[0] != '\n' && line_ptr[0] != EOF) {
-        HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
+        HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
         free(operand);
         return;
     }
     ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
 
     if (ast->ast_word_type == ERROR) {
-        HANDLE_ERROR(&ast, *error_msg)
+        HANDLE_AST_ERROR(&ast, *error_msg);
         free(operand);
         return;
     } else {
@@ -360,7 +360,7 @@ void check_operands_for_group_c(char *line, ast *ast) {
 
     line_ptr = skip_spaces(line_ptr);
     if (*line_ptr != '\0' && *line_ptr != '\n' && *line_ptr != EOF) {
-        HANDLE_ERROR(&ast, ERROR_TRAILING_CHARACTERS)
+        HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
         return;
     }
 }
@@ -377,15 +377,14 @@ ast get_ast_line_info(char *line, int line_number) {
         char *colon_ptr = strchr(line, ':');
         size_t symbol_length = colon_ptr - line_ptr;  /* Calculate the length of the string before ':' */
         symbol_name = malloc(sizeof(char) * (symbol_length + 1));
-        strncpy(symbol_name, line, symbol_length);
+        strncpy(symbol_name, line_ptr, symbol_length);
         symbol_name[symbol_length] = '\0';
         if (is_symbol_valid(symbol_name)) {
             strcpy(ast.ast_symbol, symbol_name);
             free(symbol_name);
             line_ptr += symbol_length + 1; /* Skip the ':' */
         } else {
-            ast.ast_word_type = ERROR;
-            strcpy(ast.ast_word.error_word, ERROR_INVALID_SYMBOL);
+            HANDLE_AST_ERROR_NON_POINTER(&ast, ERROR_INVALID_SYMBOL);
             free(symbol_name);
             return ast;
         }

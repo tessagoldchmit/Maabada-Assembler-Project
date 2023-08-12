@@ -4,7 +4,7 @@
 #include "first_pass.h"
 #include "globals.h"
 #include "ast.h"
-#include "temp.h"
+#include "logs.h"
 
 void decode_data(char *line, ast ast_line_info, int *dc, data_image *my_data_image) {
     data_node *new_node;
@@ -42,8 +42,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
                 ast_line_info->ast_word.instruction_word.instruction_name == ADD_TYPE ||
                 ast_line_info->ast_word.instruction_word.instruction_name == SUB_TYPE ||
                 ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
-                ast_line_info->ast_word_type = ERROR;
-                strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
                 return -1;
             } else {
                 new_operand_target = IMMEDIATE_ADDRESS;
@@ -56,8 +55,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
 
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == NUMBER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
-                ast_line_info->ast_word_type = ERROR;
-                strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
                 return -1;
             } else {
                 new_operand_source = IMMEDIATE_ADDRESS;
@@ -67,8 +65,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
             new_operand_source = DIRECT_ADDRESS;
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
-                ast_line_info->ast_word_type = ERROR;
-                strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
                 return -1;
             } else {
                 new_operand_source = REGISTER_ADDRESS;
@@ -91,8 +88,7 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
             if (ast_line_info->ast_word.instruction_word.instruction_name == PRN_TYPE) {
                 new_operand_target = IMMEDIATE_ADDRESS;
             } else {
-                ast_line_info->ast_word_type = ERROR;
-                strcpy(ast_line_info->ast_word.error_word, "Illegal operand type.");
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
                 return -1;
             }
         }
@@ -156,8 +152,6 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
             line[line_length - 1] = '\0';
             line_length--;
         }
-        printf("\n------------------------------------------------------------------------------\n");
-        printf("%d. %s\n", line_number, line);
 
         if (line_length > MAX_LINE_LENGTH) {
             printf("Error: Line %d is longer than %d characters.\n", line_number, MAX_LINE_LENGTH);
@@ -169,7 +163,6 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
             }
         } else {
             ast ast_line_info = get_ast_line_info(line, line_number);
-            print_ast(&ast_line_info);
             if (ast_line_info.ast_word_type != ERROR) {
                 if (ast_line_info.ast_symbol[0] != '\0') {
                     symbol_flag = TRUE;
@@ -179,8 +172,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                         ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
                         if (symbol_flag) {
                             if(add_symbol(symbol_table, ast_line_info.ast_symbol, dc, DATA)==FALSE){
-                                ast_line_info.ast_word_type=ERROR;
-                                strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                                HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_ALREADY_EXISTS);
                                 error_flag = TRUE;
                             }
                             else{
@@ -192,8 +184,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                         if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE) {
                             if(add_symbol(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol, dc,
                                        EXTERNAL)==FALSE){
-                                ast_line_info.ast_word_type = ERROR;
-                                strcpy(ast_line_info.ast_word.error_word, "ERROR_SYMBOL_ALREADY_EXISTS");
+                                HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_ALREADY_EXISTS);
                                 error_flag = TRUE;
                             }
                         }
@@ -201,8 +192,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                 } else {
                     if (symbol_flag) {
                         if (add_symbol(symbol_table, ast_line_info.ast_symbol, ic, CODE)==FALSE) {
-                            ast_line_info.ast_word_type = ERROR;
-                            strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                            HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_ALREADY_EXISTS);
                             error_flag = TRUE;
                         }
                         else{
@@ -220,22 +210,19 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                     }
                 }
                 symbol_flag = FALSE;
-                /*update_data_dc(symbol_table, ic);*/
             } else {
                 error_flag = TRUE;
             }
-            printf("\nast after checking error:\n");
-            print_ast(&ast_line_info);
-            printf("-------------------------\n");
+
         }
     }
     update_data_dc(symbol_table, ic);
-    print_symbol_table(symbol_table);
+//    print_symbol_table(symbol_table);
     if (error_flag) {
-        printf("## First pass encountered errors.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_FIRST_PASS);
         return FALSE;
     } else {
-        printf("## First pass completed successfully.\n");
+        PRINT_MESSAGE(INFO_MSG_TYPE, INFO_FIRST_PASS);
         return TRUE;
     }
 }

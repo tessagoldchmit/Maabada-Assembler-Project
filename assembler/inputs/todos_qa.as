@@ -1,9 +1,7 @@
 ; INVALID OPERAND (maayan)
-; todo: why it prints Illegal oper?
 ;MAIN: mov @     r5 ,LENGTH
 
 ; INVALID REGISTER (maayan)
-; todo: why it prints Illegal regi?
 ;mov @r9 ,K
 
 ; ARGUMENTS FOR DATA MUST BE INTEGERS (tessa)

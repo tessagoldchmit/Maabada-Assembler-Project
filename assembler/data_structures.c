@@ -2,7 +2,6 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
-#include "temp.h"
 
 
 int char_to_binary(char character) {
@@ -31,14 +30,6 @@ code_node *create_code_node_registers(char* line, int L, ast ast, int new_operan
     new_node->word[1] = insert_bits(new_node->word[1], atoi(&ast.ast_word.instruction_word.instruction_union.group_a.target_value.register_num), 2, 6);
     new_node->word[1] = insert_bits(new_node->word[1], atoi(&ast.ast_word.instruction_word.instruction_union.group_a.source_value.register_num), 7, 11);
 
-    /** TEMP **/
-    int t;
-    for (t = 0; t < L; t++) {
-        print_binary_12bits(new_node->word[t] & 0xFFF);
-        printf("\n");
-    }
-    /** END OF TEMP **/
-
     new_node->original_line = (char*)malloc(strlen(line) + 1);
     if (new_node->original_line == NULL) {
         fprintf(stderr, "Error: Failed to allocate memory.\n");
@@ -66,14 +57,6 @@ code_node *create_code_node(char* line, int L, ast ast, int new_operand_code, in
     new_node->word[0] = insert_bits(new_node->word[0], new_operand_target, 2, 4);
     new_node->word[0] = insert_bits(new_node->word[0], new_operand_code, 5, 8);
     new_node->word[0] = insert_bits(new_node->word[0], new_operand_source, 9, 11);
-
-    /** TEMP **/
-    int t;
-    for (t = 0; t < L; t++) {
-        print_binary_12bits(new_node->word[t] & 0xFFF);
-        printf("\n");
-    }
-    /** END OF TEMP **/
 
     new_node->original_line = (char*)malloc(strlen(line) + 1);
     if (new_node->original_line == NULL) {
@@ -125,14 +108,6 @@ data_node *create_data_node(char* line, int L, ast ast) {
     else
         for (i = 0; i < L; i++)
             new_node->word[i] = ast.ast_word.directive_word.directive_option.machine_code.machine_code_array[i];
-
-    /** TEMP **/
-    int t;
-    for (t = 0; t < L; t++) {
-        print_binary_12bits(new_node->word[t] & 0xFFF);
-        printf("\n");
-    }
-    /** END OF TEMP **/
 
     new_node->original_line = (char*)malloc(strlen(line) + 1);
     if (new_node->original_line == NULL) {

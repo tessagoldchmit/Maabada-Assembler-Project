@@ -7,6 +7,7 @@
 #include "output.h"
 #include "second_pass.h"
 #include "symbols.h"
+#include "logs.h"
 #include "extern_symbols.h"
 
 
@@ -24,20 +25,20 @@ int main(int argc, char *argv[]) {
 
     /* Check that at least one file name was passed to the program */
     if (argc == 1) {
-        fprintf(stderr, "Error: No file names provided.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_NO_FILES_PROVIDED);
         exit(EXIT_FAILURE);
     }
 
     /* Process each file if the file name does not exceed the maximum length */
     for (i = 1; i < argc; i++) {
         if (strlen(argv[i]) > MAX_FILE_NAME) {
-            fprintf(stderr, "Error: File name exceeds maximum length.\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FILE_NAME_TOO_LONG);
             continue;
         }
         process_file(argv[i]);
     }
 
-    printf("All files have been processed!\n");
+    PRINT_MESSAGE(INFO_MSG_TYPE, INFO_ALL_FILES_HAVE_BEEN_PROCESSED);
     return 0;
 }
 
@@ -69,26 +70,24 @@ bool process_file(char *base_filename) {
 
     /* Preprocessing step */
     if (!preprocess_file(base_filename)) {
-        printf("Error: Preprocessing step failed. Macros could not be spread correctly.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_PREPROCESSING);
         return FALSE;
     }
 
     /* First pass */
     char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
     if (!first_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table)) {
-        printf("Error: First pass failed.\n");
         return FALSE;
     }
 
     /* Second pass */
     if (!second_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table, extern_table)) {
-        printf("Error: Second pass failed.\n");
         return FALSE;
     }
 
     /* Check if we have exceeded the memory size */
     if ((*ic + *dc) > (MEMORY_SIZE - START_OF_MEMORY_ADDRESS)) {
-        printf("Error: Memory size exceeded\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_MEMORY_SIZE_EXCEEDED);
         success = FALSE;
     }
 

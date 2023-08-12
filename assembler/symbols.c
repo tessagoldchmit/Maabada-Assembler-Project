@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
+#include "logs.h"
 
 const char *reserved_words[] = {
         "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
@@ -55,7 +56,6 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
             /* Symbol already exists, return false */
-            printf("Error: Symbol already exists.");
             return FALSE;
         }
         current = current->next_symbol;
@@ -125,7 +125,6 @@ bool check_entry_symbol_duplication(symbol_table *table, char *symbol_name) {
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
             if(current->symbol_type == EXTERNAL) {
-                printf("Error: Symbol already exists.");
                 return FALSE;
             }
         }

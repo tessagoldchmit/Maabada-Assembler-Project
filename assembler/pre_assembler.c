@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
+#include "logs.h"
 
 
 /**
@@ -33,14 +34,14 @@ bool preprocess_file(char *base_filename) {
     /* Open .as file  */
     as_file = fopen(filename_with_as_suffix, "r");
     if (as_file == NULL) {
-        fprintf(stderr, "Error: Failed to open .as file '%s' for reading.\n", filename_with_as_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_READING_AS_FILE);
         return FALSE;
     }
 
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "w");
     if (am_file == NULL) {
-        fprintf(stderr, "Error: Failed to open .am file '%s' for writing.\n", filename_with_am_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_AM_FILE);
         fclose(as_file);
         return FALSE;
     }
@@ -132,16 +133,16 @@ void insert_macro_array(macro_array *arr, char *name, char *content) {
         arr->size *= 2;
         void *temp = realloc(arr->array, arr->size * sizeof(macro));
         if (!temp) {
-            fprintf(stderr, "Error: Failed to reallocate memory.\n");
-            exit(1);
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_REALLOCATE_MEM);
+            exit(EXIT_FAILURE);
         }
         arr->array = temp;
     }
     arr->array[arr->used].name = malloc(strlen(name) + 1);
     arr->array[arr->used].content = malloc(strlen(content) + 1);
     if (!arr->array[arr->used].name || !arr->array[arr->used].content) {
-        fprintf(stderr, "Error: Failed to allocate memory for macro name or content.\n");
-        exit(1);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
+        exit(EXIT_FAILURE);
     }
     strcpy(arr->array[arr->used].name, name);
     strcpy(arr->array[arr->used].content, content);
@@ -174,11 +175,11 @@ void free_macro_array(macro_array *arr) {
  * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
  */
 int current_macro_status(char *str, bool macro_flag, int cmd_length) {
-    if (strncmp(str, "mcro", strlen("mcro")) == 0 && str[4] && str[4] == ' ') { /* First ast_word is 'macro'*/
+    if (strncmp(str, MACRO_START, strlen(MACRO_START)) == 0 && str[4] && str[4] == ' ') { /* First ast_word is 'macro'*/
         return START_OF_MACRO;
-    } else if (macro_flag && strncmp(str, "endmcro", cmd_length) != 0) {
+    } else if (macro_flag && strncmp(str, MACRO_END, cmd_length) != 0) {
         return BODY_OF_MACRO;
-    } else if (macro_flag && strncmp(str, "endmcro", cmd_length) == 0) {
+    } else if (macro_flag && strncmp(str, MACRO_END, cmd_length) == 0) {
         return END_OF_MACRO;
     }
     return NOT_A_MACRO;

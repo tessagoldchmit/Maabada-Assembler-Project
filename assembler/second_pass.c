@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "second_pass.h"
-#include "temp.h"
 #include "data_structures.h"
 #include "string.h"
 #include "symbols.h"
+#include "logs.h"
 
 #define R 2
 #define E 1
@@ -165,12 +165,6 @@ bool decode_code(symbol_table *symbol_table, code_node *current_code_node, exter
     }
 
     *ic+=current_code_node->L;
-    /* Todo delete me :) */
-    int i;
-    for (i = 0; i < current_code_node->L; i++) {
-        print_binary_12bits(current_code_node->word[i]);
-        printf("\n");
-    }
     return TRUE;
 }
 
@@ -184,7 +178,6 @@ bool decode_code(symbol_table *symbol_table, code_node *current_code_node, exter
 */
 bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
                          code_image *my_code_image, symbol_table *symbol_table, extern_table *extern_table) {
-    printf("\nin second pass\n");
     bool error_flag = FALSE;
 
     /* TODO macro for repetitives */
@@ -201,40 +194,23 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
 
     /* Process each line of the source file */
     while (fgets(line, MAX_LINE_LENGTH, am_file)) {
-        printf("\n------------------------------------------------------------------------------\n");
-        printf(line);
         ast ast_line_info = get_ast_line_info(line, line_number);
-        print_ast(&ast_line_info);
 
         if (ast_line_info.ast_word_type == DIRECTIVE) {
             if (ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
                 if(check_entry_symbol_duplication(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol)==FALSE) {
-                    ast_line_info.ast_word_type = ERROR;
-                    strcpy(ast_line_info.ast_word.error_word, "Symbol already exists.");
+                    HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_ALREADY_EXISTS);
                     error_flag = TRUE;
                 }
                 else
                     mark_symbol_as_entry(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol);
             }
 
-            /* Todo delete me :) */
-            if (ast_line_info.ast_word.directive_word.directive_type == DATA_TYPE ||
-                ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
-                data_node *current_data_node = find_data_node_by_line(my_data_image, line);
-                int i;
-                if(current_data_node!=NULL) {
-                    for (i = 0; i < current_data_node->L; i++) {
-                        print_binary_12bits(current_data_node->word[i]);
-                        printf("\n");
-                    }
-                }
-            }
 
         } else {
             code_node *current_code_node = find_code_node_by_line(my_code_image, line);
             if(decode_code(symbol_table, current_code_node, extern_table, ic)==FALSE){
-                ast_line_info.ast_word_type = ERROR;
-                strcpy(ast_line_info.ast_word.error_word, "Symbol does not exists.");
+                HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_DOES_NOT_EXIST);
                 error_flag=TRUE;
             }
         }
@@ -244,10 +220,10 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
        line_number++;
     }
     if (error_flag) {
-        printf("## Second pass encountered errors.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_SECOND_PASS);
         return FALSE;
     } else {
-        printf("## Second pass completed successfully.\n");
+        PRINT_MESSAGE(INFO_MSG_TYPE, INFO_SECOND_PASS);
         return TRUE;
     }
 }

@@ -15,7 +15,7 @@ void add_extern_node(extern_table *table, char *symbol_name, int address) {
     extern_node *new_node = (extern_node *)malloc(sizeof(extern_node));
     if (new_node == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     new_node->symbol_name = strdup(symbol_name);

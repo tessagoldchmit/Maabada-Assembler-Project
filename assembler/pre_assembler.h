@@ -6,6 +6,10 @@
 #define MAX_MACRO_LENGTH 20
 #define MAX_MACRO_INST 100 /* Maximum length of content assumed. */
 
+#define MACRO_START "mcro"
+#define MACRO_END "endmcro"
+
+
 /**
  * Represents a macro, consisting of content and a name.
  */

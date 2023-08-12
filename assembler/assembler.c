@@ -94,7 +94,7 @@ bool process_file(char *base_filename) {
     }
 
     /* Second pass */
-    if (!second_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table, extern_table)) {
+    if (!second_pass_process(filename_with_am_suffix, ic, my_code_image, symbol_table, extern_table)) {
         return FALSE;
     }
 

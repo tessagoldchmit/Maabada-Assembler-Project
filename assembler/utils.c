@@ -55,23 +55,6 @@ int word_length(char *str) {
 }
 
 /**
- * Allocate memory with ast_error handling.
- * The returned pointer should be freed using the standard free function when it is no longer needed.
- *
- * @param size The size of the memory block to allocate.
- * @return A pointer to the allocated memory block.
- */
-void *safe_malloc(size_t size) {
-    void *ptr = malloc(size);
-    if (ptr == NULL) {
-        fprintf(stderr, "Failed to allocate memory.\n");
-        exit(EXIT_FAILURE);
-    }
-    return ptr;
-}
-
-
-/**
  * Concatenates a base string with an extension.
  *
  * This function takes two strings, `base` and `ext`, and concatenates them to create
@@ -102,7 +85,11 @@ char *concatenate_strings(char *base, char *ext) {
     return concatenated_string;
 }
 
-
+/**
+ * Checks if the given operand is a valid numeric constant.
+ * @param operand The operand to be checked.
+ * @return Returns TRUE if the operand is a valid numeric constant, otherwise FALSE.
+ */
 bool is_operand_a_number(char *operand) {
     if (*operand == '-' || *operand == '+') {
         operand++; /* Move past the sign character */
@@ -119,49 +106,13 @@ bool is_operand_a_number(char *operand) {
     return has_digits;
 }
 
+/**
+ * Checks if the given operand is a valid register representation.
+ * @param operand The operand to be checked.
+ * @return Returns TRUE if the operand is a valid register representation, otherwise FALSE.
+ */
 bool is_operand_a_register(char *operand) {
     if (strlen(operand) == 3 && operand[0] == '@' && operand[1] == 'r' && isdigit(operand[2]))
         return TRUE;
     return FALSE;
-}
-
-void write_entries_file(char *filename, symbol_table *table) {
-    char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
-    snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
-
-    FILE *entries_file = fopen(entries_filename, "w");
-    if (entries_file == NULL) {
-        fprintf(stderr, "Error opening entries file for writing.\n");
-        return;
-    }
-
-    symbol_node *current = table->first;
-    while (current != NULL) {
-        if (current->symbol_type == ENTRY) {
-            int current_symbol_address = get_symbol_address(table, current->symbol_name) + START_OF_MEMORY_ADDRESS;
-            fprintf(entries_file, "%s\t%d\n", current->symbol_name, current_symbol_address);
-        }
-        current = current->next_symbol;
-    }
-
-    fclose(entries_file);
-}
-
-void write_externals_file(char *filename, extern_table *table) {
-    char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
-    snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);
-
-    FILE *externals_file = fopen(externals_filename, "w");
-    if (externals_file == NULL) {
-        fprintf(stderr, "Error opening entries file for writing.\n");
-        return;
-    }
-
-    extern_node *current = table->first;
-    while (current != NULL) {
-        fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address + START_OF_MEMORY_ADDRESS);
-        current = current->next;
-    }
-
-    fclose(externals_file);
 }

@@ -6,9 +6,11 @@
 #include "symbols.h"
 #include "extern_symbols.h"
 
-bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
-                         code_image *my_code_image, symbol_table *symbol_table, extern_table *extern_table);
+#define R 2
+#define E 1
 
+bool second_pass_process(char *filename_with_am_suffix, int *ic, code_image *my_code_image, symbol_table *symbol_table,
+                         extern_table *extern_table);
 
 
 #endif /* SECOND_PASS_H */

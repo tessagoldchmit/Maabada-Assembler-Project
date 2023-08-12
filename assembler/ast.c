@@ -7,6 +7,12 @@
 #include "symbols.h"
 #include "logs.h"
 
+/**
+ * Extracts the directive from the input line and updates the AST accordingly.
+ * @param line_ptr Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ * @return Updated pointer to the input line.
+ */
 char *get_directive(char *line_ptr, ast *ast) {
     /* Skip '.' */
     (line_ptr)++;
@@ -34,6 +40,11 @@ char *get_directive(char *line_ptr, ast *ast) {
     return line_ptr;
 }
 
+/**
+ * Extracts a string from the input line and updates the AST accordingly.
+ * @param ptr Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ */
 static void get_string(char *ptr, ast *ast) {
     char *end_quote;
     ptr = skip_spaces(ptr);
@@ -65,6 +76,11 @@ static void get_string(char *ptr, ast *ast) {
     }
 }
 
+/**
+ * Extracts data integers from the input line and updates the AST accordingly.
+ * @param ptr Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ */
 static void get_data(char *ptr, ast *ast) {
     char *end_ptr;
     int value;
@@ -111,6 +127,11 @@ static void get_data(char *ptr, ast *ast) {
 
 }
 
+/**
+ * Extracts entry/extern symbol from the input line and updates the AST accordingly.
+ * @param ptr Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ */
 static void get_ent_extern_symbol(char *ptr, ast *ast) {
     char *symbol_name = NULL;
     int len;
@@ -134,9 +155,8 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
     symbol_name[len] = '\0';
     ptr += len;
 
-
     if (!is_symbol_valid(symbol_name)) {
-       HANDLE_AST_ERROR(&ast, ERROR_INVALID_SYMBOL);
+        HANDLE_AST_ERROR(&ast, ERROR_INVALID_SYMBOL);
         free(symbol_name);
         return;
     }
@@ -150,10 +170,11 @@ static void get_ent_extern_symbol(char *ptr, ast *ast) {
     }
 }
 
-bool is_symbol(char *line) {
-    return strchr(line, ':') != NULL;
-}
-
+/**
+ * Checks the group type of an instruction based on its instruction name.
+ * @param instruction_name The name of the instruction.
+ * @return The group type of the instruction.
+ */
 group_type check_group(instruction_name instruction_name) {
     if (instruction_name == MOV_TYPE || instruction_name == CMP_TYPE || instruction_name == ADD_TYPE ||
         instruction_name == SUB_TYPE || instruction_name == LEA_TYPE) {
@@ -168,8 +189,12 @@ group_type check_group(instruction_name instruction_name) {
     return 0;
 }
 
-
-
+/**
+ * Extracts the code instruction from the input line and updates the AST accordingly.
+ * @param line Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ * @return Updated pointer to the input line.
+ */
 char *get_code_instruction(char *line, ast *ast) {
     int len;
     char *line_ptr = line;
@@ -201,6 +226,12 @@ char *get_code_instruction(char *line, ast *ast) {
     return line_ptr;
 }
 
+/**
+ * Checks the operand type of an operand and provides an error message if needed.
+ * @param operand Operand string to be checked.
+ * @param error_msg Pointer to the error message to be populated if needed.
+ * @return The operand type.
+ */
 operand_type check_operand_type(char *operand, error *error_msg) {
     char *endptr;
     long value;
@@ -238,6 +269,11 @@ operand_type check_operand_type(char *operand, error *error_msg) {
     }
 }
 
+/**
+ * Checks operands for group A instructions and updates the AST accordingly.
+ * @param line Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ */
 void check_operands_for_group_a(char *line, ast *ast) {
     char *line_ptr = line;
     char *endptr;
@@ -245,7 +281,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     char *operand;
 
     error *error_msg = NULL;
-    error_msg = (error*)malloc(sizeof(char));
+    error_msg = (error *) malloc(sizeof(char));
     if (error_msg == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         free(error_msg);
@@ -339,14 +375,18 @@ void check_operands_for_group_a(char *line, ast *ast) {
     }
 }
 
-
+/**
+ * Checks operands for group B instructions and updates the AST accordingly.
+ * @param line Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ */
 void check_operands_for_group_b(char *line, ast *ast) {
     char *line_ptr = line;
     char *endptr;
     int len;
     char *operand;
     error *error_msg = NULL;
-    error_msg = (error*)malloc(sizeof(char));
+    error_msg = (error *) malloc(sizeof(char));
     if (error_msg == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         free(error_msg);
@@ -390,7 +430,7 @@ void check_operands_for_group_b(char *line, ast *ast) {
         return;
     } else {
         if (ast->ast_word.instruction_word.instruction_union.group_b.target_type == NUMBER_OPERAND_TYPE) {
-            ast->ast_word.instruction_word.instruction_union.group_b.target_value.number =  strtol(operand, &endptr, 10);
+            ast->ast_word.instruction_word.instruction_union.group_b.target_value.number = strtol(operand, &endptr, 10);
         } else if (ast->ast_word.instruction_word.instruction_union.group_b.target_type == SYMBOL_OPERAND_TYPE) {
             strcpy(ast->ast_word.instruction_word.instruction_union.group_b.target_value.symbol, operand);
         } else if (ast->ast_word.instruction_word.instruction_union.group_b.target_type == REGISTER_OPERAND_TYPE) {
@@ -402,6 +442,11 @@ void check_operands_for_group_b(char *line, ast *ast) {
     }
 }
 
+/**
+ * Checks operands for group C instructions and updates the AST accordingly.
+ * @param line Pointer to the input line.
+ * @param ast Pointer to the AST structure to be updated.
+ */
 void check_operands_for_group_c(char *line, ast *ast) {
     char *line_ptr = line;
 
@@ -412,11 +457,17 @@ void check_operands_for_group_c(char *line, ast *ast) {
     }
 }
 
+/**
+ * Parses an input line and populates an Abstract Syntax Tree (AST) structure.
+ * @param line The input line to be parsed.
+ * @param line_number The line number of the input line.
+ * @return The populated AST structure.
+ */
 ast get_ast_line_info(char *line, int line_number) {
     ast ast = {0};
     char *line_ptr = line;
     char *symbol_name = NULL;
-    ast.line_number=line_number;
+    ast.line_number = line_number;
 
     /* is a symbol definition */
     line_ptr = skip_spaces(line_ptr);

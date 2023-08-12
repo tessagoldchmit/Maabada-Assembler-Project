@@ -4,7 +4,6 @@
 #include "data_structures.h"
 #include "symbols.h"
 
-bool is_symbol(char *line);
 
 void decode_data(char* line, ast ast_line_info, int *dc, data_image *my_data_image);
 

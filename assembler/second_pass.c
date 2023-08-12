@@ -6,8 +6,6 @@
 #include "symbols.h"
 #include "logs.h"
 
-#define R 2
-#define E 1
 
 int get_correct_a_r_e_for_source(ast ast_line_info, symbol_table *symbol_table) {
     int symbol_type = -1;
@@ -42,7 +40,8 @@ int get_correct_a_r_e_for_target(ast ast_line_info, symbol_table *symbol_table) 
 }
 
 
-bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
+bool
+decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
     int source_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_type;
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_type;
 
@@ -67,11 +66,10 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (source_type == SYMBOL_OPERAND_TYPE) {
         char *source_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol;
         int source_symbol_address = get_symbol_address(symbol_table, source_symbol);
-        if(source_symbol_address == NONEXIST_SYMBOL_ADDRESS){
+        if (source_symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
             printf("Symbol does not exist\n");
             return FALSE;
-        }
-        else if (source_symbol_address != 1) {
+        } else if (source_symbol_address != 1) {
             int source_are = get_correct_a_r_e_for_source(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], source_are, 0, 1);
             source_symbol_address = source_symbol_address + START_OF_MEMORY_ADDRESS;
@@ -79,8 +77,11 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[1] = insert_bits(current_code_node->word[1], source_symbol_address, 0, 11);
         }
-        if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol)){
-            add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol, *ic+(current_code_node->L-1));
+        if (is_symbol_extern(symbol_table,
+                             current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol)) {
+            add_extern_node(extern_table,
+                            current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol,
+                            *ic + (current_code_node->L - 1));
         }
     } else if (source_type == NUMBER_OPERAND_TYPE) {
         int source_number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.number;
@@ -96,11 +97,10 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (target_type == SYMBOL_OPERAND_TYPE) {
         char *target_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol;
         int target_symbol_address = get_symbol_address(symbol_table, target_symbol);
-        if(target_symbol_address == NONEXIST_SYMBOL_ADDRESS){
+        if (target_symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
             printf("Symbol does not exist\n");
             return FALSE;
-        }
-        else if (target_symbol_address != 1) {
+        } else if (target_symbol_address != 1) {
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_are, 0, 1);
             target_symbol_address = target_symbol_address + START_OF_MEMORY_ADDRESS;
@@ -108,8 +108,11 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         } else {
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_symbol_address, 0, 11);
         }
-        if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol)){
-            add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol, *ic+(current_code_node->L-1));
+        if (is_symbol_extern(symbol_table,
+                             current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol)) {
+            add_extern_node(extern_table,
+                            current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol,
+                            *ic + (current_code_node->L - 1));
         }
     } else if (target_type == NUMBER_OPERAND_TYPE) {
         int target_number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.number;
@@ -118,7 +121,8 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
     return TRUE;
 }
 
-bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
+bool
+decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_type;
 
     /* handle target */
@@ -130,11 +134,10 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
     } else if (target_type == SYMBOL_OPERAND_TYPE) {
         char *symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol;
         int symbol_address = get_symbol_address(symbol_table, symbol);
-        if(symbol_address == NONEXIST_SYMBOL_ADDRESS){
+        if (symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
             printf("Symbol does not exist\n");
             return FALSE;
-        }
-        else if (symbol_address != -1) { /* valid symbol case */
+        } else if (symbol_address != -1) { /* valid symbol case */
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], target_are, 0, 1);
             symbol_address = symbol_address + START_OF_MEMORY_ADDRESS;
@@ -142,8 +145,11 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
         } else { /* extern symbol case */
             current_code_node->word[1] = insert_bits(current_code_node->word[1], 1, 0, 11);
         }
-        if(is_symbol_extern(symbol_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol)){
-            add_extern_node(extern_table, current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol, *ic+(current_code_node->L-1));
+        if (is_symbol_extern(symbol_table,
+                             current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol)) {
+            add_extern_node(extern_table,
+                            current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol,
+                            *ic + (current_code_node->L - 1));
         }
     } else if (target_type == NUMBER_OPERAND_TYPE) {
         int number = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.number;
@@ -155,33 +161,26 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
 
 bool decode_code(symbol_table *symbol_table, code_node *current_code_node, extern_table *extern_table, int *ic) {
     if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_A) {
-        if(decode_code_group_a(current_code_node, symbol_table, extern_table, ic)==FALSE){
+        if (decode_code_group_a(current_code_node, symbol_table, extern_table, ic) == FALSE) {
             return FALSE;
         }
     } else if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_B) {
-        if(decode_code_group_b(current_code_node, symbol_table, extern_table, ic)==FALSE){
+        if (decode_code_group_b(current_code_node, symbol_table, extern_table, ic) == FALSE) {
             return FALSE;
         }
     }
 
-    *ic+=current_code_node->L;
+    *ic += current_code_node->L;
     return TRUE;
 }
 
-/*
-    Processes a line during the second pass of the assembler.
 
-    @param ast The ast tree representing the structure of the line.
-    @param table The symbol table used for tracking symbols.
-    @param line Information about the processed line.
-    @return TRUE if the line is processed successfully, FALSE otherwise.
-*/
-bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
-                         code_image *my_code_image, symbol_table *symbol_table, extern_table *extern_table) {
+bool second_pass_process(char *filename_with_am_suffix, int *ic, code_image *my_code_image, symbol_table *symbol_table,
+                         extern_table *extern_table) {
     bool error_flag = FALSE;
 
-    int line_number=1;
-    *ic=0;
+    int line_number = 1;
+    *ic = 0;
     FILE *am_file;
     char line[MAX_LINE_LENGTH];
     /* Open .am file */
@@ -197,26 +196,24 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
 
         if (ast_line_info.ast_word_type == DIRECTIVE) {
             if (ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
-                if(check_entry_symbol_duplication(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol)==FALSE) {
+                if (check_entry_symbol_duplication(symbol_table,
+                                                   ast_line_info.ast_word.directive_word.directive_option.symbol) ==
+                    FALSE) {
                     HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_ALREADY_EXISTS);
                     error_flag = TRUE;
-                }
-                else
+                } else
                     mark_symbol_as_entry(symbol_table, ast_line_info.ast_word.directive_word.directive_option.symbol);
             }
 
 
         } else {
             code_node *current_code_node = find_code_node_by_line(my_code_image, line);
-            if(decode_code(symbol_table, current_code_node, extern_table, ic)==FALSE){
+            if (decode_code(symbol_table, current_code_node, extern_table, ic) == FALSE) {
                 HANDLE_AST_ERROR_NON_POINTER(&ast_line_info, ERROR_SYMBOL_DOES_NOT_EXIST);
-                error_flag=TRUE;
+                error_flag = TRUE;
             }
         }
-       /* printf("\nast after checking error:\n");
-        print_ast(&ast_line_info);
-        printf("-------------------------\n");*/
-       line_number++;
+        line_number++;
     }
     if (error_flag) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_SECOND_PASS);

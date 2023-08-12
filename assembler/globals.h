@@ -1,42 +1,51 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-/* Maximum file name length */
+
+/* Maximum length of a file name */
 #define MAX_FILE_NAME 80
 
-/* Total memory size */
+/* Total memory size in words */
 #define MEMORY_SIZE 1024
 
-/* Max line length */
+/* Maximum length of a line in the input file */
 #define MAX_LINE_LENGTH 80
 
-/* Max symbol length*/
+/* Maximum length of a symbol */
 #define MAX_SYMBOL_LENGTH 31
 
-/* Start of memory we can access */
+/* Starting memory address available for use */
 #define START_OF_MEMORY_ADDRESS 100
 
+/* Maximum length of a string */
 #define MAX_STRING_LENGTH 80
+
+/* Maximum length of a number */
 #define MAX_NUMBER_LENGTH 80
+
+/* Maximum length of an AST error message */
 #define MAX_AST_ERROR_LENGTH 80
 
+/* First and last register numbers */
 #define FIRST_REGISTER_NUM 0
 #define LAST_REGISTER_NUM 7
 
-#define NO_OPERAND 0 /* For words that doesn't take operand */
-#define GROUP_A_WORD_LENGTH 3 /* The amount of words take place in the memory for group a */
-#define DEFAULT_WORD_LENGTH 2 /* The default amount of words take place in the memory */
-#define GROUP_C_WORD_LENGTH 1 /* The amount of words take place in the memory for group c */
-#define IMMEDIATE_ADDRESS 1 /* Address method */
-#define DIRECT_ADDRESS 3 /* Address method */
-#define REGISTER_ADDRESS 5 /* Address method */
-#define EXTERN_DECIMAL_ADDRESS -1 /* First pass - no address for .extern symbols */
-#define NONEXIST_SYMBOL_ADDRESS -2
+/* Operand addressing methods */
+#define NO_OPERAND 0
+#define GROUP_A_WORD_LENGTH 3
+#define DEFAULT_WORD_LENGTH 2
+#define GROUP_C_WORD_LENGTH 1
+#define IMMEDIATE_ADDRESS 1
+#define DIRECT_ADDRESS 3
+#define REGISTER_ADDRESS 5
+#define EXTERN_DECIMAL_ADDRESS (-1)
+#define NON_EXIST_SYMBOL_ADDRESS (-2)
 
-/* Defines a boolean ast_word_type (T/F) */
+/* Boolean values */
 typedef enum {
     FALSE,
     TRUE
 } bool;
+
 
 #endif /* GLOBALS_H */

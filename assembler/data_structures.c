@@ -202,18 +202,3 @@ code_node* find_code_node_by_line(code_image* code_image, char* line) {
     }
     return NULL;
 }
-
-data_node* find_data_node_by_line(data_image* data_image, char* line) {
-    size_t line_length = strlen(line);
-    if (line_length > 0 && line[line_length - 1] == '\n') {
-        line[line_length - 1] = '\0';  /* () Replace newline with null terminator */
-    }
-    data_node* current = data_image->first;
-    while (current != NULL) {
-        if (strcmp(current->original_line, line) == 0) {
-            return current;
-        }
-        current = current->next_node;
-    }
-    return NULL;
-}

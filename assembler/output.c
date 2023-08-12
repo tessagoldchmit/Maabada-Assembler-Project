@@ -1,7 +1,11 @@
 #include "output.h"
 #include "utils.h"
 
-
+/**
+ * Converts a 6-bit binary number to the corresponding Base64 character.
+ * @param binary_number The 6-bit binary number to be converted.
+ * @return The corresponding Base64 character.
+ */
 char binary_to_base64(unsigned int binary_number) {
     unsigned int six_bit_group = binary_number & 0b111111;
 
@@ -20,6 +24,14 @@ char binary_to_base64(unsigned int binary_number) {
     }
 }
 
+/**
+ * Writes the object file (.ob) containing the code and data images.
+ * @param filename The name of the source file (without extension).
+ * @param my_code_image Pointer to the code image structure.
+ * @param ic Pointer to the Instruction Counter value.
+ * @param my_data_image Pointer to the data image structure.
+ * @param dc Pointer to the Data Counter value.
+ */
 void write_object_file(char *filename, code_image *my_code_image, int *ic, data_image *my_data_image, int *dc) {
     FILE *file;
     char *filename_with_obj_suffix = concatenate_strings(filename, ".ob");
@@ -70,4 +82,55 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
 
     /* Free the allocated memory */
     fclose(file);
+}
+
+/**
+ * Writes the entries file (.ent) containing the symbols marked as entry points.
+ * @param filename The name of the source file (without extension).
+ * @param table Pointer to the symbol table structure.
+ */
+void write_entries_file(char *filename, symbol_table *table) {
+    char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
+    snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
+
+    FILE *entries_file = fopen(entries_filename, "w");
+    if (entries_file == NULL) {
+        fprintf(stderr, "Error opening entries file for writing.\n");
+        return;
+    }
+
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        if (current->symbol_type == ENTRY) {
+            int current_symbol_address = get_symbol_address(table, current->symbol_name) + START_OF_MEMORY_ADDRESS;
+            fprintf(entries_file, "%s\t%d\n", current->symbol_name, current_symbol_address);
+        }
+        current = current->next_symbol;
+    }
+
+    fclose(entries_file);
+}
+
+/**
+ * Writes the externals file (.ext) containing the symbols marked as externals.
+ * @param filename The name of the source file (without extension).
+ * @param table Pointer to the extern table structure.
+ */
+void write_externals_file(char *filename, extern_table *table) {
+    char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
+    snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);
+
+    FILE *externals_file = fopen(externals_filename, "w");
+    if (externals_file == NULL) {
+        fprintf(stderr, "Error opening entries file for writing.\n");
+        return;
+    }
+
+    extern_node *current = table->first;
+    while (current != NULL) {
+        fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address + START_OF_MEMORY_ADDRESS);
+        current = current->next;
+    }
+
+    fclose(externals_file);
 }

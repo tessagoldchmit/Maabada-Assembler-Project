@@ -1,5 +1,6 @@
 
-/* Macro definition for the error handling code */
+/* Macro definitions for handling errors in the AST */
+
 #define HANDLE_AST_ERROR(ast, error_msg) \
     do { \
         (*(ast))->ast_word_type = ERROR; \
@@ -14,25 +15,27 @@
         printf("Error in line %d: %s\n", (ast)->line_number, error_msg); \
     } while (0)
 
+/* Message types for PRINT_MESSAGE macro */
 typedef enum {
     INFO_MSG_TYPE,
     ERROR_MSG_TYPE
 } message_type;
 
+/* Macro to print messages with type and content */
 #define PRINT_MESSAGE(type, msg) \
     do { \
         const char *typeStr = ((type) == INFO_MSG_TYPE) ? "Info" : "Error"; \
         printf("%s: %s\n", typeStr, msg); \
     } while (0)
 
-/* Info */
+/* Informational Messages */
 
 #define INFO_START_OF_ASSEMBLER   "Start processing files..."
 #define INFO_FIRST_PASS   "First pass completed successfully."
 #define INFO_SECOND_PASS  "Second pass completed successfully."
 #define INFO_ALL_FILES_HAVE_BEEN_PROCESSED "All files have been processed!"
 
-/* Errors */
+/* Error Messages */
 
 #define ERROR_IN_PREPROCESSING     "Preprocessing step encountered errors. Macros could not be spread correctly."
 #define ERROR_IN_FIRST_PASS        "First pass encountered errors."

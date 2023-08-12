@@ -48,6 +48,4 @@ unsigned short insert_bits(unsigned short value, int num, int start_bit, int end
 
 code_node* find_code_node_by_line(code_image* code_image, char* line);
 
-data_node* find_data_node_by_line(data_image* data_image, char* line);
-
 #endif /* DATA_STRUCTURES_H */

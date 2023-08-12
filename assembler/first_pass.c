@@ -217,7 +217,6 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
         }
     }
     update_data_dc(symbol_table, ic);
-//    print_symbol_table(symbol_table);
     if (error_flag) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_FIRST_PASS);
         return FALSE;

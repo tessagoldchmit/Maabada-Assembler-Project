@@ -62,7 +62,6 @@ bool preprocess_file(char *base_filename) {
         }
 
         /* Remove leading spaces and get the word_union length */
-        /* TODO handle the invalid name of the macro. if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
         int command_length = word_length(main_str_ptr);
         int macro_status;
 

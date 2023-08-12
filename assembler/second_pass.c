@@ -180,7 +180,6 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_i
                          code_image *my_code_image, symbol_table *symbol_table, extern_table *extern_table) {
     bool error_flag = FALSE;
 
-    /* TODO macro for repetitives */
     int line_number=1;
     *ic=0;
     FILE *am_file;

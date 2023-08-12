@@ -25,6 +25,5 @@ K: .data 7.5, 8, 9.5
 ;MAIN: mov @r3 ,NOTEXIST
 
 
-;todo: understand why this symbol is invalid (tessa)
 ; valid ahusharmuta!
-;    PLUS: .data +1, -1
+    PLUS: .data +1, -1

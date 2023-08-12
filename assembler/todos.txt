@@ -1,19 +1,24 @@
-/**********************************************************************************************************************/
+TODO add errors printing
+make sure all errors are printed
 
-PRIORITIZED TASKS:
+TODO move all errors texts to errors file
+move all prints of errors to use PRINT_MESSAGE under logs.h
 
-add errors printing
+TODO encapsulation
 
-move all errors texts to errors file
+TODO add docstring to every function
 
-encapsulation
+TODO handle the invalid name of the macro.
+if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
 
-/**********************************************************************************************************************/
+TODO handle decimal numbers
+for example: K: .data 7.5, 8, 9.5
+ARGUMENTS FOR DATA MUST BE INTEGERS
 
-GENERAL TASKS:
-
-add docstring to every function
-
-be happyyyyyyyyyyyyyyyyyyyyyyyyy
-
-/**********************************************************************************************************************/
+TODO macro for repetitives
+for example:, for opening .am/.as files
+am_file = fopen(filename_with_am_suffix, "r");
+if (am_file == NULL) {
+    fprintf(stderr, "Error: Failed to open .am file '%s' for reading.\n", filename_with_am_suffix);
+    return FALSE;
+}

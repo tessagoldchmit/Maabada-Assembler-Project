@@ -109,7 +109,7 @@ static void get_data(char *ptr, ast *ast) {
             return;
         } else {
             if (ptr[0] != ',') {
-                HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
+                HANDLE_AST_ERROR(&ast, ERROR_ARGS_FOR_DATA_MUST_BE_INTEGERS);
                 return;
             }
             ptr += 1; /* Skip the ',' */

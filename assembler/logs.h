@@ -65,7 +65,8 @@ typedef enum {
 #define ERROR_STRING_START_QUOTES  "String must start with quotes(\")."
 #define ERROR_STRING_END_QUOTES    "String must end with quotes(\")."
 
-#define ERROR_DATA_MISSING_INT     ".data instruction must have at least one integer."
+#define ERROR_DATA_MISSING_INT                ".data instruction must have at least one integer."
+#define ERROR_ARGS_FOR_DATA_MUST_BE_INTEGERS  "arguments for data must be integers."
 
 #define ERROR_MISSING_OPERAND             "Missing operand."
 #define ERROR_ILLEGAL_OPERAND             "Illegal operand."

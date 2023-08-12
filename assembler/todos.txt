@@ -30,10 +30,6 @@ second_pass.h
 TODO handle the invalid name of the macro.
 if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
 
-TODO handle decimal numbers
-for example: K: .data 7.5, 8, 9.5
-ARGUMENTS FOR DATA MUST BE INTEGERS
-
 TODO macro for repetitives
 for example:, for opening .am/.as files
 am_file = fopen(filename_with_am_suffix, "r");

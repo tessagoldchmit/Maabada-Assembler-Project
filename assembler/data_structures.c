@@ -1,5 +1,5 @@
 #include "data_structures.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -19,7 +19,17 @@ code_node *create_code_node_registers(char* line, int L, ast ast, int new_operan
     int i;
 
     code_node *new_node = (code_node *) malloc(sizeof(code_node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node);
+        exit(1);
+    }
     new_node->word = (int*)malloc(L * sizeof(int));
+    if (new_node->word == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node->word);
+        exit(1);
+    }
     for (i = 0; i < L; i++)
         new_node->word[i]=0; /* Making sure zeroed */
 
@@ -50,7 +60,17 @@ code_node *create_code_node(char* line, int L, ast ast, int new_operand_code, in
     int i;
 
     code_node *new_node = (code_node *) malloc(sizeof(code_node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node);
+        exit(1);
+    }
     new_node->word = (int*)malloc(L * sizeof(int));
+    if (new_node->word == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node->word);
+        exit(1);
+    }
     for (i = 0; i < L; i++)
         new_node->word[i]=0; /* Making sure zeroed */
 
@@ -80,6 +100,11 @@ code_node *create_code_node(char* line, int L, ast ast, int new_operand_code, in
  */
 code_image *initialize_code_image() {
     code_image *new_code_image = malloc(sizeof(code_image));
+    if (new_code_image == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_code_image);
+        exit(1);
+    }
     new_code_image->first = NULL;
     new_code_image->last = NULL;
 
@@ -100,7 +125,17 @@ void add_code_node(code_image *code_image, code_node *new_node) {
 /* Creates a new data node */
 data_node *create_data_node(char* line, int L, ast ast) {
     data_node *new_node = (data_node *) malloc(sizeof(data_node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node);
+        exit(1);
+    }
     new_node->word = (int*)malloc(L * sizeof(int));
+    if (new_node->word == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node->word);
+        exit(1);
+    }
     int i;
     if(ast.ast_word.directive_word.directive_type == STRING_TYPE)
         for (i = 0; i <= L; i++)
@@ -131,6 +166,11 @@ data_node *create_data_node(char* line, int L, ast ast) {
  */
 data_image *initialize_data_image() {
     data_image *new_data_image = malloc(sizeof(data_image));
+    if (new_data_image == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_data_image);
+        exit(1);
+    }
     new_data_image->first = NULL;
     new_data_image->last = NULL;
 

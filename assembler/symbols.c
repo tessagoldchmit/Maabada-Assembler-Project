@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "logs.h"
 
 const char *reserved_words[] = {
@@ -21,6 +21,11 @@ const char *reserved_words[] = {
  */
 symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type symbol_type) {
     symbol_node *new_symbol = (symbol_node *) malloc(sizeof(symbol_node));
+    if (new_symbol == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_symbol);
+        exit(1);
+    }
     new_symbol->symbol_name = strdup(symbol_name);
     new_symbol->decimal_address = decimal_address;
     new_symbol->symbol_type = symbol_type;
@@ -35,6 +40,11 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
  */
 symbol_table *initialize_symbol_table() {
     symbol_table *new_symbol_table = malloc(sizeof(symbol_table));
+    if (new_symbol_table == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_symbol_table);
+        exit(1);
+    }
     new_symbol_table->first = NULL;
     new_symbol_table->last = NULL;
 

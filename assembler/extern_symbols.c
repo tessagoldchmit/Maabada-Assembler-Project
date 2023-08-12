@@ -5,6 +5,11 @@
 
 extern_table *initialize_extern_table() {
     extern_table *new_extern_table = malloc(sizeof(extern_table));
+    if (new_extern_table == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_extern_table);
+        exit(1);
+    }
     new_extern_table->first = NULL;
     new_extern_table->last = NULL;
 
@@ -15,6 +20,7 @@ void add_extern_node(extern_table *table, char *symbol_name, int address) {
     extern_node *new_node = (extern_node *)malloc(sizeof(extern_node));
     if (new_node == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
+        free(new_node);
         exit(EXIT_FAILURE);
     }
 

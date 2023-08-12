@@ -51,7 +51,17 @@ int main(int argc, char *argv[]) {
 bool process_file(char *base_filename) {
     /* Initialize variables and data structures */
     int *ic = malloc(sizeof(int));
+    if (ic == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(ic);
+        exit(1);
+    }
     int *dc = malloc(sizeof(int));
+    if (dc == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(dc);
+        exit(1);
+    }
     *ic=0;
     *dc=0;
     data_image *my_data_image;

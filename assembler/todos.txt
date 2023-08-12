@@ -12,7 +12,6 @@ encapsulation
 
 GENERAL TASKS:
 
-make sure all malloc are handled safely + free them
 
 delete temp files
 

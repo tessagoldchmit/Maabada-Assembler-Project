@@ -26,4 +26,4 @@ K: .data 7.5, 8, 9.5
 
 
 ; valid ahusharmuta!
-    PLUS: .data +1, -1
+;    PLUS: .data +1, -1

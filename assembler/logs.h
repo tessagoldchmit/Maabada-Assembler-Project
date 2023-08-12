@@ -16,23 +16,21 @@
 
 typedef enum {
     INFO_MSG_TYPE,
-    WARNING_MSG_TYPE,
     ERROR_MSG_TYPE
 } message_type;
 
 #define PRINT_MESSAGE(type, msg) \
     do { \
-        const char *typeStr = ((type) == INFO_MSG_TYPE) ? "Info" : ((type) == WARNING_MSG_TYPE) ? "Warning" : "Error"; \
+        const char *typeStr = ((type) == INFO_MSG_TYPE) ? "Info" : "Error"; \
         printf("%s: %s\n", typeStr, msg); \
     } while (0)
 
 /* Info */
 
+#define INFO_START_OF_ASSEMBLER   "Start processing files..."
 #define INFO_FIRST_PASS   "First pass completed successfully."
 #define INFO_SECOND_PASS  "Second pass completed successfully."
 #define INFO_ALL_FILES_HAVE_BEEN_PROCESSED "All files have been processed!"
-
-/* Warnings */
 
 /* Errors */
 

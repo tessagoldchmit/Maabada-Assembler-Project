@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Process each file if the file name does not exceed the maximum length */
+    PRINT_MESSAGE(INFO_MSG_TYPE, INFO_START_OF_ASSEMBLER);
     for (i = 1; i < argc; i++) {
         if (strlen(argv[i]) > MAX_FILE_NAME) {
             PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FILE_NAME_TOO_LONG);

@@ -81,6 +81,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     }
 
     /* Free the allocated memory */
+    free(filename_with_obj_suffix);
     free(binary_numbers_arr);
     fclose(file);
 }

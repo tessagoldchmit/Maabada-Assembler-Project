@@ -69,6 +69,8 @@ bool preprocess_file(char *base_filename) {
         return FALSE;
     }
 
+    free(filename_with_as_suffix);
+
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "w");
     if (am_file == NULL) {
@@ -131,6 +133,7 @@ bool preprocess_file(char *base_filename) {
     }
 
     /* Free memory and close files */
+    free(filename_with_am_suffix);
     free_macro_array(&macro_array);
     fclose(as_file);
     fclose(am_file);

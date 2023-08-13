@@ -119,7 +119,7 @@ bool process_file(char *base_filename) {
     /* Free allocated memory */
     free(ic);
     free(dc);
-
+    free(filename_with_am_suffix);
     free_all_data_structures(my_code_image, my_data_image);
     free_symbols(symbol_table, extern_table);
 

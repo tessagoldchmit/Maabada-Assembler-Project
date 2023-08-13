@@ -16,7 +16,8 @@
 char *get_directive(char *line_ptr, ast *ast) {
     /* Skip '.' */
     (line_ptr)++;
-    char *directive = line_ptr;
+    char *directive;
+    directive = line_ptr;
 
     if (strncmp(directive, "string", 6) == 0) {
         ast->ast_word_type = DIRECTIVE;
@@ -194,6 +195,7 @@ char *get_code_instruction(char *line, ast *ast) {
     int len;
     char *line_ptr = line;
     char *command = NULL;
+    int i;
     for (len = 0; line_ptr[len] != '\0' && line_ptr[len] != '\n' &&
                   line_ptr[len] != EOF && !(isspace(line_ptr[len])); len++);
     command = malloc(sizeof(char) * len + 1);
@@ -208,7 +210,6 @@ char *get_code_instruction(char *line, ast *ast) {
 
     ast->ast_word_type = INSTRUCTION;
 
-    int i;
     for (i = 0; i < 16; ++i) {
         if (strncmp(command, instructions_map[i].name, strlen(command)) == 0) {
             ast->ast_word.instruction_word.instruction_name = instructions_map[i].type;
@@ -276,7 +277,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
     char *operand;
 
     error *error_msg = NULL;
-    error_msg = (error *) malloc(sizeof(char));
+    error_msg = (error *) malloc(sizeof(error));
     if (error_msg == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         free(error_msg);
@@ -494,7 +495,7 @@ ast get_ast_line_info(char *line, int line_number) {
         } else if (ast.ast_word.directive_word.directive_type == STRING_TYPE) {
             get_string(line_ptr, &ast);
             return ast;
-        } else if (ast.ast_word.directive_word.directive_type == DATA) {
+        } else if (ast.ast_word.directive_word.directive_type == DATA_TYPE) {
             get_data(line_ptr, &ast);
         } else if (ast.ast_word.directive_word.directive_type == ENTRY_TYPE ||
                    ast.ast_word.directive_word.directive_type == EXTERN_TYPE) {

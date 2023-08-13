@@ -213,11 +213,10 @@ bool decode_code(symbol_table *symbol_table, code_node *current_code_node, exter
 
 bool second_pass_process(char *filename_with_am_suffix, int *ic, code_image *my_code_image, symbol_table *symbol_table,
                          extern_table *extern_table) {
+    FILE *am_file;
     bool error_flag = FALSE;
-
     int line_number = 1;
     *ic = 0;
-    FILE *am_file;
     char line[MAX_LINE_LENGTH];
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "r");

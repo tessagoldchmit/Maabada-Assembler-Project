@@ -174,11 +174,12 @@ void add_data_node(data_image *data_image, data_node *new_node) {
 }
 
 code_node* find_code_node_by_line(code_image* code_image, char* line) {
+    code_node* current;
     size_t line_length = strlen(line);
     if (line_length > 0 && line[line_length - 1] == '\n') {
         line[line_length - 1] = '\0';  /* Replace newline with null terminator */
     }
-    code_node* current = code_image->first;
+    current = code_image->first;
     while (current != NULL) {
         if (strcmp(current->original_line, line) == 0) {
             return current;

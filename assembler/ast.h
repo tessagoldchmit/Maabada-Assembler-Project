@@ -21,7 +21,7 @@ typedef enum {
     PRN_TYPE,
     JSR_TYPE,
     RTS_TYPE,
-    STOP_TYPE,
+    STOP_TYPE
 } instruction_name;
 
 /**

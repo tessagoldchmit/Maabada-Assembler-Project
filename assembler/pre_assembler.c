@@ -57,6 +57,10 @@ bool preprocess_file(char *base_filename) {
     /* Create filename with .am suffix */
     char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
 
+    int idx;
+    int command_length;
+    int macro_status;
+
 
     /* Open .as file  */
     as_file = fopen(filename_with_as_suffix, "r");
@@ -89,8 +93,7 @@ bool preprocess_file(char *base_filename) {
         }
 
         /* Remove leading spaces and get the word_union length */
-        int command_length = word_length(main_str_ptr);
-        int macro_status;
+        command_length = word_length(main_str_ptr);
 
         /* Check the status of the current line with respect to macros */
         macro_status = current_macro_status(main_str_ptr, is_macro_flag, command_length);
@@ -113,7 +116,6 @@ bool preprocess_file(char *base_filename) {
             replaced_flag = FALSE;
 
             /* Check if the line contains a macro reference and replace it */
-            int idx;
             for (idx = 0; idx < macro_array.used; idx++) {
                 if (strncmp(main_str_ptr, macro_array.array[idx].name, command_length) == 0 &&
                     empty_string(main_str_ptr + command_length)) { /* If it's a name of a macro */
@@ -147,9 +149,10 @@ void init_macro_array(macro_array *arr, int initial_size) {
 }
 
 void insert_macro_array(macro_array *arr, char *name, char *content) {
+    void *temp;
     if (arr->used == arr->size) {
         arr->size *= 2;
-        void *temp = realloc(arr->array, arr->size * sizeof(macro));
+        temp = realloc(arr->array, arr->size * sizeof(macro));
         if (!temp) {
             PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_REALLOCATE_MEM);
             exit(EXIT_FAILURE);

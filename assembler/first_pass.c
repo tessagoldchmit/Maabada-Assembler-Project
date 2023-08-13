@@ -17,7 +17,8 @@
 void decode_data(char *line, ast ast_line_info, int *dc, data_image *my_data_image) {
     data_node *new_node;
     int word_length = 0;
-    int i = 0;
+    int i;
+    i=0;
 
     /* handle directive */
     if (ast_line_info.ast_word.directive_word.directive_type == STRING_TYPE) {
@@ -134,12 +135,13 @@ int analyze_operands(char *line, ast *ast_line_info, code_image *my_code_image) 
     @param ic A pointer to the instruction counter value.
 */
 void update_data_dc(symbol_table *my_symbol_table, int *ic) {
+    symbol_node *symbol_node_pointer;
     if (my_symbol_table->first == NULL) {
         /* Symbol table is empty, nothing to update */
         return;
     }
 
-    symbol_node *symbol_node_pointer = my_symbol_table->first;
+    symbol_node_pointer = my_symbol_table->first;
     do {
         if (symbol_node_pointer->symbol_type == DATA)
             symbol_node_pointer->decimal_address += *ic;
@@ -157,6 +159,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
     int L;
     int line_number = 0;
     size_t line_length;
+    int c;
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "r");
     if (am_file == NULL) {
@@ -180,7 +183,6 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
             error_flag = 1;
 
             /* Skip the remaining characters in the overlong line */
-            int c;
             while ((c = fgetc(am_file)) != '\n' && c != EOF) {
             }
         } else {

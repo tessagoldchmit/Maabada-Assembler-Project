@@ -30,7 +30,7 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
         free(new_symbol);
         exit(1);
     }
-    new_symbol->symbol_name = strdup(symbol_name);
+    new_symbol->symbol_name = strdup(symbol_name); /*TODO strdup is not allowed in c90*/
     new_symbol->decimal_address = decimal_address;
     new_symbol->symbol_type = symbol_type;
     new_symbol->next_symbol = NULL;
@@ -52,7 +52,9 @@ symbol_table *initialize_symbol_table() {
 
 bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, symbol_type symbol_type) {
     /* Check if the symbol already exists in the table */
-    symbol_node *current = table->first;
+    symbol_node *current;
+    symbol_node *new_symbol;
+    current = table->first;
     while (current != NULL) {
         if (strcmp(current->symbol_name, symbol_name) == 0) {
             /* Symbol already exists, return false */
@@ -60,7 +62,6 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
         }
         current = current->next_symbol;
     }
-    symbol_node *new_symbol;
 
     /* Create a new symbol node */
     if (symbol_type == EXTERNAL)
@@ -201,7 +202,7 @@ void add_extern_node(extern_table *table, char *symbol_name, int address) {
         exit(EXIT_FAILURE);
     }
 
-    new_node->symbol_name = strdup(symbol_name);
+    new_node->symbol_name = strdup(symbol_name); /* TODO strdup not allowed in c90 */
     new_node->address = address;
     new_node->next = NULL;
 

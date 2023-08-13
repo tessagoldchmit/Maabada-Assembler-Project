@@ -50,10 +50,11 @@ char *concatenate_strings(char *base, char *ext) {
 }
 
 bool is_operand_a_number(char *operand) {
+    bool has_digits;
+    has_digits = FALSE;
     if (*operand == '-' || *operand == '+') {
         operand++; /* Move past the sign character */
     }
-    bool has_digits = FALSE;
     while (*operand != '\0') {
         if (!isdigit(*operand)) {
             return FALSE;

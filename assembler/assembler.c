@@ -52,13 +52,22 @@ int main(int argc, char *argv[]) {
 */
 bool process_file(char *base_filename) {
     /* Initialize variables and data structures */
-    int *ic = malloc(sizeof(int));
+    int *ic;
+    int *dc;
+    data_image *my_data_image;
+    code_image *my_code_image;
+    symbol_table *symbol_table;
+    extern_table *extern_table;
+    bool success = TRUE, has_extern, has_entry;
+    char *filename_with_am_suffix;
+
+    ic = malloc(sizeof(int));
     if (ic == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         free(ic);
         exit(1);
     }
-    int *dc = malloc(sizeof(int));
+    dc = malloc(sizeof(int));
     if (dc == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         free(dc);
@@ -66,19 +75,11 @@ bool process_file(char *base_filename) {
     }
     *ic=0;
     *dc=0;
-    data_image *my_data_image;
+
     my_data_image = initialize_data_image();
-
-    code_image *my_code_image;
     my_code_image = initialize_code_image();
-
-    symbol_table *symbol_table;
     symbol_table = initialize_symbol_table();
-
-    extern_table *extern_table;
     extern_table = initialize_extern_table();
-
-    bool success = TRUE, has_extern, has_entry;
 
     /* Preprocessing step */
     if (!preprocess_file(base_filename)) {
@@ -87,7 +88,7 @@ bool process_file(char *base_filename) {
     }
 
     /* First pass */
-    char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
+    filename_with_am_suffix = concatenate_strings(base_filename, ".am");
     if (!first_pass_process(filename_with_am_suffix, ic, dc, my_data_image, my_code_image, symbol_table)) {
         return FALSE;
     }

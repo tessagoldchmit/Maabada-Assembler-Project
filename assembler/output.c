@@ -1,5 +1,6 @@
 #include "output.h"
 #include "utils.h"
+#include "stdio.h"
 
 /**
  * Converts a 6-bit binary number to the corresponding Base64 character.
@@ -7,7 +8,7 @@
  * @return The corresponding Base64 character.
  */
 char binary_to_base64(unsigned int binary_number) {
-    unsigned int six_bit_group = binary_number & 0b111111;
+    unsigned int six_bit_group = binary_number & 0x3F;
 
     if (six_bit_group <= 25) {
         return 'A' + six_bit_group; /* 'A' to 'Z' */
@@ -27,7 +28,13 @@ char binary_to_base64(unsigned int binary_number) {
 void write_object_file(char *filename, code_image *my_code_image, int *ic, data_image *my_data_image, int *dc) {
     FILE *file;
     char *filename_with_obj_suffix = concatenate_strings(filename, ".ob");
-    unsigned int binary_numbers_arr[*ic + *dc];
+    code_node *current_code_node;
+    data_node *current_data_node;
+    unsigned int *binary_numbers_arr = (unsigned int *)malloc((*ic + *dc) * sizeof(unsigned int));
+    if (binary_numbers_arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
     int i = 0;
 
     /* Open .ob file */
@@ -39,7 +46,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     fprintf(file, "%d %d\n", *ic, *dc);
 
     /* Add code image's binary numbers to the array */
-    code_node *current_code_node = my_code_image->first;
+    current_code_node = my_code_image->first;
     while (current_code_node != NULL) {
         int j;
         for (j = 0; j < current_code_node->L; j++) {
@@ -50,7 +57,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     }
 
     /* Add data image's binary numbers to the array */
-    data_node *current_data_node = my_data_image->first;
+    current_data_node = my_data_image->first;
     while (current_data_node != NULL) {
         int j;
         for (j = 0; j < current_data_node->L; j++) {
@@ -65,7 +72,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
         unsigned int binary_number = binary_numbers_arr[i];
 
         unsigned int left_bits = (unsigned int)binary_number >> 6;
-        unsigned int right_bits = binary_number & 0b111111;
+        unsigned int right_bits = binary_number & 0x3F;
 
         fputc(binary_to_base64(left_bits), file);
         fputc(binary_to_base64(right_bits), file);
@@ -73,20 +80,23 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     }
 
     /* Free the allocated memory */
+    free(binary_numbers_arr);
     fclose(file);
 }
 
 void write_entries_file(char *filename, symbol_table *table) {
     char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
+    symbol_node *current;
     snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
 
-    FILE *entries_file = fopen(entries_filename, "w");
+    FILE *entries_file;
+    entries_file = fopen(entries_filename, "w");
     if (entries_file == NULL) {
         fprintf(stderr, "Error opening entries file for writing.\n");
         return;
     }
 
-    symbol_node *current = table->first;
+    current = table->first;
     while (current != NULL) {
         if (current->symbol_type == ENTRY) {
             int current_symbol_address = get_symbol_address(table, current->symbol_name) + START_OF_MEMORY_ADDRESS;
@@ -100,15 +110,17 @@ void write_entries_file(char *filename, symbol_table *table) {
 
 void write_externals_file(char *filename, extern_table *table) {
     char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
+    FILE *externals_file;
+    extern_node *current;
     snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);
 
-    FILE *externals_file = fopen(externals_filename, "w");
+    externals_file = fopen(externals_filename, "w");
     if (externals_file == NULL) {
         fprintf(stderr, "Error opening entries file for writing.\n");
         return;
     }
 
-    extern_node *current = table->first;
+    current = table->first;
     while (current != NULL) {
         fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address + START_OF_MEMORY_ADDRESS);
         current = current->next;

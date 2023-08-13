@@ -3,18 +3,46 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
+#include "logs.h"
+
+/**
+ * Initializes the macro array.
+ *
+ * @param arr: Pointer to the macro array.
+ * @param initial_size: Initial size of the macro array.
+ */
+void init_macro_array(macro_array *, int);
+
+/**
+ * Inserts a macro into the macro array.
+ *
+ * @param arr: Pointer to the macro array.
+ * @param name: Name of the macro to insert.
+ * @param content: Content of the macro to insert.
+ */
+void insert_macro_array(macro_array *arr, char *name, char *content);
 
 
 /**
- * Preprocesses a C file by removing comments, empty lines, and spreading macros.
- * At the end of the preprocessing, any dynamically allocated memory is freed.
+ * Frees all memory used by the macro array.
  *
- * @param base_filename: The name of the C file (without the suffix) to be preprocessed.
- * @return: True if the preprocessing is successful, False otherwise.
+ * @param arr: Pointer to the macro array.
  */
+void free_macro_array(macro_array *);
+
+/**
+ * Determines the current "macro status" based on the given input.
+ *
+ * @param str: Input string to analyze.
+ * @param macro_flag: Flag indicating if currently processing a macro.
+ * @param cmd_length: Length of the word_union.
+ * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
+ */
+int current_macro_status(char *, bool, int);
+
 bool preprocess_file(char *base_filename) {
     /* Variables */
-    bool is_macro_flag=FALSE, replaced_flag=FALSE;
+    bool is_macro_flag=FALSE, replaced_flag;
     macro_array macro_array;
 
     char line[MAX_LINE_LENGTH];
@@ -29,18 +57,22 @@ bool preprocess_file(char *base_filename) {
     /* Create filename with .am suffix */
     char *filename_with_am_suffix = concatenate_strings(base_filename, ".am");
 
+    int idx;
+    int command_length;
+    int macro_status;
+
 
     /* Open .as file  */
     as_file = fopen(filename_with_as_suffix, "r");
     if (as_file == NULL) {
-        fprintf(stderr, "Error: Failed to open .as file '%s' for reading.\n", filename_with_as_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_READING_AS_FILE);
         return FALSE;
     }
 
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "w");
     if (am_file == NULL) {
-        fprintf(stderr, "Error: Failed to open .am file '%s' for writing.\n", filename_with_am_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_AM_FILE);
         fclose(as_file);
         return FALSE;
     }
@@ -55,15 +87,13 @@ bool preprocess_file(char *base_filename) {
     while (fgets(line, MAX_LINE_LENGTH, as_file)) {
 
         /* Skip empty lines and comments (lines starting with ';') */
-        /* TODO tessa - handle cases where comments don't start at index 0 */
-        if (empty_string(line) || line[0] == ';') {
+        char *main_str_ptr = skip_spaces(line); /* Points to first ast_word */
+        if (empty_string(line) || main_str_ptr[0] == ';') {
             continue;
         }
 
         /* Remove leading spaces and get the word_union length */
-        char *main_str_ptr = skip_spaces(line); /* Points to first ast_word */
-        int command_length = word_length(main_str_ptr);
-        int macro_status;
+        command_length = word_length(main_str_ptr);
 
         /* Check the status of the current line with respect to macros */
         macro_status = current_macro_status(main_str_ptr, is_macro_flag, command_length);
@@ -86,7 +116,6 @@ bool preprocess_file(char *base_filename) {
             replaced_flag = FALSE;
 
             /* Check if the line contains a macro reference and replace it */
-            int idx;
             for (idx = 0; idx < macro_array.used; idx++) {
                 if (strncmp(main_str_ptr, macro_array.array[idx].name, command_length) == 0 &&
                     empty_string(main_str_ptr + command_length)) { /* If it's a name of a macro */
@@ -108,52 +137,41 @@ bool preprocess_file(char *base_filename) {
     return TRUE;
 }
 
-/**
- * Initializes the macro array.
- *
- * @param arr: Pointer to the macro array.
- * @param initial_size: Initial size of the macro array.
- */
 void init_macro_array(macro_array *arr, int initial_size) {
     arr->array = malloc(initial_size * sizeof(macro));
+    if (arr->array == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(arr->array);
+        exit(1);
+    }
     arr->used = 0;
     arr->size = initial_size;
 }
 
-/**
- * Inserts a macro into the macro array.
- *
- * @param arr: Pointer to the macro array.
- * @param name: Name of the macro to insert.
- * @param content: Content of the macro to insert.
- */
 void insert_macro_array(macro_array *arr, char *name, char *content) {
+    void *temp;
     if (arr->used == arr->size) {
         arr->size *= 2;
-        void *temp = realloc(arr->array, arr->size * sizeof(macro));
+        temp = realloc(arr->array, arr->size * sizeof(macro));
         if (!temp) {
-            fprintf(stderr, "Error: Failed to reallocate memory.\n");
-            exit(1);
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_REALLOCATE_MEM);
+            exit(EXIT_FAILURE);
         }
         arr->array = temp;
     }
     arr->array[arr->used].name = malloc(strlen(name) + 1);
     arr->array[arr->used].content = malloc(strlen(content) + 1);
     if (!arr->array[arr->used].name || !arr->array[arr->used].content) {
-        fprintf(stderr, "Error: Failed to allocate memory for macro name or content.\n");
-        exit(1);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
+        free(arr->array[arr->used].name);
+        free(arr->array[arr->used].content);
+        exit(EXIT_FAILURE);
     }
     strcpy(arr->array[arr->used].name, name);
     strcpy(arr->array[arr->used].content, content);
     arr->used++;
 }
 
-
-/**
- * Frees all memory used by the macro array.
- *
- * @param arr: Pointer to the macro array.
- */
 void free_macro_array(macro_array *arr) {
     int idx;
     for (idx = 0; idx < arr->used; idx++) {
@@ -165,20 +183,12 @@ void free_macro_array(macro_array *arr) {
     arr->used = arr->size = 0;
 }
 
-/**
- * Determines the current "macro status" based on the given input.
- *
- * @param str: Input string to analyze.
- * @param macro_flag: Flag indicating if currently processing a macro.
- * @param cmd_length: Length of the word_union.
- * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
- */
 int current_macro_status(char *str, bool macro_flag, int cmd_length) {
-    if (strncmp(str, "mcr", strlen("mcr")) == 0 && str[3] && str[3] == ' ') { /* First ast_word is 'macro'*/
+    if (strncmp(str, MACRO_START, strlen(MACRO_START)) == 0 && str[4] && str[4] == ' ') { /* First ast_word is 'macro'*/
         return START_OF_MACRO;
-    } else if (macro_flag && strncmp(str, "endmcr", cmd_length) != 0) {
+    } else if (macro_flag && strncmp(str, MACRO_END, cmd_length) != 0) {
         return BODY_OF_MACRO;
-    } else if (macro_flag && strncmp(str, "endmcr", cmd_length) == 0) {
+    } else if (macro_flag && strncmp(str, MACRO_END, cmd_length) == 0) {
         return END_OF_MACRO;
     }
     return NOT_A_MACRO;

@@ -1,41 +1,16 @@
-/**********************************************************************************************************************/
+TODO add errors printing
+make sure all errors are printed
 
-PRIORITIZED TASKS:
+TODO move all errors texts to errors file
+move all prints of errors to use PRINT_MESSAGE under logs.h
 
-fix bug with extern symbols in the second pass -
-the function get_symbol_address() CAN'T RETURN 1 if the decimal address is -1. think of another solution.
+TODO handle the invalid name of the macro.
+if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
 
-add errors printing
-
-move all errors texts to errors file
-
-Create a HUGE as file containing all types of errors.
-
-debug first pass and clean
-
-write files extern and entry (only if exist)
-
-/**********************************************************************************************************************/
-
-GENERAL TASKS:
-
-make sure all malloc are handled safely + free them
-
-Understand why errors are shorter than what suppose to be.
-examples:
-* "MAIN: mov @r9, LENGTH"
- the error needs to be "Invalid register number" but somehow what is thrown is "Invalid regi"
-* jmp
- the error needs to be "Missing operand." but somehow what is thrown is "Missing oper"
-
-finish second pass
-
-delete temp files
-
-add docstring to every function
-
-test everything in UBUNTU
-
-be happyyyyyyyyyyyyyyyyyyyyyyyyy
-
-/**********************************************************************************************************************/
+TODO macro for repetitives
+for example:, for opening .am/.as files
+am_file = fopen(filename_with_am_suffix, "r");
+if (am_file == NULL) {
+    fprintf(stderr, "Error: Failed to open .am file '%s' for reading.\n", filename_with_am_suffix);
+    return FALSE;
+}

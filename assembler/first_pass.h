@@ -4,14 +4,17 @@
 #include "data_structures.h"
 #include "symbols.h"
 
-bool is_symbol(char *line);
+/**
+    Processes the first pass of assembling, analyzing and updating symbol information.
 
-void decode_data(char* line, ast ast_line_info, int *dc, data_image *my_data_image);
-
-int analyze_operands(char* line, ast ast_line_info, int *ic, code_image *my_code_image);
-
-void update_data_dc(symbol_table *my_symbol_table, int *ic);
-
+    @param filename_with_am_suffix The name of the .am file to process.
+    @param ic A pointer to the instruction counter value.
+    @param dc A pointer to the data counter value.
+    @param my_data_image The data image to update with data information.
+    @param my_code_image The code image to update with code information.
+    @param symbol_table The symbol table to update with symbol information.
+    @return TRUE if the first pass process succeeds, FALSE otherwise.
+*/
 bool first_pass_process(char *base_filename, int *ic, int *dc, data_image *my_data_image, code_image *code_image,
                         symbol_table *symbol_table);
 

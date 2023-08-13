@@ -1,6 +1,6 @@
 #include "output.h"
 #include "utils.h"
-#include "stdio.h"
+#include <stdio.h>
 
 /**
  * Converts a 6-bit binary number to the corresponding Base64 character.
@@ -27,6 +27,7 @@ char binary_to_base64(unsigned int binary_number) {
 
 void write_object_file(char *filename, code_image *my_code_image, int *ic, data_image *my_data_image, int *dc) {
     FILE *file;
+    int i;
     char *filename_with_obj_suffix = concatenate_strings(filename, ".ob");
     code_node *current_code_node;
     data_node *current_data_node;
@@ -35,7 +36,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
         fprintf(stderr, "Memory allocation failed\n");
         exit(1);
     }
-    int i = 0;
+    i = 0;
 
     /* Open .ob file */
     file = fopen(filename_with_obj_suffix, "w");
@@ -87,9 +88,8 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
 void write_entries_file(char *filename, symbol_table *table) {
     char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
     symbol_node *current;
-    snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
-
     FILE *entries_file;
+    snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
     entries_file = fopen(entries_filename, "w");
     if (entries_file == NULL) {
         fprintf(stderr, "Error opening entries file for writing.\n");

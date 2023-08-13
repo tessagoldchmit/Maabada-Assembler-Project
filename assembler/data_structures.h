@@ -128,4 +128,15 @@ unsigned short insert_bits(unsigned short value, int num, int start_bit, int end
 */
 code_node* find_code_node_by_line(code_image* code_image, char* line);
 
+/**
+    Frees the memory occupied by code and data image structures.
+
+    This function releases the memory allocated for the provided code image and data image structures,
+    along with any associated resources.
+
+    @param code_img A pointer to the code image structure to be freed.
+    @param data_img A pointer to the data image structure to be freed.
+*/
+void free_all_data_structures(code_image *code_img, data_image *data_img);
+
 #endif /* DATA_STRUCTURES_H */

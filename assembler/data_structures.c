@@ -3,11 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-/* TODO talk with tessa about the "binary" case here */
-int char_to_binary(char character) {
-    return (int)character;
-}
-
 unsigned short insert_bits(unsigned short value, int num, int start_bit, int end_bit) {
     unsigned short mask = ((1 << (end_bit - start_bit + 1)) - 1) << start_bit;
     unsigned short num_bits = num << start_bit;
@@ -115,6 +110,7 @@ void add_code_node(code_image *code_image, code_node *new_node) {
 }
 
 data_node *create_data_node(char* line, int L, ast ast) {
+    int i;
     data_node *new_node = (data_node *) malloc(sizeof(data_node));
     if (new_node == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -127,10 +123,9 @@ data_node *create_data_node(char* line, int L, ast ast) {
         free(new_node->word);
         exit(1);
     }
-    int i;
     if(ast.ast_word.directive_word.directive_type == STRING_TYPE)
         for (i = 0; i <= L; i++)
-            new_node->word[i] = char_to_binary(ast.ast_word.directive_word.directive_option.string[i]);
+            new_node->word[i] = (int)(ast.ast_word.directive_word.directive_option.string[i]);
     else
         for (i = 0; i < L; i++)
             new_node->word[i] = ast.ast_word.directive_word.directive_option.machine_code.machine_code_array[i];
@@ -187,4 +182,37 @@ code_node* find_code_node_by_line(code_image* code_image, char* line) {
         current = current->next;
     }
     return NULL;
+}
+
+void free_data_node(data_node *node) {
+    if (node != NULL) {
+        free(node->word);
+        free(node->original_line);
+        free(node);
+    }
+}
+
+void free_data_image(data_image *image) {
+    data_node *current = image->first;
+    while (current != NULL) {
+        data_node *temp = current;
+        current = current->next_node;
+        free_data_node(temp);
+    }
+    free(image);
+}
+
+void free_code_image(code_image *image) {
+    code_node *current = image->first;
+    while (current != NULL) {
+        code_node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(image);
+}
+
+void free_all_data_structures(code_image *code_img, data_image *data_img) {
+    free_code_image(code_img);
+    free_data_image(data_img);
 }

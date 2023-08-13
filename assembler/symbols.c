@@ -30,7 +30,16 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
         free(new_symbol);
         exit(1);
     }
-    new_symbol->symbol_name = strdup(symbol_name); /*TODO strdup is not allowed in c90*/
+
+    /* Allocate memory for the symbol_name and copy the string */
+    new_symbol->symbol_name = (char *) malloc(strlen(symbol_name) + 1);
+    if (new_symbol->symbol_name == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_symbol);
+        exit(1);
+    }
+    strcpy(new_symbol->symbol_name, symbol_name);
+
     new_symbol->decimal_address = decimal_address;
     new_symbol->symbol_type = symbol_type;
     new_symbol->next_symbol = NULL;
@@ -198,11 +207,18 @@ void add_extern_node(extern_table *table, char *symbol_name, int address) {
     extern_node *new_node = (extern_node *)malloc(sizeof(extern_node));
     if (new_node == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
-        free(new_node);
         exit(EXIT_FAILURE);
     }
 
-    new_node->symbol_name = strdup(symbol_name); /* TODO strdup not allowed in c90 */
+    /* Allocate memory for the symbol_name and copy the string */
+    new_node->symbol_name = (char *)malloc(strlen(symbol_name) + 1);
+    if (new_node->symbol_name == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node);
+        exit(EXIT_FAILURE);
+    }
+    strcpy(new_node->symbol_name, symbol_name);
+
     new_node->address = address;
     new_node->next = NULL;
 
@@ -213,4 +229,44 @@ void add_extern_node(extern_table *table, char *symbol_name, int address) {
         table->last->next = new_node;
         table->last = new_node;
     }
+}
+
+
+void free_symbol_node(symbol_node *node) {
+    if (node != NULL) {
+        free(node->symbol_name);
+        free(node);
+    }
+}
+
+void free_symbol_table(symbol_table *table) {
+    symbol_node *current = table->first;
+    while (current != NULL) {
+        symbol_node *temp = current;
+        current = current->next_symbol;
+        free_symbol_node(temp);
+    }
+    free(table);
+}
+
+void free_extern_node(extern_node *node) {
+    if (node != NULL) {
+        free(node->symbol_name);
+        free(node);
+    }
+}
+
+void free_extern_table(extern_table *table) {
+    extern_node *current = table->first;
+    while (current != NULL) {
+        extern_node *temp = current;
+        current = current->next;
+        free_extern_node(temp);
+    }
+    free(table);
+}
+
+void free_symbols(symbol_table *symbol_table, extern_table *extern_table) {
+    free_symbol_table(symbol_table);
+    free_extern_table(extern_table);
 }

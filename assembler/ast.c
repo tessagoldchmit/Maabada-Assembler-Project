@@ -14,9 +14,9 @@
  * @return Updated pointer to the input line.
  */
 char *get_directive(char *line_ptr, ast *ast) {
+    char *directive;
     /* Skip '.' */
     (line_ptr)++;
-    char *directive;
     directive = line_ptr;
 
     if (strncmp(directive, "string", 6) == 0) {
@@ -369,6 +369,7 @@ void check_operands_for_group_a(char *line, ast *ast) {
         HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
         return;
     }
+    free(error_msg);
 }
 
 /**

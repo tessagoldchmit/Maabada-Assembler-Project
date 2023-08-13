@@ -153,4 +153,6 @@ extern_table *initialize_extern_table();
 */
 void add_extern_node(extern_table *table, char *symbol_name, int address);
 
+void free_symbols(symbol_table *symbol_table, extern_table *extern_table);
+
 #endif /* MMN14_SYMBOLS_H */

@@ -120,11 +120,8 @@ bool process_file(char *base_filename) {
     free(ic);
     free(dc);
 
-    free(my_data_image);
-    free(my_code_image);
-    free(symbol_table);
-    free(extern_table);
-
+    free_all_data_structures(my_code_image, my_data_image);
+    free_symbols(symbol_table, extern_table);
 
     return TRUE;
 }

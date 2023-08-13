@@ -124,7 +124,7 @@ data_node *create_data_node(char* line, int L, ast ast) {
         exit(1);
     }
     if(ast.ast_word.directive_word.directive_type == STRING_TYPE)
-        for (i = 0; i <= L; i++)
+        for (i = 0; i < L; i++)
             new_node->word[i] = (int)(ast.ast_word.directive_word.directive_option.string[i]);
     else
         for (i = 0; i < L; i++)

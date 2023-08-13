@@ -185,34 +185,49 @@ code_node* find_code_node_by_line(code_image* code_image, char* line) {
 }
 
 void free_data_node(data_node *node) {
-    if (node != NULL) {
-        free(node->word);
+    if (node) {
         free(node->original_line);
+        free(node->word);
+        free(node);
+    }
+}
+
+void free_code_node(code_node *node) {
+    if (node) {
+        free(node->original_line);
+        free(node->word);
         free(node);
     }
 }
 
 void free_data_image(data_image *image) {
-    data_node *current = image->first;
-    while (current != NULL) {
-        data_node *temp = current;
-        current = current->next_node;
-        free_data_node(temp);
+    if (image) {
+        data_node *current = image->first;
+        while (current) {
+            data_node *temp = current;
+            current = current->next_node;
+            free_data_node(temp);
+        }
+        free(image);
     }
-    free(image);
 }
 
 void free_code_image(code_image *image) {
-    code_node *current = image->first;
-    while (current != NULL) {
-        code_node *temp = current;
-        current = current->next;
-        free(temp);
+    if (image) {
+        code_node *current = image->first;
+        while (current) {
+            code_node *temp = current;
+            current = current->next;
+            free_code_node(temp);
+        }
+        free(image);
     }
-    free(image);
 }
-
 void free_all_data_structures(code_image *code_img, data_image *data_img) {
-    free_code_image(code_img);
-    free_data_image(data_img);
+    if (code_img) {
+        free_code_image(code_img);
+    }
+    if (data_img) {
+        free_data_image(data_img);
+    }
 }

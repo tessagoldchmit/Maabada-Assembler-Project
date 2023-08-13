@@ -3,6 +3,7 @@
 
 #include "globals.h"
 
+/* TODO enscpulate tessa */
 /* Enumeration of supported assembly instructions */
 typedef enum {
     MOV_TYPE,
@@ -23,11 +24,17 @@ typedef enum {
     STOP_TYPE,
 } instruction_name;
 
+/**
+ * Represents a mapping of instruction names to their corresponding types.
+ */
 struct instruction_map {
-    const char *name;
-    instruction_name type;
+    const char *name; /* The name of the instruction. */
+    instruction_name type; /* The type of the instruction (enum value). */
 };
 
+/**
+ * An array containing mappings of instruction names to their types.
+ */
 static const struct instruction_map instructions_map[] = {
         {"mov",  MOV_TYPE},
         {"cmp",  CMP_TYPE},
@@ -68,7 +75,6 @@ typedef union {
     char register_num;
     int number;
 } operand_union;
-
 
 /* Structure for group A instructions */
 typedef struct {
@@ -143,9 +149,19 @@ typedef struct ast {
     int line_number;
 } ast;
 
-
+/**
+ * Parses an input line and populates an Abstract Syntax Tree (AST) structure.
+ * @param line The input line to be parsed.
+ * @param line_number The line number of the input line.
+ * @return The populated AST structure.
+ */
 ast get_ast_line_info(char *line, int line_number);
 
+/**
+ * Checks the group type of an instruction based on its instruction name.
+ * @param instruction_name The name of the instruction.
+ * @return The group type of the instruction.
+ */
 group_type check_group(instruction_name instruction_name);
 
 #endif /* AST_H */

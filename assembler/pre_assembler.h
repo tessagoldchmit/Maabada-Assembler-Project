@@ -39,15 +39,13 @@ enum {
     NOT_A_MACRO      /* Indicates that it is not a macro. */
 };
 
-
+/**
+ * Preprocesses a C file by removing comments, empty lines, and spreading macros.
+ * At the end of the preprocessing, any dynamically allocated memory is freed.
+ *
+ * @param base_filename: The name of the C file (without the suffix) to be preprocessed.
+ * @return: True if the preprocessing is successful, False otherwise.
+ */
 bool preprocess_file(char *base_filename);
-
-void init_macro_array(macro_array *, int);
-
-void insert_macro_array(macro_array *arr, char *name, char *content);
-
-void free_macro_array(macro_array *);
-
-int current_macro_status(char *, bool, int);
 
 #endif /* PRE_ASSEMBLER_H */

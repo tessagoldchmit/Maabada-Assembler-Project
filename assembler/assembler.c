@@ -8,7 +8,6 @@
 #include "second_pass.h"
 #include "symbols.h"
 #include "logs.h"
-#include "extern_symbols.h"
 
 
 bool process_file(char *base_filename);

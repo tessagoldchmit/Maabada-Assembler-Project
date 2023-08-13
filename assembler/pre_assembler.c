@@ -5,14 +5,41 @@
 #include "utils.h"
 #include "logs.h"
 
+/**
+ * Initializes the macro array.
+ *
+ * @param arr: Pointer to the macro array.
+ * @param initial_size: Initial size of the macro array.
+ */
+void init_macro_array(macro_array *, int);
 
 /**
- * Preprocesses a C file by removing comments, empty lines, and spreading macros.
- * At the end of the preprocessing, any dynamically allocated memory is freed.
+ * Inserts a macro into the macro array.
  *
- * @param base_filename: The name of the C file (without the suffix) to be preprocessed.
- * @return: True if the preprocessing is successful, False otherwise.
+ * @param arr: Pointer to the macro array.
+ * @param name: Name of the macro to insert.
+ * @param content: Content of the macro to insert.
  */
+void insert_macro_array(macro_array *arr, char *name, char *content);
+
+
+/**
+ * Frees all memory used by the macro array.
+ *
+ * @param arr: Pointer to the macro array.
+ */
+void free_macro_array(macro_array *);
+
+/**
+ * Determines the current "macro status" based on the given input.
+ *
+ * @param str: Input string to analyze.
+ * @param macro_flag: Flag indicating if currently processing a macro.
+ * @param cmd_length: Length of the word_union.
+ * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
+ */
+int current_macro_status(char *, bool, int);
+
 bool preprocess_file(char *base_filename) {
     /* Variables */
     bool is_macro_flag=FALSE, replaced_flag;
@@ -108,12 +135,6 @@ bool preprocess_file(char *base_filename) {
     return TRUE;
 }
 
-/**
- * Initializes the macro array.
- *
- * @param arr: Pointer to the macro array.
- * @param initial_size: Initial size of the macro array.
- */
 void init_macro_array(macro_array *arr, int initial_size) {
     arr->array = malloc(initial_size * sizeof(macro));
     if (arr->array == NULL) {
@@ -125,13 +146,6 @@ void init_macro_array(macro_array *arr, int initial_size) {
     arr->size = initial_size;
 }
 
-/**
- * Inserts a macro into the macro array.
- *
- * @param arr: Pointer to the macro array.
- * @param name: Name of the macro to insert.
- * @param content: Content of the macro to insert.
- */
 void insert_macro_array(macro_array *arr, char *name, char *content) {
     if (arr->used == arr->size) {
         arr->size *= 2;
@@ -155,12 +169,6 @@ void insert_macro_array(macro_array *arr, char *name, char *content) {
     arr->used++;
 }
 
-
-/**
- * Frees all memory used by the macro array.
- *
- * @param arr: Pointer to the macro array.
- */
 void free_macro_array(macro_array *arr) {
     int idx;
     for (idx = 0; idx < arr->used; idx++) {
@@ -172,14 +180,6 @@ void free_macro_array(macro_array *arr) {
     arr->used = arr->size = 0;
 }
 
-/**
- * Determines the current "macro status" based on the given input.
- *
- * @param str: Input string to analyze.
- * @param macro_flag: Flag indicating if currently processing a macro.
- * @param cmd_length: Length of the word_union.
- * @return: Macro status: START_OF_MACRO, BODY_OF_MACRO, END_OF_MACRO, or NOT_A_MACRO.
- */
 int current_macro_status(char *str, bool macro_flag, int cmd_length) {
     if (strncmp(str, MACRO_START, strlen(MACRO_START)) == 0 && str[4] && str[4] == ' ') { /* First ast_word is 'macro'*/
         return START_OF_MACRO;

@@ -24,14 +24,6 @@ char binary_to_base64(unsigned int binary_number) {
     }
 }
 
-/**
- * Writes the object file (.ob) containing the code and data images.
- * @param filename The name of the source file (without extension).
- * @param my_code_image Pointer to the code image structure.
- * @param ic Pointer to the Instruction Counter value.
- * @param my_data_image Pointer to the data image structure.
- * @param dc Pointer to the Data Counter value.
- */
 void write_object_file(char *filename, code_image *my_code_image, int *ic, data_image *my_data_image, int *dc) {
     FILE *file;
     char *filename_with_obj_suffix = concatenate_strings(filename, ".ob");
@@ -84,11 +76,6 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     fclose(file);
 }
 
-/**
- * Writes the entries file (.ent) containing the symbols marked as entry points.
- * @param filename The name of the source file (without extension).
- * @param table Pointer to the symbol table structure.
- */
 void write_entries_file(char *filename, symbol_table *table) {
     char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
     snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
@@ -111,11 +98,6 @@ void write_entries_file(char *filename, symbol_table *table) {
     fclose(entries_file);
 }
 
-/**
- * Writes the externals file (.ext) containing the symbols marked as externals.
- * @param filename The name of the source file (without extension).
- * @param table Pointer to the extern table structure.
- */
 void write_externals_file(char *filename, extern_table *table) {
     char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
     snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);

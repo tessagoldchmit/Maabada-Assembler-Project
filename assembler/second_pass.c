@@ -1,12 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "second_pass.h"
 #include "data_structures.h"
 #include "string.h"
 #include "symbols.h"
 #include "logs.h"
 
+/**
+    Gets the correct A/R/E value for the source operand in Group A instruction.
 
+    @param ast_line_info The abstract syntax tree information for the line.
+    @param symbol_table The symbol table to search for the symbol type.
+    @return The A/R/E value (A for Absolute, R for Relocatable, E for External).
+*/
 int get_correct_a_r_e_for_source(ast ast_line_info, symbol_table *symbol_table) {
     int symbol_type = -1;
     char *symbol_name = ast_line_info.ast_word.instruction_word.instruction_union.group_a.source_value.symbol;
@@ -23,6 +30,13 @@ int get_correct_a_r_e_for_source(ast ast_line_info, symbol_table *symbol_table) 
     return R;
 }
 
+/**
+    Gets the correct A/R/E value for the target operand in Group A instruction.
+
+    @param ast_line_info The abstract syntax tree information for the line.
+    @param symbol_table The symbol table to search for the symbol type.
+    @return The A/R/E value (A for Absolute, R for Relocatable, E for External).
+*/
 int get_correct_a_r_e_for_target(ast ast_line_info, symbol_table *symbol_table) {
     int symbol_type = -1;
     char *symbol_name = ast_line_info.ast_word.instruction_word.instruction_union.group_a.target_value.symbol;
@@ -39,9 +53,16 @@ int get_correct_a_r_e_for_target(ast ast_line_info, symbol_table *symbol_table) 
     return R;
 }
 
+/**
+    Decodes the operands for Group A instruction in the code node.
 
-bool
-decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
+    @param current_code_node The code node to decode.
+    @param symbol_table The symbol table to search for symbol information.
+    @param extern_table The external symbol table to add entries if needed.
+    @param ic A pointer to the instruction counter value.
+    @return TRUE if the decoding succeeds, FALSE otherwise.
+*/
+bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
     int source_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_type;
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_type;
 
@@ -121,8 +142,16 @@ decode_code_group_a(code_node *current_code_node, symbol_table *symbol_table, ex
     return TRUE;
 }
 
-bool
-decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
+/**
+    Decodes the operands for Group B instruction in the code node.
+
+    @param current_code_node The code node to decode.
+    @param symbol_table The symbol table to search for symbol information.
+    @param extern_table The external symbol table to add entries if needed.
+    @param ic A pointer to the instruction counter value.
+    @return TRUE if the decoding succeeds, FALSE otherwise.
+*/
+bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table, extern_table *extern_table, int *ic) {
     int target_type = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_type;
 
     /* handle target */
@@ -158,7 +187,15 @@ decode_code_group_b(code_node *current_code_node, symbol_table *symbol_table, ex
     return TRUE;
 }
 
+/**
+    Decodes the operands for a given code node based on its instruction group.
 
+    @param symbol_table The symbol table to search for symbol information.
+    @param current_code_node The code node to decode.
+    @param extern_table The external symbol table to add entries if needed.
+    @param ic A pointer to the instruction counter value.
+    @return TRUE if the decoding succeeds, FALSE otherwise.
+*/
 bool decode_code(symbol_table *symbol_table, code_node *current_code_node, extern_table *extern_table, int *ic) {
     if (check_group(current_code_node->ast.ast_word.instruction_word.instruction_name) == GROUP_A) {
         if (decode_code_group_a(current_code_node, symbol_table, extern_table, ic) == FALSE) {
@@ -173,7 +210,6 @@ bool decode_code(symbol_table *symbol_table, code_node *current_code_node, exter
     *ic += current_code_node->L;
     return TRUE;
 }
-
 
 bool second_pass_process(char *filename_with_am_suffix, int *ic, code_image *my_code_image, symbol_table *symbol_table,
                          extern_table *extern_table) {

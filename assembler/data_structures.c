@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
+/* TODO talk with tessa about the "binary" case here */
 int char_to_binary(char character) {
     return (int)character;
 }
@@ -14,7 +14,6 @@ unsigned short insert_bits(unsigned short value, int num, int start_bit, int end
     return (value & ~mask) | num_bits;
 }
 
-/*this operation already binaring all the words*/
 code_node *create_code_node_registers(char* line, int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source) {
     int i;
 
@@ -55,7 +54,6 @@ code_node *create_code_node_registers(char* line, int L, ast ast, int new_operan
     return new_node;
 }
 
-/* Function to create a new code node */
 code_node *create_code_node(char* line, int L, ast ast, int new_operand_code, int new_operand_target, int new_operand_source) {
     int i;
 
@@ -93,11 +91,6 @@ code_node *create_code_node(char* line, int L, ast ast, int new_operand_code, in
     return new_node;
 }
 
-/**
- * Initialize an empty code image.
- *
- * @param code_image The code image to initialize.
- */
 code_image *initialize_code_image() {
     code_image *new_code_image = malloc(sizeof(code_image));
     if (new_code_image == NULL) {
@@ -111,7 +104,6 @@ code_image *initialize_code_image() {
     return new_code_image;
 }
 
-/* Function to add a code node to the code image */
 void add_code_node(code_image *code_image, code_node *new_node) {
     if (code_image->first == NULL) {
         code_image->first = new_node;
@@ -122,7 +114,6 @@ void add_code_node(code_image *code_image, code_node *new_node) {
     }
 }
 
-/* Creates a new data node */
 data_node *create_data_node(char* line, int L, ast ast) {
     data_node *new_node = (data_node *) malloc(sizeof(data_node));
     if (new_node == NULL) {
@@ -159,11 +150,6 @@ data_node *create_data_node(char* line, int L, ast ast) {
     return new_node;
 }
 
-/**
- * Initialize an empty data image.
- *
- * @param data_image The data image to initialize.
- */
 data_image *initialize_data_image() {
     data_image *new_data_image = malloc(sizeof(data_image));
     if (new_data_image == NULL) {
@@ -177,7 +163,6 @@ data_image *initialize_data_image() {
     return new_data_image;
 }
 
-/* Adds a data node to the data image */
 void add_data_node(data_image *data_image, data_node *new_node) {
     if (data_image->first == NULL) {
         data_image->first = new_node;

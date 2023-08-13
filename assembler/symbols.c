@@ -11,11 +11,6 @@ const char *reserved_words[] = {
         "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"
 };
 
-/**
- * Checks if the line contains a symbol.
- * @param line Pointer to the input line.
- * @return Boolean indicating whether the line contains a symbol.
- */
 bool is_symbol(char *line) {
     return strchr(line, ':') != NULL;
 }
@@ -42,11 +37,6 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
     return new_symbol;
 }
 
-/**
- * Initialize an empty symbol table.
- *
- * @param symbol_table The symbol table to initialize.
- */
 symbol_table *initialize_symbol_table() {
     symbol_table *new_symbol_table = malloc(sizeof(symbol_table));
     if (new_symbol_table == NULL) {
@@ -60,15 +50,6 @@ symbol_table *initialize_symbol_table() {
     return new_symbol_table;
 }
 
-/**
- * Add a symbol to the symbol table.
- *
- * @param table The symbol table.
- * @param symbol_name The name of the symbol to add.
- * @param decimal_address The decimal address associated with the symbol.
- * @param symbol_type The ast_word_type of the symbol (DATA / EXTERNAL / CODE).
- * @return True if the symbol was successfully added, False if the symbol already exists in the table.
- */
 bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, symbol_type symbol_type) {
     /* Check if the symbol already exists in the table */
     symbol_node *current = table->first;
@@ -99,16 +80,6 @@ bool add_symbol(symbol_table *table, char *symbol_name, int *decimal_address, sy
     return TRUE;
 }
 
-/**
- * Checks if a symbol is valid, satisfying the following conditions:
- * - Length is within the maximum symbol length limit.
- * - Does not match any reserved words.
- * - Starts with an alphabetic character.
- * - Contains only alphanumeric characters.
- *
- * @param symbol_name The symbol to check
- * @return true if the symbol is valid, false otherwise
-*/
 bool is_symbol_valid(char *symbol_name) {
     int i;
 
@@ -139,13 +110,6 @@ bool is_symbol_valid(char *symbol_name) {
     return TRUE;
 }
 
-/**
- * Checks if a duplicate entry symbol with the given name exists in the symbol table.
- *
- * @param table Pointer to the symbol table.
- * @param symbol_name The name of the symbol to check for.
- * @return Returns TRUE if a duplicate entry symbol is found, otherwise FALSE.
- */
 bool check_entry_symbol_duplication(symbol_table *table, char *symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -159,12 +123,6 @@ bool check_entry_symbol_duplication(symbol_table *table, char *symbol_name) {
     return TRUE;
 }
 
-/**
- * Marks a symbol in the symbol table as an entry symbol.
- *
- * @param table Pointer to the symbol table.
- * @param symbol_name The name of the symbol to mark as an entry.
- */
 void mark_symbol_as_entry(symbol_table *table, char *symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -176,13 +134,6 @@ void mark_symbol_as_entry(symbol_table *table, char *symbol_name) {
     }
 }
 
-/**
- * Retrieves the decimal address of a symbol in the symbol table.
- *
- * @param table Pointer to the symbol table.
- * @param symbol_name The name of the symbol to get the address for.
- * @return Returns the decimal address of the symbol, or NON_EXIST_SYMBOL_ADDRESS if not found.
- */
 int get_symbol_address(symbol_table *table, symbol symbol_name) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -195,12 +146,6 @@ int get_symbol_address(symbol_table *table, symbol symbol_name) {
     return NON_EXIST_SYMBOL_ADDRESS;
 }
 
-/**
- * Checks if there is at least one entry symbol in the symbol table.
- *
- * @param table Pointer to the symbol table.
- * @return Returns TRUE if an entry symbol is found, otherwise FALSE.
- */
 bool has_entry_symbol(symbol_table *table) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -212,12 +157,6 @@ bool has_entry_symbol(symbol_table *table) {
     return FALSE;
 }
 
-/**
- * Checks if there is at least one external symbol in the symbol table.
- *
- * @param table Pointer to the symbol table.
- * @return Returns TRUE if an external symbol is found, otherwise FALSE.
- */
 bool has_extern_symbol(symbol_table *table) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -229,13 +168,6 @@ bool has_extern_symbol(symbol_table *table) {
     return FALSE;
 }
 
-/**
- * Checks if a symbol in the symbol table is marked as external.
- *
- * @param table Pointer to the symbol table.
- * @param symbol The symbol to check.
- * @return Returns TRUE if the symbol is marked as external, otherwise FALSE.
- */
 bool is_symbol_extern(symbol_table *table, symbol symbol) {
     symbol_node *current = table->first;
     while (current != NULL) {
@@ -246,4 +178,38 @@ bool is_symbol_extern(symbol_table *table, symbol symbol) {
         current = current->next_symbol;
     }
     return FALSE;
+}
+
+extern_table *initialize_extern_table() {
+    extern_table *new_extern_table = malloc(sizeof(extern_table));
+    if (new_extern_table == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_extern_table);
+        exit(1);
+    }
+    new_extern_table->first = NULL;
+    new_extern_table->last = NULL;
+
+    return new_extern_table;
+}
+
+void add_extern_node(extern_table *table, char *symbol_name, int address) {
+    extern_node *new_node = (extern_node *)malloc(sizeof(extern_node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(new_node);
+        exit(EXIT_FAILURE);
+    }
+
+    new_node->symbol_name = strdup(symbol_name);
+    new_node->address = address;
+    new_node->next = NULL;
+
+    if (table->first == NULL) {
+        table->first = new_node;
+        table->last = new_node;
+    } else {
+        table->last->next = new_node;
+        table->last = new_node;
+    }
 }

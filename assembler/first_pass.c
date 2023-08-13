@@ -6,6 +6,14 @@
 #include "ast.h"
 #include "logs.h"
 
+/**
+    Decodes data information and adds it to the data image.
+
+    @param line The original line containing the data information.
+    @param ast_line_info The abstract syntax tree information for the line.
+    @param dc A pointer to the data counter for memory length update.
+    @param my_data_image The data image where data nodes will be added.
+*/
 void decode_data(char *line, ast ast_line_info, int *dc, data_image *my_data_image) {
     data_node *new_node;
     int word_length = 0;
@@ -28,7 +36,16 @@ void decode_data(char *line, ast ast_line_info, int *dc, data_image *my_data_ima
     add_data_node(my_data_image, new_node);
 }
 
-int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_code_image) {
+/**
+    Analyzes operands and creates code nodes based on the given instruction.
+
+    @param line The original line containing the instruction.
+    @param ast_line_info The abstract syntax tree information for the line.
+    @param ic A pointer to the instruction counter for memory length update.
+    @param my_code_image The code image where code nodes will be added.
+    @return The length of the generated word(s).
+*/
+int analyze_operands(char *line, ast *ast_line_info, code_image *my_code_image) {
     code_node *new_node;
     int new_operand_code;
     int new_operand_target = 0;
@@ -110,6 +127,12 @@ int analyze_operands(char *line, ast *ast_line_info, int *ic, code_image *my_cod
     return L;
 }
 
+/**
+    Updates the decimal addresses of symbols in the symbol table associated with data.
+
+    @param my_symbol_table The symbol table to update.
+    @param ic A pointer to the instruction counter value.
+*/
 void update_data_dc(symbol_table *my_symbol_table, int *ic) {
     if (my_symbol_table->first == NULL) {
         /* Symbol table is empty, nothing to update */
@@ -124,7 +147,6 @@ void update_data_dc(symbol_table *my_symbol_table, int *ic) {
         symbol_node_pointer = symbol_node_pointer->next_symbol;
     } while (symbol_node_pointer != NULL);
 }
-
 
 bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_image *my_data_image,
                         code_image *my_code_image, symbol_table *symbol_table) {
@@ -196,14 +218,14 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                             error_flag = TRUE;
                         }
                         else{
-                            L = analyze_operands(line, &ast_line_info, ic, my_code_image);
+                            L = analyze_operands(line, &ast_line_info, my_code_image);
                             if(L==-1)
                                 error_flag=TRUE;
                             *ic += L;
                         }
                     }
                     else{
-                        L = analyze_operands(line, &ast_line_info, ic, my_code_image);
+                        L = analyze_operands(line, &ast_line_info, my_code_image);
                         if(L==-1)
                             error_flag=TRUE;
                         *ic += L;

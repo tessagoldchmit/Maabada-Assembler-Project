@@ -252,9 +252,11 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, code_image *my_
     }
     if (error_flag) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_SECOND_PASS);
+        fclose(am_file);
         return FALSE;
     } else {
         PRINT_MESSAGE(INFO_MSG_TYPE, INFO_SECOND_PASS);
+        fclose(am_file);
         return TRUE;
     }
 }

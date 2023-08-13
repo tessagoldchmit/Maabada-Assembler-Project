@@ -4,29 +4,6 @@ make sure all errors are printed
 TODO move all errors texts to errors file
 move all prints of errors to use PRINT_MESSAGE under logs.h
 
-TODO encapsulation
-needs to be done:
-ast
-data_structures
-extern_symbols
-first_pass
-output
-pre_assembler
-second_pass
-symbols
-utils
-
-TODO add docstring to every function
-needs to be done:
-data_structures.c
-data_structures.h
-extern_symbols.c
-extern_symbols.h
-first_pass.c
-first_pass.h
-second_pass.c
-second_pass.h
-
 TODO handle the invalid name of the macro.
 if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
 

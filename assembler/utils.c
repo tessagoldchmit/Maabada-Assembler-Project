@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "logs.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@ char *concatenate_strings(char *base, char *ext) {
     /* Allocate memory for the resulting string */
     char *concatenated_string = malloc(total_len + 1);
     if (concatenated_string == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(concatenated_string);
         exit(1);
     }

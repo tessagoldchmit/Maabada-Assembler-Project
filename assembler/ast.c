@@ -148,7 +148,7 @@
                       ptr[len] != EOF && !(isspace(ptr[len])); len++);
         symbol_name = (char *) malloc(sizeof(char) * (len + 1));
         if (symbol_name == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(symbol_name);
             exit(1);
         }
@@ -200,7 +200,7 @@
                       line_ptr[len] != EOF && !(isspace(line_ptr[len])); len++);
         command = malloc(sizeof(char) * len + 1);
         if (command == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(command);
             exit(1);
         }
@@ -280,7 +280,7 @@
         error_msg = (error *) malloc(sizeof(error));
         strcpy(*error_msg, "\0");
         if (error_msg == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(error_msg);
             exit(1);
         }
@@ -296,7 +296,7 @@
         /* Store the first operand */
         operand = malloc(sizeof(char) * len + 1);
         if (operand == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(operand);
             exit(1);
         }
@@ -338,7 +338,7 @@
         /* Store the second operand */
         operand = malloc(sizeof(char) * len + 1);
         if (operand == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(operand);
             exit(1);
         }
@@ -387,7 +387,7 @@
         error_msg = (error *) malloc(sizeof(char));
         strcpy(*error_msg, "\0");
         if (error_msg == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+             PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(error_msg);
             exit(1);
         }
@@ -406,7 +406,7 @@
         /* Store the operand */
         operand = malloc(sizeof(char) * len + 1);
         if (operand == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
+             PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
             free(operand);
             exit(1);
         }
@@ -468,7 +468,7 @@
             size_t symbol_length = colon_ptr - line_ptr;  /* Calculate the length of the string before ':' */
             symbol_name = malloc(sizeof(char) * (symbol_length + 1));
             if (symbol_name == NULL) {
-                fprintf(stderr, "Memory allocation failed\n");
+                 PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
                 free(symbol_name);
                 exit(1);
             }

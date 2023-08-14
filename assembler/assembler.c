@@ -63,13 +63,13 @@ bool process_file(char *base_filename) {
 
     ic = malloc(sizeof(int));
     if (ic == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(ic);
         exit(1);
     }
     dc = malloc(sizeof(int));
     if (dc == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(dc);
         exit(1);
     }

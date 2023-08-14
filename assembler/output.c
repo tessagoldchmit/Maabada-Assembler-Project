@@ -1,5 +1,6 @@
 #include "output.h"
 #include "utils.h"
+#include "logs.h"
 #include <stdio.h>
 
 /**
@@ -33,7 +34,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     data_node *current_data_node;
     unsigned int *binary_numbers_arr = (unsigned int *)malloc((*ic + *dc) * sizeof(unsigned int));
     if (binary_numbers_arr == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         exit(1);
     }
     i = 0;

@@ -26,7 +26,7 @@ bool is_symbol(char *line) {
 symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type symbol_type) {
     symbol_node *new_symbol = (symbol_node *) malloc(sizeof(symbol_node));
     if (new_symbol == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_symbol);
         exit(1);
     }
@@ -34,7 +34,7 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
     /* Allocate memory for the symbol_name and copy the string */
     new_symbol->symbol_name = (char *) malloc(strlen(symbol_name) + 1);
     if (new_symbol->symbol_name == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_symbol);
         exit(1);
     }
@@ -49,7 +49,7 @@ symbol_node *create_symbol(char *symbol_name, int decimal_address, symbol_type s
 symbol_table *initialize_symbol_table() {
     symbol_table *new_symbol_table = malloc(sizeof(symbol_table));
     if (new_symbol_table == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_symbol_table);
         exit(1);
     }
@@ -193,7 +193,7 @@ bool is_symbol_extern(symbol_table *table, symbol symbol) {
 extern_table *initialize_extern_table() {
     extern_table *new_extern_table = malloc(sizeof(extern_table));
     if (new_extern_table == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_extern_table);
         exit(1);
     }
@@ -206,14 +206,14 @@ extern_table *initialize_extern_table() {
 void add_extern_node(extern_table *table, char *symbol_name, int address) {
     extern_node *new_node = (extern_node *)malloc(sizeof(extern_node));
     if (new_node == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         exit(EXIT_FAILURE);
     }
 
     /* Allocate memory for the symbol_name and copy the string */
     new_node->symbol_name = (char *)malloc(strlen(symbol_name) + 1);
     if (new_node->symbol_name == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_node);
         exit(EXIT_FAILURE);
     }

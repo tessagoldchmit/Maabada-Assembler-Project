@@ -6,11 +6,3 @@ move all prints of errors to use PRINT_MESSAGE under logs.h
 
 TODO handle the invalid name of the macro.
 if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */
-
-TODO macro for repetitives
-for example:, for opening .am/.as files
-am_file = fopen(filename_with_am_suffix, "r");
-if (am_file == NULL) {
-    fprintf(stderr, "Error: Failed to open .am file '%s' for reading.\n", filename_with_am_suffix);
-    return FALSE;
-}

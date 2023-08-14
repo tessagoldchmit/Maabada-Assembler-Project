@@ -143,7 +143,7 @@ bool preprocess_file(char *base_filename) {
 void init_macro_array(macro_array *arr, int initial_size) {
     arr->array = malloc(initial_size * sizeof(macro));
     if (arr->array == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(arr->array);
         exit(1);
     }

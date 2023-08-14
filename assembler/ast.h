@@ -3,7 +3,6 @@
 
 #include "globals.h"
 
-/* TODO enscpulate tessa */
 /* Enumeration of supported assembly instructions */
 typedef enum {
     MOV_TYPE,

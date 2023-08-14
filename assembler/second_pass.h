@@ -5,7 +5,6 @@
 #include "data_structures.h"
 #include "symbols.h"
 
-/* TODO enscpulate tessa */
 #define R 2
 #define E 1
 

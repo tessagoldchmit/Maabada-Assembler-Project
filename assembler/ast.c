@@ -385,6 +385,7 @@
         char *operand;
         error *error_msg = NULL;
         error_msg = (error *) malloc(sizeof(char));
+        strcpy(*error_msg, "\0");
         if (error_msg == NULL) {
             fprintf(stderr, "Memory allocation failed\n");
             free(error_msg);

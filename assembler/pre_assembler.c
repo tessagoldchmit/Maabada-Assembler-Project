@@ -61,6 +61,7 @@ bool preprocess_file(char *base_filename) {
     int command_length;
     int macro_status;
 
+    bool is_reserved_word = FALSE;
 
     /* Open .as file  */
     as_file = fopen(filename_with_as_suffix, "r");
@@ -107,7 +108,6 @@ bool preprocess_file(char *base_filename) {
             strncpy(macro_name, main_str_ptr, command_length); /* Saves macro name */
 
             /* Check if the macro name is a reserved word */
-            bool is_reserved_word = FALSE;
             for (idx = 0; idx < sizeof(reserved_words) / sizeof(reserved_words[0]); idx++) {
                 if (strncmp(macro_name, reserved_words[idx], command_length) == 0 &&
                     empty_string(main_str_ptr + command_length)) {

@@ -118,10 +118,11 @@ bool preprocess_file(char *base_filename) {
             if (is_reserved_word) {
                 /* Skip the entire macro content until END_MACRO is reached */
                 PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_INVALID_MACRO_NAME);
-                free(filename_with_am_suffix);
                 free_macro_array(&macro_array);
                 fclose(as_file);
                 fclose(am_file);
+                remove(filename_with_am_suffix);
+                free(filename_with_am_suffix);
                 return FALSE;
             }
 

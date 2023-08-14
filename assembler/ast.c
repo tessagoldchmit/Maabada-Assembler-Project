@@ -346,7 +346,7 @@
         ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
 
         /* Check that the second operand is valid */
-        if (ast->ast_word_type == ERROR) {
+        if (strlen(*error_msg)!=0) {
             HANDLE_AST_ERROR(&ast, *error_msg);
             free(error_msg);
             free(operand);
@@ -419,8 +419,7 @@
             return;
         }
         ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
-
-        if (ast->ast_word_type == ERROR) {
+        if (strlen(*error_msg)!=0) {
             HANDLE_AST_ERROR(&ast, *error_msg);
             free(error_msg);
             free(operand);

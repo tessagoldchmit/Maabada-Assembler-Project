@@ -1,15 +1,10 @@
-#include "symbols.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "symbols.h"
 #include "logs.h"
 
-const char *reserved_words[] = {
-        "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
-        "and", "mov", "cmp", "add", "sub", "not", "clr", "lea",
-        "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"
-};
 
 bool is_symbol(char *line) {
     return strchr(line, ':') != NULL;

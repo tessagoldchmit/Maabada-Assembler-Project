@@ -1,7 +1,6 @@
 #ifndef MMN14_SYMBOLS_H
 #define MMN14_SYMBOLS_H
 
-#include "globals.h"
 #include "ast.h"
 
 /**

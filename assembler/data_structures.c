@@ -42,7 +42,7 @@ code_node *create_code_node_registers(char *line, int L, ast ast, int new_operan
 
     new_node->original_line = (char *) malloc(strlen(line) + 1);
     if (new_node->original_line == NULL) {
-        fprintf(stderr, "Error: Failed to allocate memory.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_node->word);
         free(new_node);
         return NULL;
@@ -80,7 +80,7 @@ create_code_node(char *line, int L, ast ast, int new_operand_code, int new_opera
 
     new_node->original_line = (char *) malloc(strlen(line) + 1);
     if (new_node->original_line == NULL) {
-        fprintf(stderr, "Error: Failed to allocate memory.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_node->word);
         free(new_node);
         return NULL;
@@ -139,7 +139,7 @@ data_node *create_data_node(char *line, int L, ast ast) {
 
     new_node->original_line = (char *) malloc(strlen(line) + 1);
     if (new_node->original_line == NULL) {
-        fprintf(stderr, "Error: Failed to allocate memory.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
         free(new_node->word);
         free(new_node);
         return NULL;

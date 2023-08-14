@@ -106,6 +106,25 @@ bool preprocess_file(char *base_filename) {
             command_length = word_length(main_str_ptr);
             strncpy(macro_name, main_str_ptr, command_length); /* Saves macro name */
 
+            /* Check if the macro name is a reserved word */
+            bool is_reserved_word = FALSE;
+            for (idx = 0; idx < sizeof(reserved_words) / sizeof(reserved_words[0]); idx++) {
+                if (strncmp(macro_name, reserved_words[idx], command_length) == 0 &&
+                    empty_string(main_str_ptr + command_length)) {
+                    is_reserved_word = TRUE;
+                    break;
+                }
+            }
+            if (is_reserved_word) {
+                /* Skip the entire macro content until END_MACRO is reached */
+                PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_INVALID_MACRO_NAME);
+                free(filename_with_am_suffix);
+                free_macro_array(&macro_array);
+                fclose(as_file);
+                fclose(am_file);
+                return FALSE;
+            }
+
         } else if (macro_status == BODY_OF_MACRO) {  /* Inside a macro definition, append to macro content */
             strncat(macro_content, line, count_line_length(line));
 

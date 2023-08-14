@@ -42,7 +42,7 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
     /* Open .ob file */
     file = fopen(filename_with_obj_suffix, "w");
     if (file == NULL) {
-        fprintf(stderr, "Error: Failed to open .ob file '%s' for writing.\n", filename_with_obj_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_OB_FILE);
         return;
     }
     fprintf(file, "%d %d\n", *ic, *dc);
@@ -94,7 +94,7 @@ void write_entries_file(char *filename, symbol_table *table) {
     snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
     entries_file = fopen(entries_filename, "w");
     if (entries_file == NULL) {
-        fprintf(stderr, "Error opening entries file for writing.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_ENT_FILE);
         return;
     }
 
@@ -118,7 +118,7 @@ void write_externals_file(char *filename, extern_table *table) {
 
     externals_file = fopen(externals_filename, "w");
     if (externals_file == NULL) {
-        fprintf(stderr, "Error opening entries file for writing.\n");
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_EXT_FILE);
         return;
     }
 

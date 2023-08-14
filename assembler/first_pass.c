@@ -163,7 +163,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "r");
     if (am_file == NULL) {
-        fprintf(stderr, "Error: Failed to open .am file '%s' for reading.\n", filename_with_am_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_READING_AM_FILE);
         return FALSE;
     }
 
@@ -179,7 +179,7 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
         }
 
         if (line_length > MAX_LINE_LENGTH) {
-            printf("Error: Line %d is longer than %d characters.\n", line_number, MAX_LINE_LENGTH);
+            printf("Error in line %d: Line is longer than %d characters.\n", line_number, MAX_LINE_LENGTH);
             error_flag = 1;
 
             /* Skip the remaining characters in the overlong line */

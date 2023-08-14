@@ -88,7 +88,7 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         char *source_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol;
         int source_symbol_address = get_symbol_address(symbol_table, source_symbol);
         if (source_symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
-            printf("Symbol does not exist\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_SYMBOL_DOES_NOT_EXIST);
             return FALSE;
         } else if (source_symbol_address != 1) {
             int source_are = get_correct_a_r_e_for_source(current_code_node->ast, symbol_table);
@@ -119,7 +119,7 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         char *target_symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol;
         int target_symbol_address = get_symbol_address(symbol_table, target_symbol);
         if (target_symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
-            printf("Symbol does not exist\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_SYMBOL_DOES_NOT_EXIST);
             return FALSE;
         } else if (target_symbol_address != 1) {
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
@@ -164,7 +164,7 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
         char *symbol = current_code_node->ast.ast_word.instruction_word.instruction_union.group_b.target_value.symbol;
         int symbol_address = get_symbol_address(symbol_table, symbol);
         if (symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
-            printf("Symbol does not exist\n");
+            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_SYMBOL_DOES_NOT_EXIST);
             return FALSE;
         } else if (symbol_address != -1) { /* valid symbol case */
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
@@ -221,7 +221,7 @@ bool second_pass_process(char *filename_with_am_suffix, int *ic, code_image *my_
     /* Open .am file */
     am_file = fopen(filename_with_am_suffix, "r");
     if (am_file == NULL) {
-        fprintf(stderr, "Error: Failed to open .am file '%s' for reading.\n", filename_with_am_suffix);
+        PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_READING_AM_FILE);
         return FALSE;
     }
 

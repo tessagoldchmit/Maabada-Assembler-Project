@@ -37,12 +37,18 @@ typedef enum {
 
 /* Error Messages */
 
-#define ERROR_IN_PREPROCESSING     "Preprocessing step encountered errors. Macros could not be spread correctly."
+#define ERROR_IN_PREPROCESSING       "Preprocessing step encountered errors. Macros could not be spread correctly."
+#define ERROR_INVALID_MACRO_NAME     "Invalid macro name, macro name can't be a reserved word."
+
 #define ERROR_IN_FIRST_PASS        "First pass encountered errors."
 #define ERROR_IN_SECOND_PASS       "Second pass encountered errors."
 
 #define ERROR_FAILED_READING_AS_FILE       "Failed to open .as file for reading."
 #define ERROR_FAILED_WRITING_TO_AM_FILE    "Failed to open .am file for writing."
+#define ERROR_FAILED_READING_AM_FILE       "Failed to open .am file for reading."
+#define ERROR_FAILED_WRITING_TO_OB_FILE    "Failed to open .ob file for reading."
+#define ERROR_FAILED_WRITING_TO_ENT_FILE   "Failed to open entries file for reading."
+#define ERROR_FAILED_WRITING_TO_EXT_FILE   "Failed to open externals file for reading."
 
 #define ERROR_FAILED_TO_REALLOCATE_MEM     "Failed to reallocate memory."
 #define ERROR_FAILED_TO_ALLOCATE_MEM       "Failed to allocate memory"
@@ -65,8 +71,8 @@ typedef enum {
 #define ERROR_STRING_START_QUOTES  "String must start with quotes(\")."
 #define ERROR_STRING_END_QUOTES    "String must end with quotes(\")."
 
-#define ERROR_DATA_MISSING_INT                ".data instruction must have at least one integer."
-#define ERROR_ARGS_FOR_DATA_MUST_BE_INTEGERS  "arguments for data must be integers."
+#define ERROR_DATA_MISSING_INT                "The instruction .data must have at least one integer."
+#define ERROR_ARGS_FOR_DATA_MUST_BE_INTEGERS  "Arguments for data must be integers."
 
 #define ERROR_MISSING_OPERAND             "Missing operand."
 #define ERROR_ILLEGAL_OPERAND             "Illegal operand."

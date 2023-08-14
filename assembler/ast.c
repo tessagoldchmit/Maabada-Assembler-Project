@@ -101,6 +101,10 @@
                 HANDLE_AST_ERROR(&ast, ERROR_INVALID_NUMBER);
                 return;
             }
+            if(value>MAX_DATA_INTEGER || value<MIN_DATA_INTEGER){
+                HANDLE_AST_ERROR(&ast, ERROR_INTEGERS_NOT_IN_RANGE);
+                return;
+            }
             ast->ast_word.directive_word.directive_option.machine_code.machine_code_array[num_of_ints] = value;
             ast->ast_word.directive_word.directive_option.machine_code.machine_code_count++;
             num_of_ints++;

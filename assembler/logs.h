@@ -73,6 +73,7 @@ typedef enum {
 
 #define ERROR_DATA_MISSING_INT                "The instruction .data must have at least one integer."
 #define ERROR_ARGS_FOR_DATA_MUST_BE_INTEGERS  "Arguments for data must be integers."
+#define ERROR_INTEGERS_NOT_IN_RANGE           "Integers for data must be between -2048 and 2047"
 
 #define ERROR_MISSING_OPERAND             "Missing operand."
 #define ERROR_ILLEGAL_OPERAND             "Illegal operand."

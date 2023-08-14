@@ -2,6 +2,8 @@
 #define AST_H
 
 #include "globals.h"
+#define MAX_DATA_INTEGER 2047
+#define MIN_DATA_INTEGER -2048
 
 /* Enumeration of supported assembly instructions */
 typedef enum {

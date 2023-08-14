@@ -1,8 +1,0 @@
-TODO add errors printing
-make sure all errors are printed
-
-TODO move all errors texts to errors file
-move all prints of errors to use PRINT_MESSAGE under logs.h
-
-TODO handle the invalid name of the macro.
-if invalid, should run over the file until find endmcro and keep on analyzing the next lines. */

@@ -41,11 +41,6 @@
 #define EXTERN_DECIMAL_ADDRESS (-1)
 #define NON_EXIST_SYMBOL_ADDRESS (-2)
 
-static const char *reserved_words[] = {
-        "@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7",
-        "mov", "cmp", "add", "sub", "lea", "not", "clr", "inc",
-        "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"
-};
 
 /* Boolean values */
 typedef enum {

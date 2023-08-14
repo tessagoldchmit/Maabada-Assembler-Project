@@ -88,13 +88,13 @@ void write_object_file(char *filename, code_image *my_code_image, int *ic, data_
 }
 
 void write_entries_file(char *filename, symbol_table *table) {
-    char entries_filename[MAX_FILE_NAME + 5]; /* +5 for ".ent\0" */
     symbol_node *current;
     FILE *entries_file;
-    snprintf(entries_filename, sizeof(entries_filename), "%s.ent", filename);
-    entries_file = fopen(entries_filename, "w");
+    char *filename_with_ent_suffix = concatenate_strings(filename, ".ent");
+    entries_file = fopen(filename_with_ent_suffix, "w");
     if (entries_file == NULL) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_ENT_FILE);
+        free(filename_with_ent_suffix);
         return;
     }
 
@@ -106,19 +106,18 @@ void write_entries_file(char *filename, symbol_table *table) {
         }
         current = current->next_symbol;
     }
-
     fclose(entries_file);
+    free(filename_with_ent_suffix);
 }
 
 void write_externals_file(char *filename, extern_table *table) {
-    char externals_filename[MAX_FILE_NAME + 5]; /* +5 for ".ext\0" */
     FILE *externals_file;
     extern_node *current;
-    snprintf(externals_filename, sizeof(externals_filename), "%s.ext", filename);
-
-    externals_file = fopen(externals_filename, "w");
+    char *filename_with_ext_suffix = concatenate_strings(filename, ".ext");
+    externals_file = fopen(filename_with_ext_suffix, "w");
     if (externals_file == NULL) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_WRITING_TO_EXT_FILE);
+        free(filename_with_ext_suffix);
         return;
     }
 
@@ -127,6 +126,6 @@ void write_externals_file(char *filename, extern_table *table) {
         fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address + START_OF_MEMORY_ADDRESS);
         current = current->next;
     }
-
     fclose(externals_file);
+    free(filename_with_ext_suffix);
 }

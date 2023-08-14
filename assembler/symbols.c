@@ -5,6 +5,11 @@
 #include "symbols.h"
 #include "logs.h"
 
+const char *reserved_words_symbols[] = {
+        "@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7",
+        "mov", "cmp", "add", "sub", "lea", "not", "clr", "inc",
+        "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"
+};
 
 bool is_symbol(char *line) {
     return strchr(line, ':') != NULL;
@@ -94,8 +99,8 @@ bool is_symbol_valid(char *symbol_name) {
     }
 
     /* Does not match any reserved words */
-    for (i = 0; reserved_words[i] != NULL; i++) {
-        if (strcmp(symbol_name, reserved_words[i]) == 0) {
+    for (i = 0; reserved_words_symbols[i] != NULL; i++) {
+        if (strcmp(symbol_name, reserved_words_symbols[i]) == 0) {
             return FALSE;
         }
     }

@@ -220,7 +220,7 @@
                 return line_ptr;
             }
         }
-        HANDLE_AST_ERROR(&ast, ERROR_COMMAND_DOES_NOT_EXIST);
+        HANDLE_AST_ERROR(&ast, ERROR_INSTRUCTION_DOES_NOT_EXIST);
         free(command);
         return line_ptr;
     }

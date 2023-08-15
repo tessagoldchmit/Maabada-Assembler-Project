@@ -232,11 +232,11 @@
      * @param error_msg Pointer to the error message to be populated if needed.
      * @return The operand type.
      */
-    operand_type check_operand_type(char *operand, error *error_msg) {
+    operand_type check_operand_type(char *operand, error error_msg) {
         char *endptr;
         long value;
         if (strlen(operand) == 0) {
-            strcpy(*error_msg, ERROR_MISSING_OPERAND);
+            strcpy(error_msg, ERROR_MISSING_OPERAND);
             return ERROR_OPERAND_TYPE;
         }
         /* check if operand is a number */
@@ -247,7 +247,7 @@
                 return NUMBER_OPERAND_TYPE;
             } else {
                 /* Error: value out of range */
-                strcpy(*error_msg, ERROR_INTEGER_OUT_OF_RANGE);
+                strcpy(error_msg, ERROR_INTEGER_OUT_OF_RANGE);
                 return ERROR_OPERAND_TYPE;
             }
 
@@ -261,14 +261,14 @@
             if (register_num >= FIRST_REGISTER_NUM && register_num <= LAST_REGISTER_NUM) {
                 return REGISTER_OPERAND_TYPE;
             } else {
-                strcpy(*error_msg, ERROR_INVALID_REGISTER);
+                strcpy(error_msg, ERROR_INVALID_REGISTER);
                 return ERROR_OPERAND_TYPE;
             }
         } else if (is_symbol_valid(operand)) {
             /* Might be a defined symbol or not, we'll save it for now as a symbol */
             return SYMBOL_OPERAND_TYPE;
         } else {
-            strcpy(*error_msg, ERROR_ILLEGAL_OPERAND);
+            strcpy(error_msg, ERROR_ILLEGAL_OPERAND);
             return ERROR_OPERAND_TYPE;
         }
     }
@@ -310,7 +310,7 @@
         }
         strncpy(operand, line_ptr, len);
         operand[len] = '\0';
-        ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
+        ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, *error_msg);
         /* Check that the first operand is valid */
         if (strlen(*error_msg)!=0) {
             HANDLE_AST_ERROR(&ast, *error_msg);
@@ -352,7 +352,7 @@
         }
         strncpy(operand, line_ptr, len);
         operand[len] = '\0';
-        ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
+        ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, *error_msg);
 
         /* Check that the second operand is valid */
         if (strlen(*error_msg)!=0) {
@@ -428,7 +428,7 @@
             free(operand);
             return;
         }
-        ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
+        ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, *error_msg);
         if (strlen(*error_msg)!=0) {
             HANDLE_AST_ERROR(&ast, *error_msg);
             free(error_msg);

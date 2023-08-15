@@ -84,6 +84,11 @@ bool process_file(char *base_filename) {
     /* Preprocessing step */
     if (!preprocess_file(base_filename)) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_IN_PREPROCESSING);
+        /* Free allocated memory */
+        free(dc);
+        free(ic);
+        free_all_data_structures(my_code_image, my_data_image);
+        free_symbols(symbol_table, extern_table);
         return FALSE;
     }
 

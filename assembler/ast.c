@@ -253,7 +253,11 @@
 
         } else if (is_operand_a_register(operand)) {
             /* Register */
-            int register_num = operand[2] - '0';
+            int register_num;
+            char register_num_str[2];
+            register_num_str[0] = operand[2];
+            register_num_str[1] = '\0';
+            register_num = atoi(register_num_str);
             if (register_num >= FIRST_REGISTER_NUM && register_num <= LAST_REGISTER_NUM) {
                 return REGISTER_OPERAND_TYPE;
             } else {

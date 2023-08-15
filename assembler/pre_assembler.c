@@ -73,6 +73,8 @@ bool preprocess_file(char *base_filename) {
     as_file = fopen(filename_with_as_suffix, "r");
     if (as_file == NULL) {
         PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_READING_AS_FILE);
+        free(filename_with_am_suffix);
+        free(filename_with_as_suffix);
         return FALSE;
     }
 
@@ -112,6 +114,7 @@ bool preprocess_file(char *base_filename) {
             main_str_ptr = skip_spaces(main_str_ptr + command_length);
             command_length = word_length(main_str_ptr);
             strncpy(macro_name, main_str_ptr, command_length); /* Saves macro name */
+            macro_name[command_length] = '\0';
 
             /* Check if the macro name is a reserved word */
             for (idx = 0; idx < sizeof(reserved_words_macros) / sizeof(reserved_words_macros[0]); idx++) {

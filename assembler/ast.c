@@ -36,7 +36,7 @@
             ast->ast_word.directive_word.directive_type = EXTERN_TYPE;
             line_ptr += 6;
         } else {
-            HANDLE_AST_ERROR(&ast, ERROR_INVALID_INSTRUCTION);
+            HANDLE_AST_ERROR(&ast, ERROR_INVALID_DIRECTIVE);
         }
         return line_ptr;
     }

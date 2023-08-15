@@ -60,7 +60,7 @@ typedef enum {
 #define ERROR_INVALID_REGISTER     "Invalid register number."
 #define ERROR_INVALID_SYMBOL       "Invalid symbol."
 #define ERROR_INVALID_NUMBER       "Invalid number."
-#define ERROR_INVALID_INSTRUCTION  "Invalid instruction."
+#define ERROR_INVALID_DIRECTIVE    "Invalid directive."
 
 #define ERROR_CONSECUTIVE_COMMAS   "Consecutive commas detected."
 #define ERROR_MISSING_COMMA        "Missing comma."

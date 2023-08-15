@@ -59,7 +59,8 @@ typedef enum {
 #define ERROR_SYMBOL_ALREADY_EXISTS          "Symbol already exists."
 #define ERROR_SYMBOL_DOES_NOT_EXIST          "Symbol does not exist."
 #define ERROR_INVALID_SYMBOL                 "Symbol name is invalid."
-#define ERROR_ENTRY_EXTERN_WITHOUT_SYMBOL    "Entry/Extern must be followed by a symbol."
+#define ERROR_ENTRY_WITHOUT_SYMBOL           "Entry must be followed by a symbol."
+#define ERROR_EXTERN_WITHOUT_SYMBOL          "Extern must be followed by a symbol."
 
 /* Commas related errors */
 #define ERROR_CONSECUTIVE_COMMAS   "Consecutive commas detected."

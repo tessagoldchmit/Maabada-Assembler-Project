@@ -149,8 +149,14 @@
             ast->ast_symbol[0] = '\0';
         }
         if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
-            HANDLE_AST_ERROR(&ast, ERROR_ENTRY_EXTERN_WITHOUT_SYMBOL);
-            return;
+            if(ast->ast_word.directive_word.directive_type==ENTRY_TYPE) {
+                HANDLE_AST_ERROR(&ast, ERROR_ENTRY_WITHOUT_SYMBOL);
+                return;
+            }
+            if(ast->ast_word.directive_word.directive_type==EXTERN_TYPE) {
+                HANDLE_AST_ERROR(&ast, ERROR_EXTERN_WITHOUT_SYMBOL);
+                return;
+            }
         }
         for (len = 0; ptr[len] != '\0' && ptr[len] != '\n' &&
                       ptr[len] != EOF && !(isspace(ptr[len])); len++);

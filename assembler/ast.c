@@ -170,7 +170,6 @@
         ptr = skip_spaces(ptr);
         if (ptr[0] != '\0' && ptr[0] != '\n' && ptr[0] != EOF) {
             HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
-            free(symbol_name);
             return;
         }
     }
@@ -284,19 +283,12 @@
         int len;
         char *operand;
 
-        error *error_msg = NULL;
-        error_msg = (error *) malloc(sizeof(error));
-        strcpy(*error_msg, "\0");
-        if (error_msg == NULL) {
-            PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
-            free(error_msg);
-            exit(1);
-        }
+        error error_msg;
+        strcpy(error_msg, "\0");
 
         line_ptr = skip_spaces(line_ptr);
         if (line_ptr[0] == ',') {
             HANDLE_AST_ERROR(&ast, ERROR_LEADING_COMMA);
-            free(error_msg);
             return;
         }
         for (len = 0; line_ptr[len] != '\0' && line_ptr[len] != '\n' &&
@@ -310,11 +302,10 @@
         }
         strncpy(operand, line_ptr, len);
         operand[len] = '\0';
-        ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, *error_msg);
+        ast->ast_word.instruction_word.instruction_union.group_a.source_type = check_operand_type(operand, error_msg);
         /* Check that the first operand is valid */
-        if (strlen(*error_msg)!=0) {
-            HANDLE_AST_ERROR(&ast, *error_msg);
-            free(error_msg);
+        if (strlen(error_msg)!=0) {
+            HANDLE_AST_ERROR(&ast, error_msg);
             free(operand);
             return;
         } else {
@@ -330,14 +321,12 @@
         line_ptr += len;
         line_ptr = skip_spaces(line_ptr);
         if (line_ptr[0] != ',') {
-            free(error_msg);
             HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
             return;
         }
         line_ptr += 1; /* skip comma */
         line_ptr = skip_spaces(line_ptr);
         if (line_ptr[0] == ',') {
-            free(error_msg);
             HANDLE_AST_ERROR(&ast, ERROR_CONSECUTIVE_COMMAS);
             return;
         }
@@ -352,12 +341,11 @@
         }
         strncpy(operand, line_ptr, len);
         operand[len] = '\0';
-        ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, *error_msg);
+        ast->ast_word.instruction_word.instruction_union.group_a.target_type = check_operand_type(operand, error_msg);
 
         /* Check that the second operand is valid */
-        if (strlen(*error_msg)!=0) {
-            HANDLE_AST_ERROR(&ast, *error_msg);
-            free(error_msg);
+        if (strlen(error_msg)!=0) {
+            HANDLE_AST_ERROR(&ast, error_msg);
             free(operand);
             return;
         } else {
@@ -374,11 +362,9 @@
         /* Check for extra trailing characters at the end */
         line_ptr = skip_spaces(line_ptr);
         if (line_ptr[0] != '\0' && line_ptr[0] != '\n' && line_ptr[0] != EOF) {
-            free(error_msg);
             HANDLE_AST_ERROR(&ast, ERROR_TRAILING_CHARACTERS);
             return;
         }
-        free(error_msg);
     }
 
     /**
@@ -391,19 +377,11 @@
         char *endptr;
         int len;
         char *operand;
-        error *error_msg = NULL;
-        error_msg = (error *) malloc(sizeof(char));
-        strcpy(*error_msg, "\0");
-        if (error_msg == NULL) {
-             PRINT_MESSAGE(ERROR_MSG_TYPE, ERROR_FAILED_TO_ALLOCATE_MEM);
-            free(error_msg);
-            exit(1);
-        }
-
+        error error_msg;
+        strcpy(error_msg, "\0");
         line_ptr = skip_spaces(line_ptr);
 
         if (line_ptr[0] == ',') {
-            free(error_msg);
             HANDLE_AST_ERROR(&ast, ERROR_LEADING_COMMA);
             return;
         }
@@ -428,10 +406,9 @@
             free(operand);
             return;
         }
-        ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, *error_msg);
-        if (strlen(*error_msg)!=0) {
-            HANDLE_AST_ERROR(&ast, *error_msg);
-            free(error_msg);
+        ast->ast_word.instruction_word.instruction_union.group_b.target_type = check_operand_type(operand, error_msg);
+        if (strlen(error_msg)!=0) {
+            HANDLE_AST_ERROR(&ast, error_msg);
             free(operand);
             return;
         } else {
@@ -443,7 +420,6 @@
                 ast->ast_word.instruction_word.instruction_union.group_b.target_value.register_num = operand[2];
             }
             free(operand);
-            free(error_msg);
             return;
         }
     }

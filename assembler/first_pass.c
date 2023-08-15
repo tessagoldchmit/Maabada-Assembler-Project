@@ -60,7 +60,7 @@ int analyze_operands(char *line, ast *ast_line_info, code_image *my_code_image) 
                 ast_line_info->ast_word.instruction_word.instruction_name == ADD_TYPE ||
                 ast_line_info->ast_word.instruction_word.instruction_name == SUB_TYPE ||
                 ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
-                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_TARGET_OPERAND_TYPE_GROUP_A);
                 return -1;
             } else {
                 new_operand_target = IMMEDIATE_ADDRESS;
@@ -73,7 +73,7 @@ int analyze_operands(char *line, ast *ast_line_info, code_image *my_code_image) 
 
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == NUMBER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
-                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_SOURCE_OPERAND_TYPE_GROUP_A);
                 return -1;
             } else {
                 new_operand_source = IMMEDIATE_ADDRESS;
@@ -83,7 +83,7 @@ int analyze_operands(char *line, ast *ast_line_info, code_image *my_code_image) 
             new_operand_source = DIRECT_ADDRESS;
         if (ast_line_info->ast_word.instruction_word.instruction_union.group_a.source_type == REGISTER_OPERAND_TYPE) {
             if (ast_line_info->ast_word.instruction_word.instruction_name == LEA_TYPE) {
-                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_SOURCE_OPERAND_TYPE_GROUP_A);
                 return -1;
             } else {
                 new_operand_source = REGISTER_ADDRESS;
@@ -106,7 +106,7 @@ int analyze_operands(char *line, ast *ast_line_info, code_image *my_code_image) 
             if (ast_line_info->ast_word.instruction_word.instruction_name == PRN_TYPE) {
                 new_operand_target = IMMEDIATE_ADDRESS;
             } else {
-                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_OPERAND_TYPE);
+                HANDLE_AST_ERROR_NON_POINTER(ast_line_info, ERROR_ILLEGAL_TARGET_OPERAND_TYPE_GROUP_B);
                 return -1;
             }
         }

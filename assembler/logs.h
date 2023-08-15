@@ -77,7 +77,11 @@ typedef enum {
 
 #define ERROR_MISSING_OPERAND             "Missing operand."
 #define ERROR_ILLEGAL_OPERAND             "Illegal operand."
-#define ERROR_ILLEGAL_OPERAND_TYPE        "Illegal operand type."
+
+#define ERROR_ILLEGAL_OPERAND_TYPE            "Illegal operand type."
+#define ERROR_ILLEGAL_TARGET_OPERAND_TYPE_GROUP_A    "Illegal target operand type for group A."
+#define ERROR_ILLEGAL_SOURCE_OPERAND_TYPE_GROUP_A    "Illegal source operand type for group A."
+#define ERROR_ILLEGAL_TARGET_OPERAND_TYPE_GROUP_B    "Illegal target operand type for group B."
 
 #define ERROR_INTEGER_OUT_OF_RANGE        "Integer is out of range."
 #define ERROR_COMMAND_DOES_NOT_EXIST      "Command does not exist."

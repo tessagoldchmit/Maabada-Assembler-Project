@@ -109,6 +109,10 @@
             ast->ast_word.directive_word.directive_option.machine_code.machine_code_count++;
             num_of_ints++;
             ptr = end_ptr;
+            if (ptr[0] == ' ') {
+                HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
+                return;
+            }
             ptr = skip_spaces(ptr);
             if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
                 return;

@@ -241,7 +241,7 @@
         /* check if operand is a number */
         if (is_operand_a_number(operand)) {
             value = strtol(operand, &endptr, 10);
-            if (value >= -(1 << 12) && value < (1 << 12)) {
+            if (value<=MAX_OPERAND_INTEGER && value>=MIN_OPERAND_INTEGER) {
                 /* Valid immediate operand */
                 return NUMBER_OPERAND_TYPE;
             } else {

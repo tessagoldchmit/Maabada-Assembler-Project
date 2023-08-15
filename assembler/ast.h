@@ -4,6 +4,8 @@
 #include "globals.h"
 #define MAX_DATA_INTEGER 2047
 #define MIN_DATA_INTEGER -2048
+#define MAX_OPERAND_INTEGER 511
+#define MIN_OPERAND_INTEGER -512
 
 /* Enumeration of supported assembly instructions */
 typedef enum {

@@ -78,12 +78,11 @@ typedef enum {
 #define ERROR_MISSING_OPERAND             "Missing operand."
 #define ERROR_ILLEGAL_OPERAND             "Illegal operand."
 
-#define ERROR_ILLEGAL_OPERAND_TYPE            "Illegal operand type."
 #define ERROR_ILLEGAL_TARGET_OPERAND_TYPE_GROUP_A    "Illegal target operand type for group A."
 #define ERROR_ILLEGAL_SOURCE_OPERAND_TYPE_GROUP_A    "Illegal source operand type for group A."
 #define ERROR_ILLEGAL_TARGET_OPERAND_TYPE_GROUP_B    "Illegal target operand type for group B."
 
-#define ERROR_INTEGER_OUT_OF_RANGE        "Integer is out of range."
+#define ERROR_INTEGER_OUT_OF_RANGE        "Integers for operands must be between -512 and 511."
 #define ERROR_COMMAND_DOES_NOT_EXIST      "Command does not exist."
 #define ERROR_TRAILING_CHARACTERS         "Detected trailing characters at the end."
 #define ERROR_ENTRY_EXTERN_WITHOUT_SYMBOL "Entry/Extern must be followed by a symbol."

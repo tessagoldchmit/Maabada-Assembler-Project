@@ -131,6 +131,7 @@ bool process_file(char *base_filename) {
             write_entries_file(base_filename, symbol_table);
         if (has_extern)
             write_externals_file(base_filename, extern_table);
+        PRINT_MESSAGE(INFO_MSG_TYPE, INFO_FILES_GENERATED_SUCCESSFULLY);
     }
 
     /* Free allocated memory */

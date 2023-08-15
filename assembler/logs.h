@@ -33,6 +33,7 @@ typedef enum {
 #define INFO_START_OF_ASSEMBLER               "Start processing files..."
 #define INFO_FIRST_PASS                       "First pass completed successfully."
 #define INFO_SECOND_PASS                      "Second pass completed successfully."
+#define INFO_FILES_GENERATED_SUCCESSFULLY     "All files have been generated successfully."
 #define INFO_ALL_FILES_HAVE_BEEN_PROCESSED    "All files have been processed!"
 
 /* Errors in specific steps */

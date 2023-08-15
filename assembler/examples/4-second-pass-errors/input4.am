@@ -1,0 +1,2 @@
+MAIN: add @r1, NOTEXIST
+END: stop

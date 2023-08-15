@@ -67,11 +67,11 @@ typedef enum {
 #define ERROR_LEADING_COMMA        "Leading comma detected."
 #define ERROR_TRAILING_COMMA       "Trailing comma detected."
 
-#define ERROR_STRING_MISSING       ".string instruction must have a string."
+#define ERROR_STRING_MISSING       ".string directive must have a string."
 #define ERROR_STRING_START_QUOTES  "String must start with quotes(\")."
 #define ERROR_STRING_END_QUOTES    "String must end with quotes(\")."
 
-#define ERROR_DATA_MISSING_INT                "The instruction .data must have at least one integer."
+#define ERROR_DATA_MISSING_INT                "The directive .data must have at least one integer."
 #define ERROR_ARGS_FOR_DATA_MUST_BE_INTEGERS  "Arguments for data must be integers."
 #define ERROR_INTEGERS_NOT_IN_RANGE           "Integers for data must be between -2048 and 2047"
 

@@ -110,8 +110,11 @@
             num_of_ints++;
             ptr = end_ptr;
             if (ptr[0] == ' ') {
-                HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
-                return;
+                skip_spaces(ptr);
+                if(ptr[0]!=' ') {
+                    HANDLE_AST_ERROR(&ast, ERROR_MISSING_COMMA);
+                    return;
+                }
             }
             ptr = skip_spaces(ptr);
             if (ptr[0] == '\0' || ptr[0] == '\n' || ptr[0] == EOF) {
@@ -138,6 +141,7 @@
 
     /**
      * Extracts entry/extern symbol from the input line and updates the AST accordingly.
+     * Assuming each .extern/entry directive gets only one symbol parameter.
      * @param ptr Pointer to the input line.
      * @param ast Pointer to the AST structure to be updated.
      */

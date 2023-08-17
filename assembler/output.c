@@ -122,6 +122,12 @@ void write_externals_file(char *filename, extern_table *table) {
     }
 
     current = table->first;
+    if(current == NULL){
+        fclose(externals_file);
+        remove(filename_with_ext_suffix);
+        free(filename_with_ext_suffix);
+        return;
+    }
     while (current != NULL) {
         fprintf(externals_file, "%s\t%d\n", current->symbol_name, current->address + START_OF_MEMORY_ADDRESS);
         current = current->next;

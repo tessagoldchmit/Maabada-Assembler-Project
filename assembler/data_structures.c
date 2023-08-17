@@ -52,6 +52,7 @@ code_node *create_code_node_registers(char *line, int L, ast ast, int new_operan
     new_node->L = L;
     new_node->ast = ast;
     new_node->next = NULL;
+    new_node->been_here = FALSE;
     return new_node;
 }
 
@@ -90,6 +91,7 @@ create_code_node(char *line, int L, ast ast, int new_operand_code, int new_opera
     new_node->L = L;
     new_node->ast = ast;
     new_node->next = NULL;
+    new_node->been_here = FALSE;
     return new_node;
 }
 
@@ -184,7 +186,10 @@ code_node *find_code_node_by_line(code_image *code_image, char *line) {
     current = code_image->first;
     while (current != NULL) {
         if (strcmp(current->original_line, line) == 0) {
-            return current;
+            if(current->been_here==FALSE) {
+                current->been_here=TRUE;
+                return current;
+            }
         }
         current = current->next;
     }

@@ -15,7 +15,7 @@
     @return The A/R/E value (A for Absolute, R for Relocatable, E for External).
 */
 int get_correct_a_r_e_for_source(ast ast_line_info, symbol_table *symbol_table) {
-    int symbol_type = -1;
+    int symbol_type = EXTERN_DECIMAL_ADDRESS;
     char *symbol_name = ast_line_info.ast_word.instruction_word.instruction_union.group_a.source_value.symbol;
     symbol_node *current_symbol_node = symbol_table->first;
     while (current_symbol_node != NULL) {
@@ -38,7 +38,7 @@ int get_correct_a_r_e_for_source(ast ast_line_info, symbol_table *symbol_table) 
     @return The A/R/E value (A for Absolute, R for Relocatable, E for External).
 */
 int get_correct_a_r_e_for_target(ast ast_line_info, symbol_table *symbol_table) {
-    int symbol_type = -1;
+    int symbol_type = EXTERN_DECIMAL_ADDRESS;
     char *symbol_name = ast_line_info.ast_word.instruction_word.instruction_union.group_a.target_value.symbol;
     symbol_node *current_symbol_node = symbol_table->first;
     while (current_symbol_node != NULL) {
@@ -89,13 +89,13 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         int source_symbol_address = get_symbol_address(symbol_table, source_symbol);
         if (source_symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
             return FALSE;
-        } else if (source_symbol_address != 1) {
+        } else if (source_symbol_address != EXTERN_DECIMAL_ADDRESS) {
             int source_are = get_correct_a_r_e_for_source(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], source_are, 0, 1);
             source_symbol_address = source_symbol_address + START_OF_MEMORY_ADDRESS;
             current_code_node->word[1] = insert_bits(current_code_node->word[1], source_symbol_address, 2, 11);
         } else {
-            current_code_node->word[1] = insert_bits(current_code_node->word[1], source_symbol_address, 0, 11);
+            current_code_node->word[1] = insert_bits(current_code_node->word[1], 1, 0, 11);
         }
         if (is_symbol_extern(symbol_table,
                              current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.source_value.symbol)) {
@@ -119,13 +119,13 @@ bool decode_code_group_a(code_node *current_code_node, symbol_table *symbol_tabl
         int target_symbol_address = get_symbol_address(symbol_table, target_symbol);
         if (target_symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
             return FALSE;
-        } else if (target_symbol_address != 1) {
+        } else if (target_symbol_address != EXTERN_DECIMAL_ADDRESS) {
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_are, 0, 1);
             target_symbol_address = target_symbol_address + START_OF_MEMORY_ADDRESS;
             current_code_node->word[2] = insert_bits(current_code_node->word[2], target_symbol_address, 2, 11);
         } else {
-            current_code_node->word[2] = insert_bits(current_code_node->word[2], target_symbol_address, 0, 11);
+            current_code_node->word[2] = insert_bits(current_code_node->word[2], 1, 0, 11);
         }
         if (is_symbol_extern(symbol_table,
                              current_code_node->ast.ast_word.instruction_word.instruction_union.group_a.target_value.symbol)) {
@@ -163,7 +163,7 @@ bool decode_code_group_b(code_node *current_code_node, symbol_table *symbol_tabl
         int symbol_address = get_symbol_address(symbol_table, symbol);
         if (symbol_address == NON_EXIST_SYMBOL_ADDRESS) {
             return FALSE;
-        } else if (symbol_address != -1) { /* valid symbol case */
+        } else if (symbol_address != EXTERN_DECIMAL_ADDRESS) { /* valid symbol case */
             int target_are = get_correct_a_r_e_for_target(current_code_node->ast, symbol_table);
             current_code_node->word[1] = insert_bits(current_code_node->word[1], target_are, 0, 1);
             symbol_address = symbol_address + START_OF_MEMORY_ADDRESS;

@@ -12,6 +12,7 @@ typedef struct code_node {
     int L; /* Size of the array of binary machine code. */
     ast ast; /* Abstract syntax tree associated with the code node. */
     struct code_node *next; /* Pointer to the next code node in the linked list. */
+    bool been_here; /* Marks if line has already been decoded */
 } code_node;
 
 /**

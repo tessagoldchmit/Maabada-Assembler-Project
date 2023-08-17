@@ -203,6 +203,9 @@ bool first_pass_process(char *filename_with_am_suffix, int *ic, int *dc, data_im
                                 decode_data(line, ast_line_info, dc, my_data_image);
                             }
                         }
+                        else{
+                            decode_data(line, ast_line_info, dc, my_data_image);
+                        }
                     } else if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE ||
                                ast_line_info.ast_word.directive_word.directive_type == ENTRY_TYPE) {
                         if (ast_line_info.ast_word.directive_word.directive_type == EXTERN_TYPE) {
